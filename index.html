@@ -137,7 +137,6 @@
       font-weight: bold;
     }
 
-    /* 최근 작성 메모 카드 */
     .recent-memos-list {
       display: flex;
       flex-direction: column;
@@ -183,13 +182,13 @@
 
     .memo-item {
       background-color: #ffffff;
-      padding: 8px 10px;
+      padding: 10px 12px;
       border-radius: 8px;
       font-size: 13px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
     }
 
     .classify-btn {
@@ -203,7 +202,7 @@
       margin-right: 4px;
     }
 
-    /* 카테고리 보관함 폴더Accordion UI */
+    /* 카테고리 보관함 UI */
     .category-grid {
       padding: 16px;
       display: flex;
@@ -239,7 +238,7 @@
 
     .folder-content.open { display: block; }
 
-    /* 전체 메모 & 검색 탭 스타일 */
+    /* 전체 메모 & 검색 탭 */
     .search-box-container {
       position: relative;
       padding: 12px 16px 4px;
@@ -264,9 +263,9 @@
       background-color: #ffffff;
       border: 1px solid #e0e0e0;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 10;
-      padding: 8px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      z-index: 100;
+      padding: 6px 0;
     }
 
     .history-item {
@@ -276,10 +275,41 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      cursor: pointer;
     }
 
-    .history-item:hover { background-color: #f5f5f5; }
+    .sort-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px 6px;
+    }
+
+    .sort-btn {
+      font-size: 11px;
+      color: #888;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 4px;
+    }
+
+    .sort-btn.active {
+      color: #1a73e8;
+      font-weight: bold;
+    }
+
+    /* 타임스탬프 스타일 */
+    .timestamp-box {
+      font-size: 11px;
+      color: #666;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .time-part {
+      font-size: 10px;
+      color: #999;
+    }
 
     .tag-badge {
       font-size: 10px;
@@ -340,7 +370,7 @@
       </div>
     </div>
 
-    <!-- 탭 2: 카테고리 보관함 페이지 (폴더별 접기/펼치기) -->
+    <!-- 탭 2: 카테고리 보관함 페이지 -->
     <div id="pageCategory" class="tab-content">
       <div style="padding: 12px 16px 0; text-align: right;">
         <button class="add-cat-btn" onclick="addNewCategoryPrompt()">+ 새 카테고리 만들기</button>
@@ -364,7 +394,14 @@
       </div>
 
       <div style="padding: 0 16px 16px;" class="content-area">
-        <div class="section-title" id="searchResultTitle">🕒 전체 메모 (시간 순)</div>
+        <div class="sort-bar">
+          <span class="section-title" id="searchResultTitle">🕒 전체 메모</span>
+          <div>
+            <button id="sortNewest" class="sort-btn active" onclick="setSortOrder('newest')">최신순</button>
+            <span style="font-size:10px; color:#ccc;">|</span>
+            <button id="sortOldest" class="sort-btn" onclick="setSortOrder('oldest')">오래된순</button>
+          </div>
+        </div>
         <div id="allMemosList" class="memo-list"></div>
       </div>
     </div>
@@ -382,6 +419,7 @@
 
     let currentSelectedCategory = '';
     let openFolderIndex = null;
+    let currentSortOrder = 'newest'; // 기본값 최신순
 
     function switchTab(tabName) {
       document.getElementById('tabWrite').classList.toggle('active', tabName === 'write');
@@ -398,7 +436,6 @@
       if (tabName === 'search') renderAllMemosPage();
     }
 
-    // 카테고리 추가
     function addNewCategoryPrompt() {
       const name = prompt('새 카테고리 이름을 입력하세요:');
       if (!name || !name.trim()) return;
@@ -425,6 +462,18 @@
         };
         container.appendChild(chip);
       });
+    }
+
+    // 날짜 및 시간 포맷터 (21:48 / 26.09.18.)
+    function formatTimestamp(timestamp) {
+      const d = new Date(timestamp);
+      const yy = String(d.getFullYear()).slice(-2);
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const hh = String(d.getHours()).padStart(2, '0');
+      const min = String(d.getMinutes()).padStart(2, '0');
+
+      return `<span class="time-part">${hh}:${min}</span> / ${yy}.${mm}.${dd}.`;
     }
 
     function renderWritePage() {
@@ -465,7 +514,6 @@
       document.getElementById('unclassifiedCount').textContent = unclassifiedMemos.length;
     }
 
-    // Dock에 남아있는 미분류 메모 바로 카테고리 지정
     window.assignCategoryDirect = function(index) {
       let optionsStr = categories.map((c, i) => `${i + 1}. ${c.icon} ${c.name}`).join('\n');
       const choice = prompt(`이 메모의 카테고리를 선택하세요:\n\n${optionsStr}`);
@@ -479,7 +527,6 @@
       }
     };
 
-    // 카테고리 보관함 (메모 안 보이고 카테고리만 뜨는 폴더 UI)
     function renderCategoryPage() {
       const grid = document.getElementById('categoryGrid');
       grid.innerHTML = '';
@@ -525,38 +572,51 @@
       renderCategoryPage();
     }
 
-    // 전체 메모 및 유사어(Fuzzy) 검색 기능
+    // 정렬 순서 전환 (최신순 / 오래된순)
+    function setSortOrder(order) {
+      currentSortOrder = order;
+      document.getElementById('sortNewest').classList.toggle('active', order === 'newest');
+      document.getElementById('sortOldest').classList.toggle('active', order === 'oldest');
+      renderAllMemosPage(document.getElementById('searchInput').value);
+    }
+
+    // 전체 메모 렌더링 (삭제 버튼 없음)
     function renderAllMemosPage(query = '') {
       const list = document.getElementById('allMemosList');
       list.innerHTML = '';
 
-      let filtered = [...savedMemos].reverse();
+      let filtered = [...savedMemos];
 
+      // 정렬 처리
+      if (currentSortOrder === 'newest') {
+        filtered.reverse();
+      }
+
+      // 유사어 검색 처리
       if (query.trim()) {
-        const cleanQuery = query.trim().replace(/하는|하고|해|좋아/g, ''); // 어근 추출 심플 매칭
+        const cleanQuery = query.trim().replace(/하는|하고|해|좋아/g, '');
         filtered = filtered.filter(m => 
           m.text.includes(query.trim()) || (cleanQuery.length >= 2 && m.text.includes(cleanQuery))
         );
       }
 
       filtered.forEach(memo => {
-        const realIndex = savedMemos.findIndex(m => m.id === memo.id);
         const item = document.createElement('div');
         item.className = 'memo-item';
         item.innerHTML = `
-          <div>
+          <div style="flex:1;">
             <div>${memo.text}</div>
-            <div style="font-size:11px; color:#888; margin-top:2px;">
+            <div style="font-size:11px; color:#888; margin-top:4px;">
               ${memo.category} ${memo.tag ? '| ' + memo.tag : ''}
             </div>
           </div>
-          <button class="delete-btn" onclick="deleteMemo(${realIndex})">✕</button>
+          <div class="timestamp-box">${formatTimestamp(memo.id)}</div>
         `;
         list.appendChild(item);
       });
     }
 
-    // 검색창 클릭 시 기록 팝업
+    // 검색창 포커스 시만 검색 기록 팝업 활성화
     function showHistoryPopup() {
       const popup = document.getElementById('historyPopup');
       if (searchHistory.length === 0) return;
@@ -566,8 +626,8 @@
         const row = document.createElement('div');
         row.className = 'history-item';
         row.innerHTML = `
-          <span onclick="useSearchHistory('${item}')">🕒 ${item}</span>
-          <span onclick="deleteSearchHistory(event, ${idx})" style="color:#aaa;">✕</span>
+          <span style="cursor:pointer; flex:1;" onclick="useSearchHistory('${item}')">🕒 ${item}</span>
+          <span onclick="deleteSearchHistory(event, ${idx})" style="color:#aaa; cursor:pointer; padding:0 4px;">✕</span>
         `;
         popup.appendChild(row);
       });
@@ -575,7 +635,9 @@
     }
 
     function hideHistoryPopup() {
-      document.getElementById('historyPopup').style.display = 'none';
+      setTimeout(() => {
+        document.getElementById('historyPopup').style.display = 'none';
+      }, 200);
     }
 
     function handleSearch() {
@@ -583,7 +645,6 @@
       renderAllMemosPage(query);
     }
 
-    // 엔터 누를 때 검색 기록 저장
     document.getElementById('searchInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         const q = this.value.trim();
@@ -592,13 +653,13 @@
           if (searchHistory.length > 5) searchHistory.pop();
           localStorage.setItem('notepound_search_history', JSON.stringify(searchHistory));
         }
-        hideHistoryPopup();
+        document.getElementById('historyPopup').style.display = 'none';
       }
     });
 
     function useSearchHistory(text) {
       document.getElementById('searchInput').value = text;
-      hideHistoryPopup();
+      document.getElementById('historyPopup').style.display = 'none';
       renderAllMemosPage(text);
     }
 
@@ -623,7 +684,7 @@
       localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
       renderWritePage();
       renderCategoryPage();
-      renderAllMemosPage();
+      renderAllMemosPage(document.getElementById('searchInput').value);
     };
 
     // 메모 작성 엔터 키 처리
