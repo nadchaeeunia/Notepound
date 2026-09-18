@@ -337,7 +337,7 @@
     }
     .delete-btn:hover { color: #d32f2f; }
 
-    /* 메모 및 카테고리 모달 레이아웃 */
+    /* 모달 레이아웃 */
     .memo-modal-overlay {
       display: none;
       position: absolute;
@@ -398,7 +398,7 @@
     .sticky-btn.save { background-color: #1a73e8; color: #ffffff; font-weight: bold; }
     .sticky-btn.cancel { background-color: #e0e0e0; color: #666; }
 
-    /* 카테고리 생성 / 수정 커스텀 모달 UI */
+    /* 카테고리 수정 및 추가 모달 */
     .cat-modal-card {
       width: 280px;
       background-color: #ffffff;
@@ -429,14 +429,15 @@
 
     .emoji-rec-box {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
-      margin-top: 4px;
-      min-height: 36px;
+      margin-top: 6px;
+      min-height: 38px;
+      flex-wrap: wrap;
     }
 
     .emoji-btn {
-      font-size: 18px;
+      font-size: 20px;
       padding: 4px 8px;
       border: 1px solid #eee;
       border-radius: 8px;
@@ -445,10 +446,15 @@
       transition: all 0.15s ease;
     }
 
+    .emoji-btn:hover {
+      background-color: #e8f0fe;
+    }
+
     .emoji-btn.selected {
       background-color: #e8f0fe;
       border-color: #1a73e8;
       transform: scale(1.15);
+      box-shadow: 0 2px 5px rgba(26,115,232,0.2);
     }
   </style>
 </head>
@@ -559,13 +565,13 @@
     <!-- 카테고리 추가/수정 공통 모달 UI -->
     <div id="catModalOverlay" class="memo-modal-overlay">
       <div class="cat-modal-card">
-        <div class="cat-modal-title" id="catModalHeaderTitle">📂 새 카테고리 추가</div>
+        <div class="cat-modal-title" id="catModalHeaderTitle">📂 카테고리 설정</div>
         <div>
-          <span style="font-size:11px; color:#666;">카테고리 이름</span>
+          <span style="font-size:11px; color:#666; font-weight:bold;">카테고리 이름</span>
           <input type="text" id="newCatNameInput" class="cat-input-field" placeholder="예: 일기, 컴활, 운동..." oninput="updateEmojiRecommendations()" />
         </div>
         <div>
-          <span style="font-size:11px; color:#666; display:block;">추천 이모지 (클릭 시 선택)</span>
+          <span style="font-size:11px; color:#666; font-weight:bold; display:block;">추천 이모지 (클릭 시 선택 적용)</span>
           <div id="emojiRecBox" class="emoji-rec-box"></div>
         </div>
         <div class="sticky-actions" style="margin-top:8px;">
@@ -640,6 +646,7 @@
       editingCategoryIndex = null;
     }
 
+    /* 카테고리 이름 키워드 인식 연동 이모지 추천 로직 */
     function updateEmojiRecommendations() {
       const name = document.getElementById('newCatNameInput').value.trim();
       const recBox = document.getElementById('emojiRecBox');
@@ -651,16 +658,16 @@
         emojis = ['📖', '📔', '✏️', '🗓️', '💭'];
       } else if (name.includes('학교') || name.includes('수원대') || name.includes('과제') || name.includes('공부') || name.includes('시험') || name.includes('컴활') || name.includes('토익')) {
         emojis = ['🎓', '📚', '💻', '✍️', '🎯'];
-      } else if (name.includes('음식') || name.includes('먹') || name.includes('맛집') || name.includes('카페') || name.includes('디저트')) {
+      } else if (name.includes('음식') || name.includes('먹') || name.includes('맛집') || name.includes('카페') || name.includes('디저트') || name.includes('좋아하는')) {
         emojis = ['🍕', '🍰', '☕', '🍧', '🍲'];
-      } else if (name.includes('운동') || name.includes('헬스') || name.includes('러닝')) {
+      } else if (name.includes('운동') || name.includes('헬스') || name.includes('러닝') || name.includes('건강')) {
         emojis = ['⚽', '🏋️‍♂️', '🏃‍♀️', '🥊', '🧘‍♀️'];
       } else if (name.includes('쇼핑') || name.includes('위시') || name.includes('구매') || name.includes('사고')) {
         emojis = ['🛍️', '🛒', '💳', '🎁', '👗'];
-      } else if (name.includes('영화') || name.includes('드라마') || name.includes('게임')) {
-        emojis = ['🎬', '🍿', '🎮', '🎨', '🎧'];
-      } else if (name.includes('알바') || name.includes('업무') || name.includes('직장')) {
-        emojis = ['💼', '☕', '🍔', '💰', '⏰'];
+      } else if (name.includes('영화') || name.includes('드라마') || name.includes('게임') || name.includes('아이디어')) {
+        emojis = ['💡', '🎬', '🍿', '🎮', '🎧'];
+      } else if (name.includes('알바') || name.includes('업무') || name.includes('직장') || name.includes('일정')) {
+        emojis = ['📅', '💼', '⏰', '🍔', '💰'];
       }
 
       if (!emojis.includes(selectedEmoji)) {
