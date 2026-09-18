@@ -154,6 +154,7 @@
       justify-content: space-between;
       align-items: center;
       border-left: 3px solid #1a73e8;
+      cursor: pointer;
     }
 
     .persistent-dock {
@@ -190,6 +191,14 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+    }
+
+    .memo-text-clickable {
+      cursor: pointer;
+      flex: 1;
+    }
+    .memo-text-clickable:hover {
+      text-decoration: underline;
     }
 
     .classify-btn {
@@ -350,12 +359,12 @@
         ></textarea>
 
         <div class="section-header-box">
-          <span class="section-title">📂 카테고리 선택 (다시 누르면 취소)</span>
+          <span class="section-title">📂 카테고리 선택</span>
           <span class="add-cat-btn" onclick="addNewCategoryPrompt()">+ 추가</span>
         </div>
         <div id="categoryChips" class="category-select-container"></div>
 
-        <div class="section-title">⚡ 최근 작성한 메모 (최근 4개)</div>
+        <div class="section-title">⚡ 최근 작성한 메모 (최근 4개 - 클릭 시 수정)</div>
         <div id="recentMemoList" class="recent-memos-list"></div>
 
         <div class="persistent-dock">
@@ -392,7 +401,7 @@
 
       <div style="padding: 0 16px 16px;" class="content-area">
         <div class="sort-bar">
-          <span class="section-title" id="searchResultTitle">🕒 전체 메모</span>
+          <span class="section-title" id="searchResultTitle">🕒 전체 메모 (클릭 시 내용 수정)</span>
           <div>
             <button id="sortNewest" class="sort-btn active" onclick="setSortOrder('newest')">최신순</button>
             <span style="font-size:10px; color:#ccc;">|</span>
@@ -415,8 +424,11 @@
     let searchHistory = JSON.parse(localStorage.getItem('notepound_search_history')) || [];
 
     let currentSelectedCategory = '';
+    let isUserManuallySelected = false; // 카테고리 수동 선택 여부
     let openFolderIndex = null;
     let currentSortOrder = 'newest';
+
+    const memoInput = document.getElementById('memoInput');
 
     function switchTab(tabName) {
       document.getElementById('tabWrite').classList.toggle('active', tabName === 'write');
@@ -444,7 +456,36 @@
       renderCategoryPage();
     }
 
-    // 카테고리 토글 및 교체 로직
+    // 메모 입력 시 즉각적인 실시간 추천 카테고리 감지
+    memoInput.addEventListener('input', function() {
+      if (isUserManuallySelected) return; // 수동 클릭 시에는 실시간 자동 변경 안 함
+
+      const text = memoInput.value;
+      if (!text.trim()) {
+        currentSelectedCategory = '';
+        renderCategoryChips();
+        return;
+      }
+
+      // 키워드 감지
+      if (text.includes('과제') || text.includes('시험') || text.includes('약속') || text.includes('오늘') || text.includes('내일')) {
+        currentSelectedCategory = findCategoryFullName('일정') || findCategoryFullName('📅');
+      } else if (text.includes('먹') || text.includes('냉면') || text.includes('음식') || text.includes('맛집')) {
+        currentSelectedCategory = findCategoryFullName('먹거리') || findCategoryFullName('🍕');
+      } else if (text.includes('사고') || text.includes('살까') || text.includes('위시')) {
+        currentSelectedCategory = findCategoryFullName('위시리스트') || findCategoryFullName('🛍️');
+      } else if (text.includes('생각') || text.includes('아이디어')) {
+        currentSelectedCategory = findCategoryFullName('아이디어') || findCategoryFullName('💡');
+      }
+
+      renderCategoryChips();
+    });
+
+    function findCategoryFullName(keyword) {
+      const found = categories.find(c => c.name.includes(keyword) || c.icon.includes(keyword));
+      return found ? `${found.icon} ${found.name}` : null;
+    }
+
     function renderCategoryChips() {
       const container = document.getElementById('categoryChips');
       container.innerHTML = '';
@@ -456,13 +497,10 @@
         chip.textContent = fullName;
         
         chip.onclick = () => {
-          // 이미 선택된 카테고리를 누르면 선택 해제, 다른 걸 누르면 즉시 교체
-          if (currentSelectedCategory === fullName) {
-            currentSelectedCategory = '';
-          } else {
-            currentSelectedCategory = fullName;
-          }
+          currentSelectedCategory = fullName;
+          isUserManuallySelected = true; // 사용자가 직접 선택했음을 기록
           renderCategoryChips();
+          memoInput.focus(); // 카테고리 선택 후 마저 작성 가능하도록 포커스 유효
         };
         container.appendChild(chip);
       });
@@ -482,11 +520,14 @@
     function renderWritePage() {
       renderCategoryChips();
 
+      // 최근 메모 4개
       const recentList = document.getElementById('recentMemoList');
       recentList.innerHTML = '';
       [...savedMemos].reverse().slice(0, 4).forEach(memo => {
+        const realIndex = savedMemos.findIndex(m => m.id === memo.id);
         const item = document.createElement('div');
         item.className = 'recent-card';
+        item.onclick = () => editMemoText(realIndex);
         item.innerHTML = `
           <span>${memo.text}</span>
           <span style="font-size:11px; color:#666;">${memo.category}</span>
@@ -494,6 +535,7 @@
         recentList.appendChild(item);
       });
 
+      // 미분류 메모
       const unclassifiedList = document.getElementById('unclassifiedMemoList');
       unclassifiedList.innerHTML = '';
       const unclassifiedMemos = savedMemos.filter(m => m.category === '#미분류' || !m.category);
@@ -503,7 +545,7 @@
         const item = document.createElement('div');
         item.className = 'memo-item';
         item.innerHTML = `
-          <span>${memo.text}</span>
+          <span class="memo-text-clickable" onclick="editMemoText(${realIndex})">${memo.text}</span>
           <div>
             <button class="classify-btn" onclick="assignCategoryDirect(${realIndex})">📂 분류</button>
             <button class="delete-btn" onclick="deleteMemo(${realIndex})">✕</button>
@@ -515,6 +557,18 @@
       document.getElementById('unclassifiedCount').textContent = unclassifiedMemos.length;
     }
 
+    // 메모 내용 수정 공통 함수
+    window.editMemoText = function(index) {
+      const newText = prompt('메모 내용을 수정하세요:', savedMemos[index].text);
+      if (newText !== null && newText.trim() !== '') {
+        savedMemos[index].text = newText.trim();
+        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+        renderWritePage();
+        renderCategoryPage();
+        renderAllMemosPage(document.getElementById('searchInput').value);
+      }
+    };
+
     window.assignCategoryDirect = function(index) {
       let optionsStr = categories.map((c, i) => `${i + 1}. ${c.icon} ${c.name}`).join('\n');
       const choice = prompt(`이 메모의 카테고리를 선택하세요:\n\n${optionsStr}`);
@@ -525,6 +579,7 @@
         savedMemos[index].category = `${selectedCat.icon} ${selectedCat.name}`;
         localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
         renderWritePage();
+        renderCategoryPage();
       }
     };
 
@@ -546,11 +601,14 @@
           const tagText = memo.tag ? memo.tag : '+ 태그 추가';
           memosHTML += `
             <div class="memo-item" style="margin-top:6px;">
-              <div>
-                <span>${memo.text}</span>
+              <div style="flex:1;">
+                <span class="memo-text-clickable" onclick="editMemoText(${realIndex})">${memo.text}</span>
                 <span class="tag-badge" onclick="addTagPrompt(${realIndex})">${tagText}</span>
               </div>
-              <button class="delete-btn" onclick="deleteMemo(${realIndex})">✕</button>
+              <div>
+                <button class="classify-btn" onclick="assignCategoryDirect(${realIndex})">📂 변경</button>
+                <button class="delete-btn" onclick="deleteMemo(${realIndex})">✕</button>
+              </div>
             </div>
           `;
         });
@@ -598,11 +656,12 @@
       }
 
       filtered.forEach(memo => {
+        const realIndex = savedMemos.findIndex(m => m.id === memo.id);
         const item = document.createElement('div');
         item.className = 'memo-item';
         item.innerHTML = `
           <div style="flex:1;">
-            <div>${memo.text}</div>
+            <div class="memo-text-clickable" onclick="editMemoText(${realIndex})">${memo.text}</div>
             <div style="font-size:11px; color:#888; margin-top:4px;">
               ${memo.category} ${memo.tag ? '| ' + memo.tag : ''}
             </div>
@@ -683,7 +742,8 @@
       renderAllMemosPage(document.getElementById('searchInput').value);
     };
 
-    document.getElementById('memoInput').addEventListener('keypress', function(e) {
+    // 메모 작성 엔터 키 처리
+    memoInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         const text = this.value.trim();
@@ -701,6 +761,7 @@
 
         this.value = '';
         currentSelectedCategory = '';
+        isUserManuallySelected = false;
         renderWritePage();
       }
     });
