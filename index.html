@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notepound - 스마트 메모</title>
+  <title>Notepound - 커스텀 태그 메모</title>
   <style>
     body {
       background-color: #f0f2f5;
@@ -55,13 +55,14 @@
       box-sizing: border-box;
     }
 
-    /* 1-Tap 스마트 태그 추천 영역 */
+    /* 태그 영역 */
     .tag-recommend-container {
-      min-height: 32px;
+      min-height: 36px;
       margin-bottom: 12px;
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .recommend-chip {
@@ -72,21 +73,36 @@
       border-radius: 16px;
       cursor: pointer;
       border: 1px solid #d2e3fc;
-      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .recommend-chip:hover {
-      background-color: #d2e3fc;
+    .recommend-chip.active {
+      background-color: #1a73e8;
+      color: #ffffff;
+      border-color: #1a73e8;
     }
 
-    /* 하단 상주 UI (Persistent Dock) */
+    /* 직접 추가 버튼 */
+    .add-chip-btn {
+      font-size: 12px;
+      background-color: #f1f3f4;
+      color: #5f6368;
+      padding: 5px 10px;
+      border-radius: 16px;
+      cursor: pointer;
+      border: 1px dashed #bdc1c6;
+    }
+
+    /* 하단 상주 UI */
     .persistent-dock {
       margin-top: auto;
       background-color: #f8f9fa;
       border-top: 2px dashed #e0e0e0;
       border-radius: 16px 16px 0 0;
       padding: 16px;
-      max-height: 300px;
+      max-height: 280px;
       overflow-y: auto;
     }
 
@@ -126,14 +142,13 @@
 
     .tag-chip {
       font-size: 11px;
-      background-color: #f1f3f4;
-      color: #5f6368;
+      background-color: #e8f0fe;
+      color: #1a73e8;
       padding: 3px 8px;
       border-radius: 12px;
       white-space: nowrap;
     }
 
-    /* 삭제 버튼 스타일 */
     .delete-btn {
       background: none;
       border: none;
@@ -141,7 +156,6 @@
       cursor: pointer;
       font-size: 14px;
       padding: 2px 6px;
-      margin-left: 8px;
     }
 
     .delete-btn:hover {
@@ -158,10 +172,10 @@
       <textarea 
         id="memoInput"
         class="memo-input" 
-        placeholder="생각을 던져놓으세요... (예: 냉면 먹고싶다, 내일 과제)"
+        placeholder="생각을 던져놓으세요... (예: 냉면, 과제)"
       ></textarea>
 
-      <!-- 1-Tap 스마트 태그 추천 영역 -->
+      <!-- 스마트 추천 및 커스텀 태그 영역 -->
       <div id="tagContainer" class="tag-recommend-container"></div>
 
       <!-- 하단 상주 UI -->
@@ -182,53 +196,109 @@
     const tagContainer = document.getElementById('tagContainer');
 
     let savedMemos = JSON.parse(localStorage.getItem('notepound_memos')) || [];
-    let selectedTag = '';
-
-    // 키워드별 추천 태그 매핑 규칙
-    const tagDictionary = {
+    
+    // 기본 키워드 태그 사전
+    const defaultDictionary = {
       '먹': ['#먹고싶다', '#위시리스트'],
       '냉면': ['#먹고싶다', '#맛집탐방'],
       '과제': ['#일정', '#할일'],
-      '내일': ['#일정', '#약속'],
-      '일기': ['#일기', '#생각정리']
+      '내일': ['#일정', '#약속']
     };
 
-    // 실시간 입력 감지 및 태그 추천
+    // 사용자가 수정/학습시킨 태그 사전 불러오기
+    let customDictionary = JSON.parse(localStorage.getItem('notepound_custom_tags')) || defaultDictionary;
+
+    let selectedTag = '';
+    let currentMatchedKeywords = [];
+
+    // 실시간 입력 및 태그 추천
     memoInput.addEventListener('input', function() {
       const text = memoInput.value;
       tagContainer.innerHTML = '';
       selectedTag = '';
+      currentMatchedKeywords = [];
 
       if (!text.trim()) return;
 
       let matchedTags = new Set();
-      Object.keys(tagDictionary).forEach(keyword => {
+
+      // 키워드 매칭
+      Object.keys(customDictionary).forEach(keyword => {
         if (text.includes(keyword)) {
-          tagDictionary[keyword].forEach(tag => matchedTags.add(tag));
+          currentMatchedKeywords.push(keyword);
+          customDictionary[keyword].forEach(tag => matchedTags.add(tag));
         }
       });
 
-      // 감지된 키워드가 없으면 기본 태그 추천
       if (matchedTags.size === 0) {
         matchedTags.add('#아이디어');
-        matchedTags.add('#메모');
       }
 
+      // 1. 추천 태그 칩 생성
       matchedTags.forEach(tag => {
-        const chip = document.createElement('span');
-        chip.className = 'recommend-chip';
-        chip.textContent = tag;
-        chip.onclick = function() {
-          selectedTag = tag;
-          // 선택된 태그 강조 시각화
-          document.querySelectorAll('.recommend-chip').forEach(c => c.style.backgroundColor = '#e8f0fe');
-          chip.style.backgroundColor = '#aecbfa';
-        };
-        tagContainer.appendChild(chip);
+        renderTagChip(tag);
       });
+
+      // 2. 직접 추가 (+ 빈 태그) 버튼 생성
+      const addBtn = document.createElement('span');
+      addBtn.className = 'add-chip-btn';
+      addBtn.textContent = '+ 태그 직접 추가';
+      addBtn.onclick = function() {
+        const customInput = prompt('추가할 태그명을 입력하세요 (예: #시험공부):', '#');
+        if (customInput && customInput.trim() !== '#' && customInput.trim() !== '') {
+          const newTag = customInput.startsWith('#') ? customInput.trim() : '#' + customInput.trim();
+          renderTagChip(newTag, true);
+          saveTagToDictionary(newTag);
+        }
+      };
+      tagContainer.appendChild(addBtn);
     });
 
-    // 화면 렌더링 함수
+    // 태그 칩 렌더링 및 클릭/수정 기능
+    function renderTagChip(tagText, isCustom = false) {
+      const chip = document.createElement('span');
+      chip.className = 'recommend-chip';
+      chip.innerHTML = `<span>${tagText}</span> <small style="font-size:9px; opacity:0.7;">✏️</small>`;
+
+      // 클릭 시 선택 및 수정 토글
+      chip.onclick = function(e) {
+        if (selectedTag === tagText) {
+          // 이미 선택된 상태에서 한 번 더 누르면 단어 수정
+          const editedTag = prompt('태그 이름을 수정하시겠습니까?', tagText);
+          if (editedTag && editedTag.trim() !== '') {
+            const finalTag = editedTag.startsWith('#') ? editedTag.trim() : '#' + editedTag.trim();
+            saveTagToDictionary(finalTag, tagText);
+            chip.querySelector('span').textContent = finalTag;
+            selectedTag = finalTag;
+          }
+        } else {
+          // 선택 처리
+          document.querySelectorAll('.recommend-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          selectedTag = tagText;
+        }
+      };
+
+      tagContainer.insertBefore(chip, tagContainer.lastChild);
+    }
+
+    // 수정되거나 새로 작성된 태그 사전 학습 및 저장
+    function saveTagToDictionary(newTag, oldTag = null) {
+      if (currentMatchedKeywords.length > 0) {
+        currentMatchedKeywords.forEach(keyword => {
+          if (!customDictionary[keyword]) customDictionary[keyword] = [];
+          if (oldTag) {
+            const idx = customDictionary[keyword].indexOf(oldTag);
+            if (idx !== -1) customDictionary[keyword][idx] = newTag;
+          } else if (!customDictionary[keyword].includes(newTag)) {
+            customDictionary[keyword].push(newTag);
+          }
+        });
+        localStorage.setItem('notepound_custom_tags', JSON.stringify(customDictionary));
+      }
+    }
+
+    // 목록 렌더링
     function renderMemos() {
       memoList.innerHTML = '';
       savedMemos.forEach((memo, index) => {
@@ -246,22 +316,20 @@
       memoCount.textContent = savedMemos.length;
     }
 
-    // 메모 삭제 기능
     window.deleteMemo = function(index) {
       savedMemos.splice(index, 1);
       localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
       renderMemos();
     };
 
-    // 엔터키 저장 이벤트
+    // 엔터키 저장
     memoInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         const text = memoInput.value.trim();
         if (text === '') return;
 
-        // 선택한 태그가 없으면 자동 카테고리 지정
-        const finalCategory = selectedTag || (text.includes('과제') || text.includes('내일') ? '#일정' : '#미분류');
+        const finalCategory = selectedTag || '#미분류';
 
         const newMemo = {
           id: Date.now(),
