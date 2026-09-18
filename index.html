@@ -337,7 +337,7 @@
     }
     .delete-btn:hover { color: #d32f2f; }
 
-    /* 일반 메모 수정 모달 */
+    /* 메모지 수정 모달 */
     .memo-modal-overlay {
       display: none;
       position: absolute;
@@ -398,7 +398,7 @@
     .sticky-btn.save { background-color: #fbc02d; color: #333; font-weight: bold; }
     .sticky-btn.cancel { background-color: #e0e0e0; color: #666; }
 
-    /* 새 카테고리 추가 모달 UI */
+    /* 카테고리 생성 / 수정 모달 UI */
     .cat-modal-card {
       width: 280px;
       background-color: #ffffff;
@@ -553,10 +553,10 @@
       </div>
     </div>
 
-    <!-- 새 카테고리 생성 & 이모지 추천 모달 -->
+    <!-- 카테고리 생성 / 수정 통합 모달 -->
     <div id="catModalOverlay" class="memo-modal-overlay">
       <div class="cat-modal-card">
-        <div class="cat-modal-title">📂 새 카테고리 추가</div>
+        <div class="cat-modal-title" id="catModalHeaderTitle">📂 새 카테고리 추가</div>
         <div>
           <span style="font-size:11px; color:#666;">카테고리 이름</span>
           <input type="text" id="newCatNameInput" class="cat-input-field" placeholder="예: 일기, 컴활, 운동..." oninput="updateEmojiRecommendations()" />
@@ -567,7 +567,7 @@
         </div>
         <div class="sticky-actions" style="margin-top:6px;">
           <button class="sticky-btn cancel" onclick="closeCatModal()">취소</button>
-          <button class="sticky-btn save" style="background-color:#1a73e8; color:#fff;" onclick="submitNewCategoryModal()">추가</button>
+          <button class="sticky-btn save" style="background-color:#1a73e8; color:#fff;" id="catModalSubmitBtn" onclick="submitCategoryModal()">확인</button>
         </div>
       </div>
     </div>
@@ -590,6 +590,7 @@
     let currentSortOrder = 'newest';
     let editingMemoIndex = null;
     let selectedEmoji = '📁';
+    let editingCategoryIndex = null; // 수정 중인 카테고리 인덱스
 
     const memoInput = document.getElementById('memoInput');
 
@@ -609,8 +610,10 @@
       if (tabName === 'search') renderAllMemosPage();
     }
 
-    /* 이모지 추천 모달 컨트롤 및 정밀 키워드 매칭 로직 */
+    /* 카테고리 생성 / 수정 모달 컨트롤 및 정밀 이모지 추천 로직 */
     function openNewCategoryModal() {
+      editingCategoryIndex = null;
+      document.getElementById('catModalHeaderTitle').textContent = '📂 새 카테고리 추가';
       document.getElementById('newCatNameInput').value = '';
       selectedEmoji = '📁';
       updateEmojiRecommendations();
@@ -618,8 +621,20 @@
       setTimeout(() => document.getElementById('newCatNameInput').focus(), 100);
     }
 
+    function editCategoryNamePrompt(catIdx) {
+      editingCategoryIndex = catIdx;
+      const cat = categories[catIdx];
+      document.getElementById('catModalHeaderTitle').textContent = '✏️ 카테고리 수정';
+      document.getElementById('newCatNameInput').value = cat.name;
+      selectedEmoji = cat.icon;
+      updateEmojiRecommendations();
+      document.getElementById('catModalOverlay').style.display = 'flex';
+      setTimeout(() => document.getElementById('newCatNameInput').focus(), 100);
+    }
+
     function closeCatModal() {
       document.getElementById('catModalOverlay').style.display = 'none';
+      editingCategoryIndex = null;
     }
 
     function updateEmojiRecommendations() {
@@ -627,9 +642,8 @@
       const recBox = document.getElementById('emojiRecBox');
       recBox.innerHTML = '';
 
-      let emojis = ['📁', '📌', '✨', '🏷️', '📝']; // 기본 이모지 셋
+      let emojis = ['📁', '📌', '✨', '🏷️', '📝'];
 
-      // 우선순위 정밀 키워드 감지 로직
       if (name.includes('일기') || name.includes('일상') || name.includes('기록') || name.includes('생각') || name.includes('메모')) {
         emojis = ['📖', '📔', '✏️', '🗓️', '💭'];
       } else if (name.includes('학교') || name.includes('수원대') || name.includes('과제') || name.includes('공부') || name.includes('시험') || name.includes('컴활') || name.includes('토익')) {
@@ -648,7 +662,9 @@
         emojis = ['✈️', '🧳', '🌴', '🚗', '⛺'];
       }
 
-      if (!emojis.includes(selectedEmoji)) selectedEmoji = emojis[0];
+      if (!emojis.includes(selectedEmoji)) {
+        emojis.unshift(selectedEmoji); // 현재 선택된 이모지가 목록에 없으면 맨 앞에 유지
+      }
 
       emojis.forEach(emo => {
         const btn = document.createElement('button');
@@ -663,48 +679,45 @@
       });
     }
 
-    function submitNewCategoryModal() {
+    function submitCategoryModal() {
       const name = document.getElementById('newCatNameInput').value.trim();
       if (!name) {
         alert('카테고리 이름을 입력해 주세요.');
         return;
       }
 
-      categories.push({ name: name, icon: selectedEmoji });
+      if (editingCategoryIndex !== null) {
+        // 기존 카테고리 수정 모드
+        const oldCat = categories[editingCategoryIndex];
+        const oldFullName = `${oldCat.icon} ${oldCat.name}`;
+        const newFullName = `${selectedEmoji} ${name}`;
+
+        // 관련 메모들의 카테고리명 변경
+        savedMemos.forEach(m => {
+          if (m.category === oldFullName) m.category = newFullName;
+        });
+
+        categories[editingCategoryIndex] = { name: name, icon: selectedEmoji };
+        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+        
+        if (activeCategoryDetail === oldFullName) {
+          openCategoryDetail(newFullName);
+        }
+      } else {
+        // 새 카테고리 추가 모드
+        categories.push({ name: name, icon: selectedEmoji });
+      }
+
       localStorage.setItem('notepound_categories', JSON.stringify(categories));
       
       closeCatModal();
       renderCategoryPage();
-      
-      if (memoInput.value.trim()) {
+      renderWritePage();
+
+      if (memoInput.value.trim() && editingCategoryIndex === null) {
         currentSelectedCategory = `${selectedEmoji} ${name}`;
         isUserManuallySelected = true;
         renderLiveCategoryChips();
-      }
-    }
-
-    function editCategoryNamePrompt(catIdx) {
-      const cat = categories[catIdx];
-      const newName = prompt('카테고리 이름을 수정하세요:', cat.name);
-      if (!newName || !newName.trim()) return;
-
-      const newIcon = prompt('이모지 아이콘을 수정하세요:', cat.icon) || cat.icon;
-
-      const oldFullName = `${cat.icon} ${cat.name}`;
-      const newFullName = `${newIcon.trim()} ${newName.trim()}`;
-
-      savedMemos.forEach(m => {
-        if (m.category === oldFullName) m.category = newFullName;
-      });
-
-      categories[catIdx] = { name: newName.trim(), icon: newIcon.trim() };
-      localStorage.setItem('notepound_categories', JSON.stringify(categories));
-      localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
-
-      renderCategoryPage();
-      renderWritePage();
-      if (activeCategoryDetail === oldFullName) {
-        openCategoryDetail(newFullName);
       }
     }
 
