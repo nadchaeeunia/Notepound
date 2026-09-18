@@ -17,7 +17,7 @@
 
     .phone-container {
       width: 375px;
-      height: 720px;
+      height: 730px;
       background-color: #ffffff;
       border-radius: 36px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
@@ -44,9 +44,9 @@
 
     .tab-btn {
       flex: 1;
-      padding: 10px;
+      padding: 10px 4px;
       text-align: center;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
       color: #888;
       cursor: pointer;
@@ -78,7 +78,7 @@
 
     .memo-input {
       width: 100%;
-      height: 70px;
+      height: 65px;
       border: none;
       outline: none;
       resize: none;
@@ -100,7 +100,7 @@
       color: #777;
     }
 
-    /* 카테고리 선택 칩 */
+    /* 카테고리 칩 */
     .category-select-container {
       display: flex;
       gap: 6px;
@@ -130,15 +130,14 @@
       font-size: 11px;
       background-color: #e8f0fe;
       color: #1a73e8;
-      padding: 5px 10px;
-      border-radius: 16px;
+      padding: 4px 8px;
+      border-radius: 12px;
       cursor: pointer;
-      white-space: nowrap;
       border: 1px dashed #1a73e8;
       font-weight: bold;
     }
 
-    /* 최근 작성 메모 */
+    /* 최근 작성 메모 카드 */
     .recent-memos-list {
       display: flex;
       flex-direction: column;
@@ -162,7 +161,7 @@
       background-color: #fff8f8;
       border-top: 2px dashed #ffcdd2;
       border-radius: 16px 16px 0 0;
-      padding: 14px;
+      padding: 12px;
       max-height: 180px;
       overflow-y: auto;
     }
@@ -193,30 +192,94 @@
       align-items: center;
     }
 
-    /* 카테고리 보관함 */
+    .classify-btn {
+      font-size: 11px;
+      background-color: #e8f0fe;
+      color: #1a73e8;
+      padding: 3px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      margin-right: 4px;
+    }
+
+    /* 카테고리 보관함 폴더Accordion UI */
     .category-grid {
       padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
     }
 
-    .category-card {
+    .category-folder {
       background-color: #f8f9fa;
       border-radius: 12px;
-      padding: 12px;
       border: 1px solid #e9ecef;
+      overflow: hidden;
     }
 
-    .category-card-header {
+    .folder-header {
+      padding: 14px 16px;
       font-size: 14px;
       font-weight: bold;
       color: #333;
-      margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      cursor: pointer;
+      background-color: #ffffff;
     }
+
+    .folder-content {
+      display: none;
+      padding: 10px 12px;
+      background-color: #f8f9fa;
+      border-top: 1px solid #eee;
+    }
+
+    .folder-content.open { display: block; }
+
+    /* 전체 메모 & 검색 탭 스타일 */
+    .search-box-container {
+      position: relative;
+      padding: 12px 16px 4px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 20px;
+      border: 1px solid #ddd;
+      font-size: 13px;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .history-popup {
+      display: none;
+      position: absolute;
+      top: 48px;
+      left: 16px;
+      right: 16px;
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 10;
+      padding: 8px 0;
+    }
+
+    .history-item {
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .history-item:hover { background-color: #f5f5f5; }
 
     .tag-badge {
       font-size: 10px;
@@ -226,13 +289,6 @@
       border-radius: 8px;
       margin-left: 4px;
       cursor: pointer;
-    }
-
-    .edit-cat-icon {
-      font-size: 11px;
-      color: #888;
-      cursor: pointer;
-      margin-left: 4px;
     }
 
     .delete-btn {
@@ -253,6 +309,7 @@
     <div class="tab-nav">
       <div id="tabWrite" class="tab-btn active" onclick="switchTab('write')">📝 메모 작성</div>
       <div id="tabCategory" class="tab-btn" onclick="switchTab('category')">🗂️ 카테고리 보관함</div>
+      <div id="tabSearch" class="tab-btn" onclick="switchTab('search')">🔍 전체 메모 & 검색</div>
     </div>
 
     <!-- 탭 1: 메모 작성 페이지 -->
@@ -283,12 +340,33 @@
       </div>
     </div>
 
-    <!-- 탭 2: 카테고리 보관함 페이지 -->
+    <!-- 탭 2: 카테고리 보관함 페이지 (폴더별 접기/펼치기) -->
     <div id="pageCategory" class="tab-content">
       <div style="padding: 12px 16px 0; text-align: right;">
         <button class="add-cat-btn" onclick="addNewCategoryPrompt()">+ 새 카테고리 만들기</button>
       </div>
       <div id="categoryGrid" class="category-grid"></div>
+    </div>
+
+    <!-- 탭 3: 전체 메모 & 검색 페이지 -->
+    <div id="pageSearch" class="tab-content">
+      <div class="search-box-container">
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="검색어를 입력하세요 (예: 좋아하는)"
+          onfocus="showHistoryPopup()"
+          oninput="handleSearch()"
+        />
+        <!-- 검색 기록 팝업 -->
+        <div id="historyPopup" class="history-popup"></div>
+      </div>
+
+      <div style="padding: 0 16px 16px;" class="content-area">
+        <div class="section-title" id="searchResultTitle">🕒 전체 메모 (시간 순)</div>
+        <div id="allMemosList" class="memo-list"></div>
+      </div>
     </div>
   </div>
 
@@ -300,24 +378,31 @@
       { name: '먹거리', icon: '🍕' },
       { name: '위시리스트', icon: '🛍️' }
     ];
+    let searchHistory = JSON.parse(localStorage.getItem('notepound_search_history')) || [];
 
     let currentSelectedCategory = '';
+    let openFolderIndex = null;
 
     function switchTab(tabName) {
       document.getElementById('tabWrite').classList.toggle('active', tabName === 'write');
       document.getElementById('tabCategory').classList.toggle('active', tabName === 'category');
+      document.getElementById('tabSearch').classList.toggle('active', tabName === 'search');
+
       document.getElementById('pageWrite').classList.toggle('active', tabName === 'write');
       document.getElementById('pageCategory').classList.toggle('active', tabName === 'category');
+      document.getElementById('pageSearch').classList.toggle('active', tabName === 'search');
+
+      hideHistoryPopup();
 
       if (tabName === 'category') renderCategoryPage();
+      if (tabName === 'search') renderAllMemosPage();
     }
 
-    // 카테고리 동적 추가 팝업
+    // 카테고리 추가
     function addNewCategoryPrompt() {
-      const name = prompt('새 카테고리 이름을 입력하세요 (예: 운동):');
+      const name = prompt('새 카테고리 이름을 입력하세요:');
       if (!name || !name.trim()) return;
-      
-      const icon = prompt('카테고리에 사용할 아이콘 이모지를 입력하세요 (예: ⚽, 🎓, ☕):', '📁') || '📁';
+      const icon = prompt('사용할 이모지 아이콘을 입력하세요:', '📁') || '📁';
       
       categories.push({ name: name.trim(), icon: icon.trim() });
       localStorage.setItem('notepound_categories', JSON.stringify(categories));
@@ -325,34 +410,9 @@
       renderCategoryPage();
     }
 
-    // 카테고리 수정 기능 (이름 & 아이콘)
-    function editCategory(idx) {
-      const cat = categories[idx];
-      const newName = prompt('수정할 카테고리 이름을 입력하세요:', cat.name);
-      if (!newName || !newName.trim()) return;
-
-      const newIcon = prompt('수정할 아이콘 이모지를 입력하세요:', cat.icon) || cat.icon;
-
-      // 기존 저장된 메모들의 카테고리명도 업데이트
-      savedMemos.forEach(m => {
-        if (m.category === `${cat.icon} ${cat.name}`) {
-          m.category = `${newIcon.trim()} ${newName.trim()}`;
-        }
-      });
-
-      categories[idx] = { name: newName.trim(), icon: newIcon.trim() };
-      localStorage.setItem('notepound_categories', JSON.stringify(categories));
-      localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
-      renderCategoryChips();
-      renderCategoryPage();
-      renderWritePage();
-    }
-
-    // 카테고리 칩 렌더링
     function renderCategoryChips() {
       const container = document.getElementById('categoryChips');
       container.innerHTML = '';
-
       categories.forEach(cat => {
         const fullName = `${cat.icon} ${cat.name}`;
         const chip = document.createElement('span');
@@ -370,12 +430,10 @@
     function renderWritePage() {
       renderCategoryChips();
 
-      // 최근 작성한 메모 4개
+      // 최근 메모 4개
       const recentList = document.getElementById('recentMemoList');
       recentList.innerHTML = '';
-      const recentMemos = [...savedMemos].reverse().slice(0, 4);
-      
-      recentMemos.forEach(memo => {
+      [...savedMemos].reverse().slice(0, 4).forEach(memo => {
         const item = document.createElement('div');
         item.className = 'recent-card';
         item.innerHTML = `
@@ -385,7 +443,7 @@
         recentList.appendChild(item);
       });
 
-      // 미분류 메모 목록
+      // 미분류 메모
       const unclassifiedList = document.getElementById('unclassifiedMemoList');
       unclassifiedList.innerHTML = '';
       const unclassifiedMemos = savedMemos.filter(m => m.category === '#미분류' || !m.category);
@@ -396,7 +454,10 @@
         item.className = 'memo-item';
         item.innerHTML = `
           <span>${memo.text}</span>
-          <button class="delete-btn" onclick="deleteMemo(${realIndex})">✕</button>
+          <div>
+            <button class="classify-btn" onclick="assignCategoryDirect(${realIndex})">📂 분류</button>
+            <button class="delete-btn" onclick="deleteMemo(${realIndex})">✕</button>
+          </div>
         `;
         unclassifiedList.prepend(item);
       });
@@ -404,18 +465,33 @@
       document.getElementById('unclassifiedCount').textContent = unclassifiedMemos.length;
     }
 
-    // 카테고리 보관함 렌더링 및 스마트 태그 추천
+    // Dock에 남아있는 미분류 메모 바로 카테고리 지정
+    window.assignCategoryDirect = function(index) {
+      let optionsStr = categories.map((c, i) => `${i + 1}. ${c.icon} ${c.name}`).join('\n');
+      const choice = prompt(`이 메모의 카테고리를 선택하세요:\n\n${optionsStr}`);
+      const choiceNum = parseInt(choice);
+
+      if (choiceNum && choiceNum > 0 && choiceNum <= categories.length) {
+        const selectedCat = categories[choiceNum - 1];
+        savedMemos[index].category = `${selectedCat.icon} ${selectedCat.name}`;
+        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+        renderWritePage();
+      }
+    };
+
+    // 카테고리 보관함 (메모 안 보이고 카테고리만 뜨는 폴더 UI)
     function renderCategoryPage() {
       const grid = document.getElementById('categoryGrid');
       grid.innerHTML = '';
 
       categories.forEach((cat, idx) => {
         const fullName = `${cat.icon} ${cat.name}`;
-        const card = document.createElement('div');
-        card.className = 'category-card';
-        
         const catMemos = savedMemos.filter(m => m.category === fullName);
-        
+        const isOpen = (openFolderIndex === idx);
+
+        const folder = document.createElement('div');
+        folder.className = 'category-folder';
+
         let memosHTML = '';
         catMemos.forEach(memo => {
           const realIndex = savedMemos.findIndex(m => m.id === memo.id);
@@ -424,38 +500,117 @@
             <div class="memo-item" style="margin-top:6px;">
               <div>
                 <span>${memo.text}</span>
-                <span class="tag-badge" onclick="addTagWithRecommendation(${realIndex})">${tagText}</span>
+                <span class="tag-badge" onclick="addTagPrompt(${realIndex})">${tagText}</span>
               </div>
               <button class="delete-btn" onclick="deleteMemo(${realIndex})">✕</button>
             </div>
           `;
         });
 
-        card.innerHTML = `
-          <div class="category-card-header">
-            <div>
-              <span>${fullName}</span>
-              <span style="font-size:12px; color:#888;">(${catMemos.length})</span>
-              <span class="edit-cat-icon" onclick="editCategory(${idx})">✏️</span>
-            </div>
+        folder.innerHTML = `
+          <div class="folder-header" onclick="toggleFolder(${idx})">
+            <span>${fullName} <span style="font-size:12px; color:#888;">(${catMemos.length})</span></span>
+            <span>${isOpen ? '▲' : '▼'}</span>
           </div>
-          <div>${memosHTML || '<div style="font-size:12px; color:#aaa;">저장된 메모가 없습니다.</div>'}</div>
+          <div class="folder-content ${isOpen ? 'open' : ''}">
+            ${memosHTML || '<div style="font-size:12px; color:#aaa; padding:6px 0;">저장된 메모가 없습니다.</div>'}
+          </div>
         `;
-        grid.appendChild(card);
+        grid.appendChild(folder);
       });
     }
 
-    // AI 태그 자동 추천 및 세부 태그 설정
-    window.addTagWithRecommendation = function(index) {
-      const memo = savedMemos[index];
-      let recTag = '#중요';
+    function toggleFolder(idx) {
+      openFolderIndex = (openFolderIndex === idx) ? null : idx;
+      renderCategoryPage();
+    }
 
-      // 키워드 기반 태그 추천
-      if (memo.text.includes('과제') || memo.text.includes('시험')) recTag = '#공부';
-      else if (memo.text.includes('먹') || memo.text.includes('카페')) recTag = '#맛집';
-      else if (memo.text.includes('내일') || memo.text.includes('오늘')) recTag = '#일정';
+    // 전체 메모 및 유사어(Fuzzy) 검색 기능
+    function renderAllMemosPage(query = '') {
+      const list = document.getElementById('allMemosList');
+      list.innerHTML = '';
 
-      const input = prompt(`추천 태그: [ ${recTag} ]\n태그명을 입력하거나 추천 태그를 그대로 사용할 수 있습니다:`, memo.tag || recTag);
+      let filtered = [...savedMemos].reverse();
+
+      if (query.trim()) {
+        const cleanQuery = query.trim().replace(/하는|하고|해|좋아/g, ''); // 어근 추출 심플 매칭
+        filtered = filtered.filter(m => 
+          m.text.includes(query.trim()) || (cleanQuery.length >= 2 && m.text.includes(cleanQuery))
+        );
+      }
+
+      filtered.forEach(memo => {
+        const realIndex = savedMemos.findIndex(m => m.id === memo.id);
+        const item = document.createElement('div');
+        item.className = 'memo-item';
+        item.innerHTML = `
+          <div>
+            <div>${memo.text}</div>
+            <div style="font-size:11px; color:#888; margin-top:2px;">
+              ${memo.category} ${memo.tag ? '| ' + memo.tag : ''}
+            </div>
+          </div>
+          <button class="delete-btn" onclick="deleteMemo(${realIndex})">✕</button>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    // 검색창 클릭 시 기록 팝업
+    function showHistoryPopup() {
+      const popup = document.getElementById('historyPopup');
+      if (searchHistory.length === 0) return;
+      
+      popup.innerHTML = '';
+      searchHistory.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'history-item';
+        row.innerHTML = `
+          <span onclick="useSearchHistory('${item}')">🕒 ${item}</span>
+          <span onclick="deleteSearchHistory(event, ${idx})" style="color:#aaa;">✕</span>
+        `;
+        popup.appendChild(row);
+      });
+      popup.style.display = 'block';
+    }
+
+    function hideHistoryPopup() {
+      document.getElementById('historyPopup').style.display = 'none';
+    }
+
+    function handleSearch() {
+      const query = document.getElementById('searchInput').value;
+      renderAllMemosPage(query);
+    }
+
+    // 엔터 누를 때 검색 기록 저장
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const q = this.value.trim();
+        if (q && !searchHistory.includes(q)) {
+          searchHistory.unshift(q);
+          if (searchHistory.length > 5) searchHistory.pop();
+          localStorage.setItem('notepound_search_history', JSON.stringify(searchHistory));
+        }
+        hideHistoryPopup();
+      }
+    });
+
+    function useSearchHistory(text) {
+      document.getElementById('searchInput').value = text;
+      hideHistoryPopup();
+      renderAllMemosPage(text);
+    }
+
+    function deleteSearchHistory(e, idx) {
+      e.stopPropagation();
+      searchHistory.splice(idx, 1);
+      localStorage.setItem('notepound_search_history', JSON.stringify(searchHistory));
+      showHistoryPopup();
+    }
+
+    window.addTagPrompt = function(index) {
+      const input = prompt('태그를 입력하세요 (예: #중요):', savedMemos[index].tag || '');
       if (input !== null) {
         savedMemos[index].tag = input.trim() ? (input.startsWith('#') ? input.trim() : '#' + input.trim()) : '';
         localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
@@ -468,9 +623,10 @@
       localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
       renderWritePage();
       renderCategoryPage();
+      renderAllMemosPage();
     };
 
-    // 메모 작성 처리 (엔터 키)
+    // 메모 작성 엔터 키 처리
     document.getElementById('memoInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
