@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notepound - 편안한 메모</title>
+  <title>Notepound - 스마트 메모</title>
   <style>
-    /* 전체 배경을 어둡게 설정하여 모바일 프레임을 강조 */
     body {
       background-color: #f0f2f5;
       display: flex;
@@ -16,7 +15,6 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    /* 모바일 프레임 스타일 (iPhone 규격 느낌) */
     .phone-container {
       width: 375px;
       height: 700px;
@@ -30,7 +28,6 @@
       overflow: hidden;
     }
 
-    /* 앱 상단 헤더 */
     .app-header {
       padding: 24px 20px 12px;
       font-size: 18px;
@@ -39,43 +36,251 @@
       border-bottom: 1px solid #f0f0f0;
     }
 
-    /* 자유 입력 영역 */
     .content-area {
       flex: 1;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
     }
 
     .memo-input {
       width: 100%;
-      height: 100%;
+      height: 90px;
       border: none;
       outline: none;
       resize: none;
       font-size: 16px;
-      line-height: 1.6;
+      line-height: 1.5;
       color: #222222;
       box-sizing: border-box;
     }
 
-    .memo-input::placeholder {
-      color: #aaa;
+    /* 1-Tap 스마트 태그 추천 영역 */
+    .tag-recommend-container {
+      min-height: 32px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .recommend-chip {
+      font-size: 12px;
+      background-color: #e8f0fe;
+      color: #1a73e8;
+      padding: 5px 10px;
+      border-radius: 16px;
+      cursor: pointer;
+      border: 1px solid #d2e3fc;
+      transition: all 0.2s;
+    }
+
+    .recommend-chip:hover {
+      background-color: #d2e3fc;
+    }
+
+    /* 하단 상주 UI (Persistent Dock) */
+    .persistent-dock {
+      margin-top: auto;
+      background-color: #f8f9fa;
+      border-top: 2px dashed #e0e0e0;
+      border-radius: 16px 16px 0 0;
+      padding: 16px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .dock-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #666666;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .memo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .memo-item {
+      background-color: #ffffff;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #333333;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .memo-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .tag-chip {
+      font-size: 11px;
+      background-color: #f1f3f4;
+      color: #5f6368;
+      padding: 3px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+
+    /* 삭제 버튼 스타일 */
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #999999;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px 6px;
+      margin-left: 8px;
+    }
+
+    .delete-btn:hover {
+      color: #ea4335;
     }
   </style>
 </head>
 <body>
 
-  <!-- 모바일 스마트폰 프레임 -->
   <div class="phone-container">
     <div class="app-header">Notepound</div>
     
     <div class="content-area">
-      <!-- 자유롭게 막 던져놓는 입력 공간 -->
       <textarea 
+        id="memoInput"
         class="memo-input" 
-        placeholder="생각을 자유롭게 던져놓으세요... (예: 냉면, 내일 12시 과제)"
+        placeholder="생각을 던져놓으세요... (예: 냉면 먹고싶다, 내일 과제)"
       ></textarea>
+
+      <!-- 1-Tap 스마트 태그 추천 영역 -->
+      <div id="tagContainer" class="tag-recommend-container"></div>
+
+      <!-- 하단 상주 UI -->
+      <div class="persistent-dock">
+        <div class="dock-title">
+          <span>📌 정리 기다리는 메모</span>
+          <span id="memoCount" style="color: #1a73e8;">0</span>
+        </div>
+        <div id="memoList" class="memo-list"></div>
+      </div>
     </div>
   </div>
+
+  <script>
+    const memoInput = document.getElementById('memoInput');
+    const memoList = document.getElementById('memoList');
+    const memoCount = document.getElementById('memoCount');
+    const tagContainer = document.getElementById('tagContainer');
+
+    let savedMemos = JSON.parse(localStorage.getItem('notepound_memos')) || [];
+    let selectedTag = '';
+
+    // 키워드별 추천 태그 매핑 규칙
+    const tagDictionary = {
+      '먹': ['#먹고싶다', '#위시리스트'],
+      '냉면': ['#먹고싶다', '#맛집탐방'],
+      '과제': ['#일정', '#할일'],
+      '내일': ['#일정', '#약속'],
+      '일기': ['#일기', '#생각정리']
+    };
+
+    // 실시간 입력 감지 및 태그 추천
+    memoInput.addEventListener('input', function() {
+      const text = memoInput.value;
+      tagContainer.innerHTML = '';
+      selectedTag = '';
+
+      if (!text.trim()) return;
+
+      let matchedTags = new Set();
+      Object.keys(tagDictionary).forEach(keyword => {
+        if (text.includes(keyword)) {
+          tagDictionary[keyword].forEach(tag => matchedTags.add(tag));
+        }
+      });
+
+      // 감지된 키워드가 없으면 기본 태그 추천
+      if (matchedTags.size === 0) {
+        matchedTags.add('#아이디어');
+        matchedTags.add('#메모');
+      }
+
+      matchedTags.forEach(tag => {
+        const chip = document.createElement('span');
+        chip.className = 'recommend-chip';
+        chip.textContent = tag;
+        chip.onclick = function() {
+          selectedTag = tag;
+          // 선택된 태그 강조 시각화
+          document.querySelectorAll('.recommend-chip').forEach(c => c.style.backgroundColor = '#e8f0fe');
+          chip.style.backgroundColor = '#aecbfa';
+        };
+        tagContainer.appendChild(chip);
+      });
+    });
+
+    // 화면 렌더링 함수
+    function renderMemos() {
+      memoList.innerHTML = '';
+      savedMemos.forEach((memo, index) => {
+        const item = document.createElement('div');
+        item.className = 'memo-item';
+        item.innerHTML = `
+          <div class="memo-content">
+            <span class="tag-chip">${memo.category}</span>
+            <span>${memo.text}</span>
+          </div>
+          <button class="delete-btn" onclick="deleteMemo(${index})">✕</button>
+        `;
+        memoList.prepend(item);
+      });
+      memoCount.textContent = savedMemos.length;
+    }
+
+    // 메모 삭제 기능
+    window.deleteMemo = function(index) {
+      savedMemos.splice(index, 1);
+      localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+      renderMemos();
+    };
+
+    // 엔터키 저장 이벤트
+    memoInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const text = memoInput.value.trim();
+        if (text === '') return;
+
+        // 선택한 태그가 없으면 자동 카테고리 지정
+        const finalCategory = selectedTag || (text.includes('과제') || text.includes('내일') ? '#일정' : '#미분류');
+
+        const newMemo = {
+          id: Date.now(),
+          text: text,
+          category: finalCategory
+        };
+
+        savedMemos.push(newMemo);
+        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+        
+        memoInput.value = '';
+        tagContainer.innerHTML = '';
+        selectedTag = '';
+        renderMemos();
+      }
+    });
+
+    renderMemos();
+  </script>
 
 </body>
 </html>
