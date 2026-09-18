@@ -559,7 +559,7 @@
         <div class="cat-modal-title">📂 새 카테고리 추가</div>
         <div>
           <span style="font-size:11px; color:#666;">카테고리 이름</span>
-          <input type="text" id="newCatNameInput" class="cat-input-field" placeholder="예: 컴활, 운동, 영화..." oninput="updateEmojiRecommendations()" />
+          <input type="text" id="newCatNameInput" class="cat-input-field" placeholder="예: 일기, 컴활, 운동..." oninput="updateEmojiRecommendations()" />
         </div>
         <div>
           <span style="font-size:11px; color:#666; display:block; margin-bottom:4px;">이모지 추천 (클릭 선택)</span>
@@ -609,7 +609,7 @@
       if (tabName === 'search') renderAllMemosPage();
     }
 
-    /* 이모지 추천 로직을 포함한 카테고리 모달 컨트롤 */
+    /* 이모지 추천 모달 컨트롤 및 정밀 키워드 매칭 로직 */
     function openNewCategoryModal() {
       document.getElementById('newCatNameInput').value = '';
       selectedEmoji = '📁';
@@ -629,14 +629,21 @@
 
       let emojis = ['📁', '📌', '✨', '🏷️', '📝']; // 기본 이모지 셋
 
-      if (name.includes('학교') || name.includes('수원대') || name.includes('과제') || name.includes('공부') || name.includes('시험') || name.includes('컴활') || name.includes('토익')) {
+      // 우선순위 정밀 키워드 감지 로직
+      if (name.includes('일기') || name.includes('일상') || name.includes('기록') || name.includes('생각') || name.includes('메모')) {
+        emojis = ['📖', '📔', '✏️', '🗓️', '💭'];
+      } else if (name.includes('학교') || name.includes('수원대') || name.includes('과제') || name.includes('공부') || name.includes('시험') || name.includes('컴활') || name.includes('토익')) {
         emojis = ['🎓', '📚', '💻', '✍️', '🎯'];
       } else if (name.includes('운동') || name.includes('헬스') || name.includes('러닝') || name.includes('다이어트')) {
         emojis = ['⚽', '🏋️‍♂️', '🏃‍♀️', '🥊', '🧘‍♀️'];
       } else if (name.includes('영화') || name.includes('드라마') || name.includes('문화') || name.includes('게임')) {
         emojis = ['🎬', '🍿', '🎮', '🎨', '🎧'];
-      } else if (name.includes('알바') || name.includes('일') || name.includes('카페') || name.includes('돈')) {
+      } else if (name.includes('알바') || name.includes('업무') || name.includes('직장') || name.includes('시급') || name === '일') {
         emojis = ['💼', '☕', '🍔', '💰', '⏰'];
+      } else if (name.includes('쇼핑') || name.includes('위시') || name.includes('구매') || name.includes('사고싶')) {
+        emojis = ['🛍️', '🛒', '💳', '🎁', '👗'];
+      } else if (name.includes('맛집') || name.includes('음식') || name.includes('카페') || name.includes('먹거리')) {
+        emojis = ['🍕', '🍰', '☕', '🍧', '🍲'];
       } else if (name.includes('여행') || name.includes('휴가') || name.includes('비행기')) {
         emojis = ['✈️', '🧳', '🌴', '🚗', '⛺'];
       }
@@ -746,6 +753,7 @@
       if (text.includes('영화') || text.includes('드라마') || text.includes('팝콘')) return { name: '문화', icon: '🎬' };
       if (text.includes('토익') || text.includes('영어') || text.includes('자격증')) return { name: '자기계발', icon: '📚' };
       if (text.includes('알바') || text.includes('매장') || text.includes('시급')) return { name: '아르바이트', icon: '💼' };
+      if (text.includes('일기') || text.includes('오늘 하루')) return { name: '일기', icon: '📖' };
       return null;
     }
 
