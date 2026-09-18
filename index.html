@@ -157,6 +157,10 @@
       cursor: pointer;
     }
 
+    .recent-card:hover {
+      text-decoration: underline;
+    }
+
     .persistent-dock {
       margin-top: auto;
       background-color: #fff8f8;
@@ -227,15 +231,30 @@
     }
 
     .folder-header {
-      padding: 14px 16px;
+      padding: 12px 16px;
       font-size: 14px;
       font-weight: bold;
       color: #333;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      cursor: pointer;
       background-color: #ffffff;
+    }
+
+    .folder-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .more-btn {
+      font-size: 11px;
+      color: #666;
+      background-color: #f1f3f4;
+      padding: 3px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: none;
     }
 
     .folder-content {
@@ -336,6 +355,75 @@
       font-size: 13px;
     }
     .delete-btn:hover { color: #d32f2f; }
+
+    /* 메모지 스타일 모달 UI */
+    .memo-modal-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.35);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .memo-sticky-note {
+      width: 280px;
+      background-color: #fffde7;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      border: 1px solid #fff59d;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sticky-header {
+      font-size: 13px;
+      font-weight: bold;
+      color: #f57f17;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .sticky-textarea {
+      width: 100%;
+      height: 90px;
+      border: 1px solid #fff59d;
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 14px;
+      outline: none;
+      resize: none;
+      box-sizing: border-box;
+    }
+
+    .sticky-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .sticky-btn {
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .sticky-btn.save {
+      background-color: #fbc02d;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .sticky-btn.cancel {
+      background-color: #e0e0e0;
+      color: #666;
+    }
   </style>
 </head>
 <body>
@@ -411,6 +499,21 @@
         <div id="allMemosList" class="memo-list"></div>
       </div>
     </div>
+
+    <!-- 메모지 스타일 수정 모달 -->
+    <div id="memoModalOverlay" class="memo-modal-overlay">
+      <div class="memo-sticky-note">
+        <div class="sticky-header">
+          <span>📌 메모 수정하기</span>
+          <span style="cursor:pointer;" onclick="closeMemoModal()">✕</span>
+        </div>
+        <textarea id="modalTextarea" class="sticky-textarea"></textarea>
+        <div class="sticky-actions">
+          <button class="sticky-btn cancel" onclick="closeMemoModal()">취소</button>
+          <button class="sticky-btn save" onclick="saveMemoModal()">저장</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -424,9 +527,10 @@
     let searchHistory = JSON.parse(localStorage.getItem('notepound_search_history')) || [];
 
     let currentSelectedCategory = '';
-    let isUserManuallySelected = false; // 카테고리 수동 선택 여부
+    let isUserManuallySelected = false;
     let openFolderIndex = null;
     let currentSortOrder = 'newest';
+    let editingMemoIndex = null;
 
     const memoInput = document.getElementById('memoInput');
 
@@ -456,9 +560,9 @@
       renderCategoryPage();
     }
 
-    // 메모 입력 시 즉각적인 실시간 추천 카테고리 감지
+    // 메모 입력 시 실시간 카테고리 감지
     memoInput.addEventListener('input', function() {
-      if (isUserManuallySelected) return; // 수동 클릭 시에는 실시간 자동 변경 안 함
+      if (isUserManuallySelected) return;
 
       const text = memoInput.value;
       if (!text.trim()) {
@@ -467,7 +571,6 @@
         return;
       }
 
-      // 키워드 감지
       if (text.includes('과제') || text.includes('시험') || text.includes('약속') || text.includes('오늘') || text.includes('내일')) {
         currentSelectedCategory = findCategoryFullName('일정') || findCategoryFullName('📅');
       } else if (text.includes('먹') || text.includes('냉면') || text.includes('음식') || text.includes('맛집')) {
@@ -498,9 +601,9 @@
         
         chip.onclick = () => {
           currentSelectedCategory = fullName;
-          isUserManuallySelected = true; // 사용자가 직접 선택했음을 기록
+          isUserManuallySelected = true;
           renderCategoryChips();
-          memoInput.focus(); // 카테고리 선택 후 마저 작성 가능하도록 포커스 유효
+          memoInput.focus();
         };
         container.appendChild(chip);
       });
@@ -527,7 +630,7 @@
         const realIndex = savedMemos.findIndex(m => m.id === memo.id);
         const item = document.createElement('div');
         item.className = 'recent-card';
-        item.onclick = () => editMemoText(realIndex);
+        item.onclick = () => openMemoModal(realIndex);
         item.innerHTML = `
           <span>${memo.text}</span>
           <span style="font-size:11px; color:#666;">${memo.category}</span>
@@ -545,7 +648,7 @@
         const item = document.createElement('div');
         item.className = 'memo-item';
         item.innerHTML = `
-          <span class="memo-text-clickable" onclick="editMemoText(${realIndex})">${memo.text}</span>
+          <span class="memo-text-clickable" onclick="openMemoModal(${realIndex})">${memo.text}</span>
           <div>
             <button class="classify-btn" onclick="assignCategoryDirect(${realIndex})">📂 분류</button>
             <button class="delete-btn" onclick="deleteMemo(${realIndex})">✕</button>
@@ -557,17 +660,31 @@
       document.getElementById('unclassifiedCount').textContent = unclassifiedMemos.length;
     }
 
-    // 메모 내용 수정 공통 함수
-    window.editMemoText = function(index) {
-      const newText = prompt('메모 내용을 수정하세요:', savedMemos[index].text);
-      if (newText !== null && newText.trim() !== '') {
-        savedMemos[index].text = newText.trim();
-        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
-        renderWritePage();
-        renderCategoryPage();
-        renderAllMemosPage(document.getElementById('searchInput').value);
+    // 메모지 스타일 모달 활성화
+    function openMemoModal(index) {
+      editingMemoIndex = index;
+      document.getElementById('modalTextarea').value = savedMemos[index].text;
+      document.getElementById('memoModalOverlay').style.display = 'flex';
+    }
+
+    function closeMemoModal() {
+      document.getElementById('memoModalOverlay').style.display = 'none';
+      editingMemoIndex = null;
+    }
+
+    function saveMemoModal() {
+      if (editingMemoIndex !== null) {
+        const updatedText = document.getElementById('modalTextarea').value.trim();
+        if (updatedText) {
+          savedMemos[editingMemoIndex].text = updatedText;
+          localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+          renderWritePage();
+          renderCategoryPage();
+          renderAllMemosPage(document.getElementById('searchInput').value);
+        }
       }
-    };
+      closeMemoModal();
+    }
 
     window.assignCategoryDirect = function(index) {
       let optionsStr = categories.map((c, i) => `${i + 1}. ${c.icon} ${c.name}`).join('\n');
@@ -583,6 +700,7 @@
       }
     };
 
+    // 카테고리 보관함 (더보기 기능 및 자체 메모 추가)
     function renderCategoryPage() {
       const grid = document.getElementById('categoryGrid');
       grid.innerHTML = '';
@@ -602,7 +720,7 @@
           memosHTML += `
             <div class="memo-item" style="margin-top:6px;">
               <div style="flex:1;">
-                <span class="memo-text-clickable" onclick="editMemoText(${realIndex})">${memo.text}</span>
+                <span class="memo-text-clickable" onclick="openMemoModal(${realIndex})">${memo.text}</span>
                 <span class="tag-badge" onclick="addTagPrompt(${realIndex})">${tagText}</span>
               </div>
               <div>
@@ -614,9 +732,12 @@
         });
 
         folder.innerHTML = `
-          <div class="folder-header" onclick="toggleFolder(${idx})">
+          <div class="folder-header">
             <span>${fullName} <span style="font-size:12px; color:#888;">(${catMemos.length})</span></span>
-            <span>${isOpen ? '▲' : '▼'}</span>
+            <div class="folder-actions">
+              <button class="add-cat-btn" onclick="addMemoToCategoryPrompt('${fullName}')">+ 메모</button>
+              <button class="more-btn" onclick="toggleFolder(${idx})">${isOpen ? '접기 ▲' : '더보기 ⋮'}</button>
+            </div>
           </div>
           <div class="folder-content ${isOpen ? 'open' : ''}">
             ${memosHTML || '<div style="font-size:12px; color:#aaa; padding:6px 0;">저장된 메모가 없습니다.</div>'}
@@ -624,6 +745,23 @@
         `;
         grid.appendChild(folder);
       });
+    }
+
+    // 카테고리 페이지에서 메모 직접 추가
+    function addMemoToCategoryPrompt(categoryFullName) {
+      const text = prompt(`[${categoryFullName}] 카테고리에 추가할 메모를 입력하세요:`);
+      if (text && text.trim()) {
+        const newMemo = {
+          id: Date.now(),
+          text: text.trim(),
+          category: categoryFullName,
+          tag: ''
+        };
+        savedMemos.push(newMemo);
+        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+        renderWritePage();
+        renderCategoryPage();
+      }
     }
 
     function toggleFolder(idx) {
@@ -661,7 +799,7 @@
         item.className = 'memo-item';
         item.innerHTML = `
           <div style="flex:1;">
-            <div class="memo-text-clickable" onclick="editMemoText(${realIndex})">${memo.text}</div>
+            <div class="memo-text-clickable" onclick="openMemoModal(${realIndex})">${memo.text}</div>
             <div style="font-size:11px; color:#888; margin-top:4px;">
               ${memo.category} ${memo.tag ? '| ' + memo.tag : ''}
             </div>
@@ -742,7 +880,6 @@
       renderAllMemosPage(document.getElementById('searchInput').value);
     };
 
-    // 메모 작성 엔터 키 처리
     memoInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
