@@ -140,6 +140,7 @@
       flex: 1;
     }
 
+    /* 목록 내 태그 칩 (클릭 가능하도록 커서 및 마우스오버 효과 추가) */
     .tag-chip {
       font-size: 11px;
       background-color: #e8f0fe;
@@ -147,6 +148,12 @@
       padding: 3px 8px;
       border-radius: 12px;
       white-space: nowrap;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .tag-chip:hover {
+      background-color: #d2e3fc;
     }
 
     .delete-btn {
@@ -197,7 +204,6 @@
 
     let savedMemos = JSON.parse(localStorage.getItem('notepound_memos')) || [];
     
-    // 기본 키워드 태그 사전
     const defaultDictionary = {
       '먹': ['#먹고싶다', '#위시리스트'],
       '냉면': ['#먹고싶다', '#맛집탐방'],
@@ -205,7 +211,6 @@
       '내일': ['#일정', '#약속']
     };
 
-    // 사용자가 수정/학습시킨 태그 사전 불러오기
     let customDictionary = JSON.parse(localStorage.getItem('notepound_custom_tags')) || defaultDictionary;
 
     let selectedTag = '';
@@ -222,7 +227,6 @@
 
       let matchedTags = new Set();
 
-      // 키워드 매칭
       Object.keys(customDictionary).forEach(keyword => {
         if (text.includes(keyword)) {
           currentMatchedKeywords.push(keyword);
@@ -234,12 +238,10 @@
         matchedTags.add('#아이디어');
       }
 
-      // 1. 추천 태그 칩 생성
       matchedTags.forEach(tag => {
         renderTagChip(tag);
       });
 
-      // 2. 직접 추가 (+ 빈 태그) 버튼 생성
       const addBtn = document.createElement('span');
       addBtn.className = 'add-chip-btn';
       addBtn.textContent = '+ 태그 직접 추가';
@@ -254,16 +256,13 @@
       tagContainer.appendChild(addBtn);
     });
 
-    // 태그 칩 렌더링 및 클릭/수정 기능
     function renderTagChip(tagText, isCustom = false) {
       const chip = document.createElement('span');
       chip.className = 'recommend-chip';
       chip.innerHTML = `<span>${tagText}</span> <small style="font-size:9px; opacity:0.7;">✏️</small>`;
 
-      // 클릭 시 선택 및 수정 토글
-      chip.onclick = function(e) {
+      chip.onclick = function() {
         if (selectedTag === tagText) {
-          // 이미 선택된 상태에서 한 번 더 누르면 단어 수정
           const editedTag = prompt('태그 이름을 수정하시겠습니까?', tagText);
           if (editedTag && editedTag.trim() !== '') {
             const finalTag = editedTag.startsWith('#') ? editedTag.trim() : '#' + editedTag.trim();
@@ -272,7 +271,6 @@
             selectedTag = finalTag;
           }
         } else {
-          // 선택 처리
           document.querySelectorAll('.recommend-chip').forEach(c => c.classList.remove('active'));
           chip.classList.add('active');
           selectedTag = tagText;
@@ -282,7 +280,6 @@
       tagContainer.insertBefore(chip, tagContainer.lastChild);
     }
 
-    // 수정되거나 새로 작성된 태그 사전 학습 및 저장
     function saveTagToDictionary(newTag, oldTag = null) {
       if (currentMatchedKeywords.length > 0) {
         currentMatchedKeywords.forEach(keyword => {
@@ -298,7 +295,7 @@
       }
     }
 
-    // 목록 렌더링
+    // 목록 렌더링 (저장된 태그 칩 클릭 시 수정 가능)
     function renderMemos() {
       memoList.innerHTML = '';
       savedMemos.forEach((memo, index) => {
@@ -306,7 +303,7 @@
         item.className = 'memo-item';
         item.innerHTML = `
           <div class="memo-content">
-            <span class="tag-chip">${memo.category}</span>
+            <span class="tag-chip" onclick="editSavedMemoTag(${index})">${memo.category}</span>
             <span>${memo.text}</span>
           </div>
           <button class="delete-btn" onclick="deleteMemo(${index})">✕</button>
@@ -316,13 +313,24 @@
       memoCount.textContent = savedMemos.length;
     }
 
+    // 저장된 메모의 태그 수정 함수
+    window.editSavedMemoTag = function(index) {
+      const currentTag = savedMemos[index].category;
+      const editedTag = prompt('저장된 메모의 태그를 수정하시겠습니까?', currentTag);
+      if (editedTag && editedTag.trim() !== '') {
+        const finalTag = editedTag.startsWith('#') ? editedTag.trim() : '#' + editedTag.trim();
+        savedMemos[index].category = finalTag;
+        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+        renderMemos();
+      }
+    };
+
     window.deleteMemo = function(index) {
       savedMemos.splice(index, 1);
       localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
       renderMemos();
     };
 
-    // 엔터키 저장
     memoInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
