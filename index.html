@@ -486,6 +486,12 @@
     .thought-group-card:hover{border-color:#7b61ff;box-shadow:0 8px 22px rgba(123,97,255,.14);transform:translateY(-2px)}
     .thought-group-kicker{font-size:9px;color:#8b7ad8;font-weight:bold;margin-bottom:7px}
     .thought-group-title{font-size:15px;font-weight:800;color:#333;margin-bottom:6px;line-height:1.25}
+    .thought-group-title-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+    .thought-title-edit{border:1px solid #e5e7eb;background:#fff;border-radius:8px;padding:3px 6px;font-size:11px;cursor:pointer;line-height:1}
+    .thought-title-edit:hover{background:#f5f7fb}
+    .thought-title-edit.detail{margin-left:6px}
+    #thoughtDetailTitle{display:flex;align-items:center;gap:4px}
+
     .thought-group-sub{font-size:9px;color:#999;line-height:1.5;margin-bottom:10px}
     .thought-group-preview{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
     .thought-group-chip{background:#f4f1ff;color:#6952c9;border-radius:10px;padding:4px 7px;font-size:8px;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -2898,6 +2904,7 @@ const THOUGHT_UNCONNECTED_POSITION_KEY = 'notepound_thought_unconnected_position
 let thoughtPositions = loadThoughtPositions();
 let thoughtCenterId = loadThoughtCenter();
 let thoughtGroupCenters = loadThoughtGroupCenters();
+let thoughtGroupTitles = JSON.parse(localStorage.getItem('notepound_thought_titles') || '{}');
 let activeThoughtGroupKey = null;
 let selectedThoughtIds = [];
 let linkingFromId = null;
@@ -3004,10 +3011,26 @@ function chooseTopicWord(group){
   return top?top[0]:'';
 }
 function getThoughtGroupTitle(group,index=0){
+  const key=thoughtGroupKey(group);
+  if(thoughtGroupTitles[key]) return thoughtGroupTitles[key];
   const topic=chooseTopicWord(group); if(topic)return `${topic}에 대한 생각`;
   const first=String(group[0]?.text||'').trim();
   if(first){const clean=first.replace(/^#/, '');return clean.length>18?clean.slice(0,18)+'…':clean;}
   return `생각 흐름 ${index+1}`;
+}
+function saveThoughtGroupTitles(){localStorage.setItem('notepound_thought_titles',JSON.stringify(thoughtGroupTitles));}
+function editThoughtGroupTitle(group){
+  if(!group||!group.length)return;
+  const key=thoughtGroupKey(group);
+  const current=getThoughtGroupTitle(group,0);
+  const defaultTopic=current.replace(/\s*에 대한 생각\s*$/,'').trim();
+  const next=prompt('이 생각의 제목을 입력하세요.\n예: 피자 / 진로 고민 / 호주 여행',defaultTopic);
+  if(next===null)return;
+  const value=next.trim();
+  if(!value)return;
+  thoughtGroupTitles[key]=value.endsWith('에 대한 생각')?value:`${value}에 대한 생각`;
+  saveThoughtGroupTitles();
+  renderThoughtFlow();
 }
 function getThoughtGroupSummary(group){
   const dates=group.map(m=>m.id).sort((a,b)=>a-b),first=dates[0],last=dates[dates.length-1];
@@ -3222,7 +3245,7 @@ function buildThoughtNode(memo,isCenter=false,index=0){
 function renderGroupOverview(){
   const box=document.getElementById('thoughtGroupList');if(!box)return;const groups=getConnectedComponents();box.innerHTML='';
   if(!groups.length){box.innerHTML='<div class="thought-empty" style="grid-column:1/-1;"><div class="thought-empty-graphic">🔗</div>아직 연결된 생각 묶음이 없어요.<br>메모를 서로 연결하면 주제별 흐름이 여기에 생겨요.</div>';return;}
-  groups.forEach((group,index)=>{const card=document.createElement('div');card.className='thought-group-card';const title=getThoughtGroupTitle(group,index);const chips=group.slice(0,4).map(m=>`<span class="thought-group-chip">${escapeHtml(m.text)}</span>`).join('');card.innerHTML=`<div class="thought-group-kicker">THOUGHT FLOW ${String(index+1).padStart(2,'0')}</div><div class="thought-group-title">${escapeHtml(title)}</div><div class="thought-group-sub">${getThoughtGroupSummary(group)}<br>이 주제의 메모를 마인드맵으로 보기</div><div class="thought-group-preview">${chips}</div><div class="thought-group-dots"><span class="thought-group-dot"></span><span class="thought-group-dot"></span><span class="thought-group-dot"></span></div>`;card.addEventListener('click',()=>enterThoughtGroup(thoughtGroupKey(group)));box.appendChild(card);});
+  groups.forEach((group,index)=>{const card=document.createElement('div');card.className='thought-group-card';const title=getThoughtGroupTitle(group,index);const chips=group.slice(0,4).map(m=>`<span class="thought-group-chip">${escapeHtml(m.text)}</span>`).join('');card.innerHTML=`<div class="thought-group-kicker">THOUGHT FLOW ${String(index+1).padStart(2,'0')}</div><div class="thought-group-title-row"><div class="thought-group-title">${escapeHtml(title)}</div><button class="thought-title-edit" type="button" title="주제 이름 수정">✏️</button></div><div class="thought-group-sub">${getThoughtGroupSummary(group)}<br>이 주제의 메모를 마인드맵으로 보기</div><div class="thought-group-preview">${chips}</div><div class="thought-group-dots"><span class="thought-group-dot"></span><span class="thought-group-dot"></span><span class="thought-group-dot"></span></div>`;card.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(group);});card.addEventListener('click',()=>enterThoughtGroup(thoughtGroupKey(group)));box.appendChild(card);});
 }
 
 function renderThoughtChangePanel(group){
@@ -3237,7 +3260,7 @@ function renderThoughtFlow(){
   const centerBadge=document.getElementById('thoughtCenterBadge');const active=getActiveGroup();
   if(activeThoughtGroupKey&&active){
     groupOverview.style.display='none';detail.style.display='block';
-    const title=getThoughtGroupTitle(active,0);document.getElementById('thoughtDetailTitle').textContent=`${title} · ${active.length}개 기록`;
+    const title=getThoughtGroupTitle(active,0);const detailTitle=document.getElementById('thoughtDetailTitle');detailTitle.innerHTML=`<span>${escapeHtml(title)} · ${active.length}개 기록</span><button class="thought-title-edit detail" type="button" title="주제 이름 수정">✏️</button>`;detailTitle.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(active);});
     const centerId=Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null;thoughtCenterId=centerId;const center=active.find(m=>Number(m.id)===centerId);
     if(centerBadge)centerBadge.innerHTML=center?`◎ 중심 메모: 「${escapeHtml(String(center.text).slice(0,28))}${String(center.text).length>28?'…':''}」`:'◎ 이 주제의 중심 메모를 하나 선택해 주세요';
     const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#7b61ff"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>`;
