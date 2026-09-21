@@ -481,12 +481,29 @@
     .thought-view-btn.active{background:#e8f0fe;color:#1a73e8;border-color:#c9dcff;}
     .thought-view{display:none;}
     .thought-view.active{display:block;}
-    .unlinked-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;padding:0 10px 10px;}
-    .unlinked-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:12px;box-shadow:0 3px 10px rgba(0,0,0,.06);cursor:pointer;}
-    .unlinked-card:hover{border-color:#1a73e8;}
+    .thought-group-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;padding:2px 10px 14px;}
+    .thought-group-card{background:#fff;border:1px solid #e3e7ed;border-radius:18px;padding:15px;box-shadow:0 4px 14px rgba(0,0,0,.06);cursor:pointer;transition:.18s;min-height:145px;position:relative;overflow:hidden;}
+    .thought-group-card:hover{border-color:#7b61ff;box-shadow:0 8px 22px rgba(123,97,255,.14);transform:translateY(-2px)}
+    .thought-group-kicker{font-size:9px;color:#8b7ad8;font-weight:bold;margin-bottom:7px}
+    .thought-group-title{font-size:15px;font-weight:800;color:#333;margin-bottom:6px;line-height:1.25}
+    .thought-group-sub{font-size:9px;color:#999;line-height:1.5;margin-bottom:10px}
+    .thought-group-preview{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+    .thought-group-chip{background:#f4f1ff;color:#6952c9;border-radius:10px;padding:4px 7px;font-size:8px;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .thought-group-dots{position:absolute;right:12px;bottom:11px;display:flex;gap:4px;align-items:center}
+    .thought-group-dot{width:7px;height:7px;border-radius:50%;background:#cfc7f7}
+    .thought-group-dot:nth-child(2){background:#a99be9}.thought-group-dot:nth-child(3){background:#7b61ff}
+    .thought-back-btn{border:none;background:#f1f3f4;color:#555;border-radius:14px;padding:7px 10px;font-size:10px;font-weight:bold;cursor:pointer;margin:0 14px 8px}
+    .thought-detail-title{padding:0 14px 8px;font-size:13px;font-weight:800;color:#333}
+    .unlinked-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:#f8f9fa;overflow:auto;position:relative}
+    .unlinked-graph{position:relative;width:100%;min-width:1000px;height:760px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden}
+    .unlinked-card{position:absolute;width:210px;min-height:118px;background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:12px;box-shadow:0 4px 13px rgba(0,0,0,.07);cursor:grab;animation:thoughtFloat 5.2s ease-in-out infinite;transition:box-shadow .18s,border-color .18s;user-select:none;touch-action:none}
+    .unlinked-card:hover{border-color:#1a73e8;box-shadow:0 7px 20px rgba(26,115,232,.13)}
+    .unlinked-card.dragging{cursor:grabbing;animation:none;z-index:30}
     .unlinked-card-date{font-size:9px;color:#999;margin-bottom:6px;}
     .unlinked-card-text{font-size:12px;line-height:1.5;color:#333;word-break:break-word;}
     .unlinked-card-meta{font-size:9px;color:#1a73e8;margin-top:7px;}
+    @keyframes thoughtFloat{0%,100%{transform:translateY(0) rotate(-.3deg)}50%{transform:translateY(-8px) rotate(.3deg)}}
+    .thought-empty-graphic{font-size:30px;margin-bottom:8px}
     .thought-auto-note{padding:0 14px 8px;font-size:9px;color:#777;line-height:1.5;}
     .thought-center-badge{display:inline-flex;align-items:center;gap:4px;background:#f0eaff;color:#6b4bd6;border-radius:12px;padding:5px 8px;font-size:9px;font-weight:bold;margin:0 14px 8px;}
 .thought-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:#f8f9fa;overflow:auto;position:relative}
@@ -785,38 +802,57 @@
       카드의 ●를 다른 카드로 드래그하거나 두 카드를 선택해 직접 연결할 수 있고, 연결선을 클릭하면 연결을 끊을 수 있어요.
     </div>
     <div id="thoughtCenterBadge" class="thought-center-badge">◎ 중심 메모를 선택해 주세요</div>
-    <div class="thought-auto-note">✨ 자동 연결은 후보로 표시되지 않고, 관련도가 높은 기존 메모와 자동으로 연결됩니다.</div>
+    <div class="thought-auto-note">✨ 관련도가 높은 메모는 후보로 따로 보여주지 않고 자동으로 연결해요.</div>
     <div class="thought-view-switch">
       <button id="thoughtConnectedBtn" class="thought-view-btn active" onclick="switchThoughtView('connected')">🔗 연결된 생각 흐름</button>
       <button id="thoughtUnconnectedBtn" class="thought-view-btn" onclick="switchThoughtView('unconnected')">○ 연결되지 않은 메모</button>
     </div>
 
     <div id="thoughtConnectedView" class="thought-view active">
-      <div class="thought-legend">
-        <span class="legend-item"><span class="legend-line"></span> 직접 연결</span>
-        <span class="legend-item"><span class="legend-line auto"></span> 자동 연결</span>
-      </div>
-      <div id="thoughtSelectedInfo" class="selected-info" style="display:none;"></div>
-      <div class="thought-graph-wrap">
-        <div id="thoughtGraph" class="thought-graph">
-          <svg id="thoughtSvg" class="thought-svg" aria-hidden="true">
-            <defs>
-              <marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path></marker>
-              <marker id="arrowSuggested" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#7b61ff"></path></marker>
-            </defs>
-            <g id="thoughtEdges"></g>
-            <path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path>
-          </svg>
+      <div id="thoughtGroupOverview">
+        <div class="thought-legend">
+          <span class="legend-item">🔗 연결된 메모 묶음</span>
+          <span class="legend-item">주제를 눌러 생각 흐름으로 들어가세요</span>
         </div>
+        <div id="thoughtGroupList" class="thought-group-overview"></div>
       </div>
-      <div class="thought-bottom">
-        <div id="thoughtSummary" class="thought-panel"></div>
-        <div id="thoughtChangePanel" class="thought-panel"></div>
+
+      <div id="thoughtGroupDetail" style="display:none;">
+        <button class="thought-back-btn" onclick="exitThoughtGroup()">← 연결된 생각 주제로 돌아가기</button>
+        <div id="thoughtDetailTitle" class="thought-detail-title"></div>
+        <div class="thought-legend">
+          <span class="legend-item"><span class="legend-line"></span> 직접 연결</span>
+          <span class="legend-item"><span class="legend-line auto"></span> 자동 연결</span>
+          <span class="legend-item">선 클릭 → 연결 끊기</span>
+        </div>
+        <div id="thoughtSelectedInfo" class="selected-info" style="display:none;"></div>
+        <div class="thought-graph-wrap">
+          <div id="thoughtGraph" class="thought-graph">
+            <svg id="thoughtSvg" class="thought-svg" aria-hidden="true">
+              <defs>
+                <marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path></marker>
+                <marker id="arrowSuggested" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#7b61ff"></path></marker>
+              </defs>
+              <g id="thoughtEdges"></g>
+              <path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="thought-bottom">
+          <div id="thoughtSummary" class="thought-panel"></div>
+          <div id="thoughtChangePanel" class="thought-panel"></div>
+        </div>
       </div>
     </div>
 
     <div id="thoughtUnconnectedView" class="thought-view">
-      <div id="thoughtUnconnectedList" class="unlinked-list"></div>
+      <div class="thought-legend">
+        <span class="legend-item">○ 아직 다른 메모와 연결되지 않은 생각</span>
+        <span class="legend-item">카드를 드래그해서 위치를 바꾸거나 클릭해 연결</span>
+      </div>
+      <div class="unlinked-graph-wrap">
+        <div id="thoughtUnconnectedList" class="unlinked-graph"></div>
+      </div>
     </div>
   </div>
 
@@ -2859,96 +2895,51 @@ function deleteMemo(index) {
 
 
 /* =====================================================
-   생각 연결 그래프 - 자동 유사도 분석
+   생각 흐름 / 연결 주제 / 마인드맵
    ===================================================== */
 
 const THOUGHT_POSITION_KEY = 'notepound_thought_positions';
 const THOUGHT_CENTER_KEY = 'notepound_thought_center';
+const THOUGHT_GROUP_CENTERS_KEY = 'notepound_thought_group_centers';
 const THOUGHT_BLOCKED_KEY = 'notepound_thought_blocked_links';
+const THOUGHT_UNCONNECTED_POSITION_KEY = 'notepound_thought_unconnected_positions';
 let thoughtPositions = loadThoughtPositions();
 let thoughtCenterId = loadThoughtCenter();
+let thoughtGroupCenters = loadThoughtGroupCenters();
+let activeThoughtGroupKey = null;
 let selectedThoughtIds = [];
 let linkingFromId = null;
 let isDraggingThoughtNode = false;
 let thoughtDragOffset = {x:0,y:0};
 
 function loadThoughtPositions(){
-  try{
-    const data=JSON.parse(localStorage.getItem(THOUGHT_POSITION_KEY));
-    return data && typeof data==='object' ? data : {};
-  }catch(e){ return {}; }
+  try{const d=JSON.parse(localStorage.getItem(THOUGHT_POSITION_KEY));return d&&typeof d==='object'?d:{};}catch(e){return {};}
 }
+function saveThoughtPositions(){localStorage.setItem(THOUGHT_POSITION_KEY,JSON.stringify(thoughtPositions));}
+function loadThoughtCenter(){const v=Number(localStorage.getItem(THOUGHT_CENTER_KEY));return Number.isFinite(v)&&v>0?v:null;}
+function saveThoughtCenter(){if(thoughtCenterId===null)localStorage.removeItem(THOUGHT_CENTER_KEY);else localStorage.setItem(THOUGHT_CENTER_KEY,String(thoughtCenterId));}
+function loadThoughtGroupCenters(){try{const d=JSON.parse(localStorage.getItem(THOUGHT_GROUP_CENTERS_KEY));return d&&typeof d==='object'?d:{};}catch(e){return {};}}
+function saveThoughtGroupCenters(){localStorage.setItem(THOUGHT_GROUP_CENTERS_KEY,JSON.stringify(thoughtGroupCenters));}
+function getBlockedThoughtLinks(){try{const d=JSON.parse(localStorage.getItem(THOUGHT_BLOCKED_KEY));return new Set(Array.isArray(d)?d:[]);}catch(e){return new Set();}}
+function saveBlockedThoughtLinks(set){localStorage.setItem(THOUGHT_BLOCKED_KEY,JSON.stringify([...set]));}
+function thoughtPairKey(a,b){return [Number(a),Number(b)].sort((x,y)=>x-y).join('-');}
 
-function saveThoughtPositions(){
-  localStorage.setItem(THOUGHT_POSITION_KEY,JSON.stringify(thoughtPositions));
-}
-
-function loadThoughtCenter(){
-  const value=Number(localStorage.getItem(THOUGHT_CENTER_KEY));
-  return Number.isFinite(value)&&value>0 ? value : null;
-}
-
-function saveThoughtCenter(){
-  if(thoughtCenterId===null)localStorage.removeItem(THOUGHT_CENTER_KEY);
-  else localStorage.setItem(THOUGHT_CENTER_KEY,String(thoughtCenterId));
-}
-
-function getBlockedThoughtLinks(){
-  try{
-    const data=JSON.parse(localStorage.getItem(THOUGHT_BLOCKED_KEY));
-    return new Set(Array.isArray(data)?data:[]);
-  }catch(e){return new Set();}
-}
-
-function saveBlockedThoughtLinks(set){
-  localStorage.setItem(THOUGHT_BLOCKED_KEY,JSON.stringify([...set]));
-}
-
-function thoughtPairKey(a,b){
-  return [Number(a),Number(b)].sort((x,y)=>x-y).join('-');
-}
-
-function normalizeThoughtText(text){
-  return String(text||'').toLowerCase().replace(/[^\p{L}\p{N}#]+/gu,' ').trim();
-}
-
+function normalizeThoughtText(text){return String(text||'').toLowerCase().replace(/[^\p{L}\p{N}#]+/gu,' ').trim();}
 function tokenizeThoughtText(text){
-  const normalized=normalizeThoughtText(text);
-  if(!normalized)return [];
-  const raw=normalized.split(/\s+/);
-  const tokens=[];
-  raw.forEach(token=>{
-    if(token.length>=2)tokens.push(token);
-    if(/^[가-힣]+$/.test(token)&&token.length>=3){
-      for(let i=0;i<token.length-1;i++)tokens.push(token.slice(i,i+2));
-    }
-  });
+  const normalized=normalizeThoughtText(text); if(!normalized)return [];
+  const raw=normalized.split(/\s+/),tokens=[];
+  raw.forEach(token=>{if(token.length>=2)tokens.push(token);if(/^[가-힣]+$/.test(token)&&token.length>=3){for(let i=0;i<token.length-1;i++)tokens.push(token.slice(i,i+2));}});
   return [...new Set(tokens)];
 }
-
 function getMeaningfulTokens(text){
-  const stopWords=new Set([
-    '그리고','근데','그래서','진짜','너무','정말','그냥','오늘','내일',
-    '같은','대한','하는','했다','있는','있다','싶다','것','거','나','내',
-    '저','이','그','좀','더','에서','으로','에게','하면','해서','때문'
-  ]);
-  return tokenizeThoughtText(text).filter(token=>!stopWords.has(token)&&token.length>=2);
+  const stopWords=new Set(['그리고','근데','그래서','진짜','너무','정말','그냥','오늘','내일','같은','대한','하는','했다','있는','있다','싶다','것','거','나','내','저','이','그','좀','더','에서','으로','에게','하면','해서','때문','나는','우리','정도','같이','때']);
+  return tokenizeThoughtText(text).filter(t=>!stopWords.has(t)&&t.length>=2);
 }
-
-function getManualLinkedIds(memo){
-  if(!memo||!Array.isArray(memo.linkedMemos))return [];
-  return memo.linkedMemos.map(Number).filter(id=>!Number.isNaN(id));
-}
-
-function areManuallyLinked(a,b){
-  return getManualLinkedIds(a).includes(Number(b.id))||getManualLinkedIds(b).includes(Number(a.id));
-}
-
+function getManualLinkedIds(memo){return memo&&Array.isArray(memo.linkedMemos)?memo.linkedMemos.map(Number).filter(id=>!Number.isNaN(id)):[];}
+function areManuallyLinked(a,b){return getManualLinkedIds(a).includes(Number(b.id))||getManualLinkedIds(b).includes(Number(a.id));}
 function calculateThoughtSimilarity(a,b){
-  const aTokens=new Set(getMeaningfulTokens(a.text));
-  const bTokens=new Set(getMeaningfulTokens(b.text));
-  const shared=[...aTokens].filter(token=>bTokens.has(token));
-  let score=0;
+  const at=new Set(getMeaningfulTokens(a.text)),bt=new Set(getMeaningfulTokens(b.text));
+  const shared=[...at].filter(t=>bt.has(t)); let score=0;
   if(areManuallyLinked(a,b))score+=100;
   if(String(a.replyTo)===String(b.id)||String(b.replyTo)===String(a.id))score+=80;
   if(a.category&&b.category&&a.category===b.category&&a.category!=='#미분류')score+=4;
@@ -2956,669 +2947,229 @@ function calculateThoughtSimilarity(a,b){
   score+=Math.min(shared.length*3,18);
   return {score,shared};
 }
-
-function isThoughtRelated(a,b){
-  const result=calculateThoughtSimilarity(a,b);
-  if(areManuallyLinked(a,b))return true;
-  if(String(a.replyTo)===String(b.id)||String(b.replyTo)===String(a.id))return true;
-  return result.shared.length>=2 || (
-    result.shared.length>=1 &&
-    a.category&&b.category&&a.category===b.category&&a.category!=='#미분류'
-  );
-}
-
-function findThoughtRelatedMemos(targetMemo,limit=8){
-  return savedMemos.filter(m=>m.id!==targetMemo.id).map(memo=>{
-    const result=calculateThoughtSimilarity(targetMemo,memo);
-    return {memo,score:result.score,shared:result.shared};
-  }).filter(item=>item.score>=6 || item.shared.length>=1)
-    .sort((a,b)=>b.score-a.score||b.memo.id-a.memo.id)
-    .slice(0,limit);
-}
-
 function getAutomaticEdges(){
-  const edges=[];
-  const blocked=getBlockedThoughtLinks();
+  const edges=[],blocked=getBlockedThoughtLinks();
   const sorted=[...savedMemos].sort((a,b)=>a.id-b.id);
-  // 새 메모는 가장 관련성이 높은 기존 메모 한 개에 우선 연결해
-  // 모든 메모가 서로 얽히는 대신 가지가 뻗는 구조를 만듭니다.
   sorted.forEach((memo,index)=>{
     if(index===0)return;
-    const candidates=sorted.slice(0,index).map(other=>{
-      const result=calculateThoughtSimilarity(memo,other);
-      return {other,result};
-    }).filter(item=>{
-      const key=thoughtPairKey(memo.id,item.other.id);
-      if(blocked.has(key))return false;
+    const candidates=sorted.slice(0,index).map(other=>({other,result:calculateThoughtSimilarity(memo,other)})).filter(item=>{
+      if(blocked.has(thoughtPairKey(memo.id,item.other.id)))return false;
       const r=item.result;
-      return r.shared.length>=2 ||
-        (r.shared.length>=1 && memo.category && item.other.category && memo.category===item.other.category && memo.category!=='#미분류') ||
-        r.score>=9 ||
-        String(memo.replyTo)===String(item.other.id);
+      return r.shared.length>=2 || (r.shared.length>=1&&memo.category&&item.other.category&&memo.category===item.other.category&&memo.category!=='#미분류') || r.score>=9 || String(memo.replyTo)===String(item.other.id);
     }).sort((a,b)=>b.result.score-a.result.score||b.other.id-a.other.id);
-    if(candidates.length){
-      const best=candidates[0];
-      edges.push({from:memo.id,to:best.other.id,score:best.result.score,shared:best.result.shared,type:'auto'});
-    }
+    if(candidates.length){const best=candidates[0];edges.push({from:memo.id,to:best.other.id,score:best.result.score,shared:best.result.shared,type:'auto'});}
   });
   return edges;
 }
-
-function getSuggestedEdges(){
-  return [];
-}
-
 function autoConnectThoughtMemos(){
   let changed=false;
   getAutomaticEdges().forEach(edge=>{
-    const a=savedMemos.find(m=>m.id===edge.from);
-    const b=savedMemos.find(m=>m.id===edge.to);
-    if(!a||!b)return;
-    if(!Array.isArray(a.linkedMemos))a.linkedMemos=[];
-    if(!Array.isArray(b.linkedMemos))b.linkedMemos=[];
-    if(!a.linkedMemos.includes(b.id)){a.linkedMemos.push(b.id);changed=true;}
-    if(!b.linkedMemos.includes(a.id)){b.linkedMemos.push(a.id);changed=true;}
-    if(!Array.isArray(a.autoLinkedMemos))a.autoLinkedMemos=[];
-    if(!Array.isArray(b.autoLinkedMemos))b.autoLinkedMemos=[];
-    if(!a.autoLinkedMemos.includes(b.id)){a.autoLinkedMemos.push(b.id);changed=true;}
-    if(!b.autoLinkedMemos.includes(a.id)){b.autoLinkedMemos.push(a.id);changed=true;}
+    const a=savedMemos.find(m=>m.id===edge.from),b=savedMemos.find(m=>m.id===edge.to);if(!a||!b)return;
+    if(!Array.isArray(a.linkedMemos))a.linkedMemos=[];if(!Array.isArray(b.linkedMemos))b.linkedMemos=[];
+    if(!a.linkedMemos.includes(b.id)){a.linkedMemos.push(b.id);changed=true;}if(!b.linkedMemos.includes(a.id)){b.linkedMemos.push(a.id);changed=true;}
+    if(!Array.isArray(a.autoLinkedMemos))a.autoLinkedMemos=[];if(!Array.isArray(b.autoLinkedMemos))b.autoLinkedMemos=[];
+    if(!a.autoLinkedMemos.includes(b.id)){a.autoLinkedMemos.push(b.id);changed=true;}if(!b.autoLinkedMemos.includes(a.id)){b.autoLinkedMemos.push(a.id);changed=true;}
   });
   if(changed)saveMemos();
 }
-
-function getAutoLinkedIds(memo){
-  if(!memo||!Array.isArray(memo.autoLinkedMemos))return [];
-  return memo.autoLinkedMemos.map(Number).filter(id=>!Number.isNaN(id));
-}
-
-function formatThoughtDate(timestamp){
-  const d=new Date(timestamp);
-  return `${String(d.getFullYear()).slice(-2)}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
-}
-
-function detectThoughtMarkers(text){
-  const groups={
-    '고민·불확실':['고민','모르','헷갈','걱정','아직','일까','궁금'],
-    '긍정·관심':['좋','재밌','괜찮','하고 싶','가고 싶','마음에'],
-    '부담·부정':['싫','별로','힘들','어렵','후회','그만'],
-    '결정·행동':['결정','정했','하기로','할 거','해야','시작']
-  };
-  const found=[],value=String(text||'');
-  Object.entries(groups).forEach(([label,words])=>{
-    if(words.some(word=>value.includes(word)))found.push(label);
-  });
-  return found;
-}
-
-function summarizeThoughtChange(memos){
-  if(memos.length<2)return '연결된 기록이 2개 이상 모이면 생각의 변화 과정을 확인할 수 있어요.';
-  const sorted=[...memos].sort((a,b)=>a.id-b.id);
-  const first=detectThoughtMarkers(sorted[0].text);
-  const last=detectThoughtMarkers(sorted[sorted.length-1].text);
-  const parts=[];
-  if(first.length)parts.push(`처음 기록에는 ${first.join(', ')} 표현이 나타납니다.`);
-  if(last.length)parts.push(`최근 기록에는 ${last.join(', ')} 표현이 나타납니다.`);
-  return parts.length?parts.join(' '):'시간이 지나면서 같은 주제에 대한 기록이 이어지고 있습니다.';
-}
+function getAutoLinkedIds(memo){return memo&&Array.isArray(memo.autoLinkedMemos)?memo.autoLinkedMemos.map(Number).filter(id=>!Number.isNaN(id)):[];}
+function formatThoughtDate(timestamp){const d=new Date(timestamp);return `${String(d.getFullYear()).slice(-2)}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;}
 
 function getConnectionPairs(){
-  const pairs=[];
-  const seen=new Set();
-  savedMemos.forEach(memo=>{
-    getManualLinkedIds(memo).forEach(id=>{
-      const other=savedMemos.find(m=>m.id===id);
-      if(!other)return;
-      const key=[memo.id,other.id].sort((a,b)=>a-b).join('-');
-      if(seen.has(key))return;
-      seen.add(key);
-      pairs.push({from:memo.id,to:other.id,type:'manual'});
-    });
-  });
+  const pairs=[],seen=new Set();
+  savedMemos.forEach(memo=>getManualLinkedIds(memo).forEach(id=>{
+    const other=savedMemos.find(m=>m.id===id);if(!other)return;const key=thoughtPairKey(memo.id,other.id);if(seen.has(key))return;seen.add(key);
+    const auto=getAutoLinkedIds(memo).includes(Number(other.id))||getAutoLinkedIds(other).includes(Number(memo.id));
+    pairs.push({from:memo.id,to:other.id,type:auto?'auto':'manual'});
+  }));
   return pairs;
+}
+function getConnectedComponents(){
+  const byId=new Map(savedMemos.map(m=>[Number(m.id),m])),visited=new Set(),groups=[];
+  savedMemos.forEach(start=>{
+    if(visited.has(Number(start.id))||getManualLinkedIds(start).length===0)return;
+    const group=[],queue=[start];visited.add(Number(start.id));
+    while(queue.length){const cur=queue.shift();group.push(cur);getManualLinkedIds(cur).forEach(id=>{const next=byId.get(Number(id));if(next&&!visited.has(Number(next.id))){visited.add(Number(next.id));queue.push(next);}});}
+    if(group.length>=2)groups.push(group.sort((a,b)=>a.id-b.id));
+  });
+  return groups.sort((a,b)=>b.length-a.length||b[0].id-a[0].id);
+}
+function thoughtGroupKey(group){return group.map(m=>Number(m.id)).sort((a,b)=>a-b).join('_');}
+function getActiveGroup(){
+  if(!activeThoughtGroupKey)return null;
+  return getConnectedComponents().find(g=>thoughtGroupKey(g)===activeThoughtGroupKey)||null;
+}
+function chooseTopicWord(group){
+  const catCount={};group.forEach(m=>{const c=String(m.category||'').replace(/^#/,'');if(c&&c!=='미분류')catCount[c]=(catCount[c]||0)+1;});
+  const cats=Object.entries(catCount).sort((a,b)=>b[1]-a[1]);
+  if(cats.length&&cats[0][1]>=Math.max(2,Math.ceil(group.length/2)))return cats[0][0];
+  const count={};group.forEach(m=>getMeaningfulTokens(m.text).forEach(t=>{if(t.length>=2)count[t]=(count[t]||0)+1;}));
+  const top=Object.entries(count).sort((a,b)=>b[1]-a[1]||b[0].length-a[0].length).find(x=>x[1]>=2);
+  return top?top[0]:'';
+}
+function getThoughtGroupTitle(group,index=0){
+  const topic=chooseTopicWord(group); if(topic)return `${topic}에 대한 생각`;
+  const first=String(group[0]?.text||'').trim();
+  if(first){const clean=first.replace(/^#/, '');return clean.length>18?clean.slice(0,18)+'…':clean;}
+  return `생각 흐름 ${index+1}`;
+}
+function getThoughtGroupSummary(group){
+  const dates=group.map(m=>m.id).sort((a,b)=>a-b),first=dates[0],last=dates[dates.length-1];
+  return `${group.length}개의 기록 · ${formatThoughtDate(first)} ~ ${formatThoughtDate(last)}`;
 }
 
 function defaultThoughtPosition(index,total){
-  const cols=2;
-  const row=Math.floor(index/cols);
-  const col=index%cols;
-  const x=18+col*52;
-  const y=18+row*118;
-  return {x:Math.min(x,58),y:Math.min(y,82)};
+  const cols=3,row=Math.floor(index/cols),col=index%cols;return {x:8+col*31,y:8+row*24};
 }
-
 function getThoughtPosition(memo,index){
-  const saved=thoughtPositions[String(memo.id)];
-  if(saved&&Number.isFinite(saved.x)&&Number.isFinite(saved.y)){
-    return {x:Math.max(1,Math.min(94,saved.x)),y:Math.max(2,Math.min(94,saved.y))};
-  }
-  const pos=defaultThoughtPosition(index,savedMemos.length);
-  thoughtPositions[String(memo.id)]=pos;
-  return pos;
+  const saved=thoughtPositions[String(memo.id)];if(saved&&Number.isFinite(saved.x)&&Number.isFinite(saved.y))return {x:Math.max(1,Math.min(94,saved.x)),y:Math.max(2,Math.min(90,saved.y))};
+  const pos=defaultThoughtPosition(index,savedMemos.length);thoughtPositions[String(memo.id)]=pos;return pos;
 }
-
 function resetThoughtPositions(){
-  thoughtPositions={};
-  if(thoughtCenterId!==null)layoutThoughtMindMap();
-  else{
-    savedMemos.forEach((memo,index)=>{
-      thoughtPositions[String(memo.id)]=defaultThoughtPosition(index,savedMemos.length);
-    });
-    saveThoughtPositions();
-  }
-  renderThoughtFlow();
+  const group=getActiveGroup();if(group){thoughtPositions={};layoutThoughtMindMap();}
+  else savedMemos.forEach((memo,index)=>{thoughtPositions[String(memo.id)]=defaultThoughtPosition(index,savedMemos.length);});
+  saveThoughtPositions();renderThoughtFlow();
 }
-
 function selectThoughtNode(id){
-  if(selectedThoughtIds.includes(id)){
-    selectedThoughtIds=selectedThoughtIds.filter(x=>x!==id);
-  }else{
-    if(selectedThoughtIds.length>=2)selectedThoughtIds=[];
-    selectedThoughtIds.push(id);
-  }
-  updateThoughtSelectionUI();
+  if(selectedThoughtIds.includes(id))selectedThoughtIds=selectedThoughtIds.filter(x=>x!==id);else{if(selectedThoughtIds.length>=2)selectedThoughtIds=[];selectedThoughtIds.push(id);}updateThoughtSelectionUI();
 }
-
-function clearThoughtSelection(){
-  selectedThoughtIds=[];
-  updateThoughtSelectionUI();
-  renderThoughtFlow();
-}
-
+function clearThoughtSelection(){selectedThoughtIds=[];updateThoughtSelectionUI();renderThoughtFlow();}
 function updateThoughtSelectionUI(){
-  document.querySelectorAll('.thought-node').forEach(node=>{
-    node.classList.toggle('selected',selectedThoughtIds.includes(Number(node.dataset.id)));
-  });
-  const info=document.getElementById('thoughtSelectedInfo');
-  if(!info)return;
-  if(selectedThoughtIds.length){
-    const names=selectedThoughtIds.map(id=>{
-      const m=savedMemos.find(x=>x.id===id);
-      return m?`「${m.text.slice(0,18)}${m.text.length>18?'…':''}」`:'';
-    }).filter(Boolean);
-    info.style.display='block';
-    info.textContent=selectedThoughtIds.length===2
-      ? `${names.join('  ↔  ')} · 🔗 선택 연결을 누르면 두 기록이 연결됩니다.`
-      : `${names[0]} 선택됨 · 하나를 더 선택하면 바로 연결할 수 있어요.`;
-  }else{
-    info.style.display='none';
-  }
+  document.querySelectorAll('.thought-node').forEach(node=>node.classList.toggle('selected',selectedThoughtIds.includes(Number(node.dataset.id))));
+  const info=document.getElementById('thoughtSelectedInfo');if(!info)return;
+  if(selectedThoughtIds.length){const names=selectedThoughtIds.map(id=>{const m=savedMemos.find(x=>x.id===id);return m?`「${m.text.slice(0,18)}${m.text.length>18?'…':''}」`:'';}).filter(Boolean);info.style.display='block';info.textContent=selectedThoughtIds.length===2?`${names.join('  ↔  ')} · 🔗 선택 연결을 누르면 두 기록이 연결됩니다.`:`${names[0]} 선택됨 · 하나를 더 선택하면 바로 연결할 수 있어요.`;}else info.style.display='none';
 }
-
-function connectSelectedMemos(){
-  if(selectedThoughtIds.length!==2){
-    alert('연결할 메모 2개를 선택해주세요.');
-    return;
-  }
-  connectMemos(selectedThoughtIds[0],selectedThoughtIds[1]);
-  selectedThoughtIds=[];
-  renderThoughtFlow();
-}
-
+function connectSelectedMemos(){if(selectedThoughtIds.length!==2){alert('연결할 메모 2개를 선택해주세요.');return;}connectMemos(selectedThoughtIds[0],selectedThoughtIds[1]);selectedThoughtIds=[];renderThoughtFlow();}
 function connectMemos(aId,bId){
-  if(aId===bId)return;
-  const a=savedMemos.find(m=>m.id===aId);
-  const b=savedMemos.find(m=>m.id===bId);
-  if(!a||!b)return;
-  const blocked=getBlockedThoughtLinks();
-  blocked.delete(thoughtPairKey(aId,bId));
-  saveBlockedThoughtLinks(blocked);
-  if(!Array.isArray(a.linkedMemos))a.linkedMemos=[];
-  if(!Array.isArray(b.linkedMemos))b.linkedMemos=[];
-  if(!a.linkedMemos.includes(bId))a.linkedMemos.push(bId);
-  if(!b.linkedMemos.includes(aId))b.linkedMemos.push(aId);
-  saveMemos();
+  if(aId===bId)return;const a=savedMemos.find(m=>m.id===aId),b=savedMemos.find(m=>m.id===bId);if(!a||!b)return;
+  const blocked=getBlockedThoughtLinks();blocked.delete(thoughtPairKey(aId,bId));saveBlockedThoughtLinks(blocked);
+  if(!Array.isArray(a.linkedMemos))a.linkedMemos=[];if(!Array.isArray(b.linkedMemos))b.linkedMemos=[];
+  if(!a.linkedMemos.includes(bId))a.linkedMemos.push(bId);if(!b.linkedMemos.includes(aId))b.linkedMemos.push(aId);saveMemos();
 }
-
 function setSelectedAsThoughtCenter(){
-  if(selectedThoughtIds.length!==1){
-    alert('중심으로 만들 메모 1개를 선택해주세요.');
-    return;
-  }
-  thoughtCenterId=Number(selectedThoughtIds[0]);
-  saveThoughtCenter();
-  selectedThoughtIds=[];
-  layoutThoughtMindMap();
-  renderThoughtFlow();
+  if(selectedThoughtIds.length!==1){alert('중심으로 만들 메모 1개를 선택해주세요.');return;}
+  const group=getActiveGroup();if(!group)return;
+  const key=thoughtGroupKey(group);thoughtCenterId=Number(selectedThoughtIds[0]);thoughtGroupCenters[key]=thoughtCenterId;saveThoughtCenter();saveThoughtGroupCenters();selectedThoughtIds=[];layoutThoughtMindMap();renderThoughtFlow();
 }
-
 function clearThoughtCenter(){
-  thoughtCenterId=null;
-  saveThoughtCenter();
-  renderThoughtFlow();
+  const group=getActiveGroup();if(group){delete thoughtGroupCenters[thoughtGroupKey(group)];saveThoughtGroupCenters();}thoughtCenterId=null;saveThoughtCenter();renderThoughtFlow();
 }
+function enterThoughtGroup(key){
+  const group=getConnectedComponents().find(g=>thoughtGroupKey(g)===key);if(!group)return;
+  activeThoughtGroupKey=key;selectedThoughtIds=[];thoughtCenterId=Number(thoughtGroupCenters[key]||'')||null;
+  if(thoughtCenterId&&!group.some(m=>Number(m.id)===thoughtCenterId))thoughtCenterId=null;
+  saveThoughtCenter();renderThoughtFlow();
+}
+function exitThoughtGroup(){activeThoughtGroupKey=null;selectedThoughtIds=[];thoughtCenterId=null;saveThoughtCenter();renderThoughtFlow();}
 
 function getConnectedComponent(startId){
-  if(startId===null||startId===undefined)return [];
-  const start=savedMemos.find(m=>Number(m.id)===Number(startId));
-  if(!start)return [];
-  const seen=new Set([Number(start.id)]),queue=[start];
-  while(queue.length){
-    const cur=queue.shift();
-    getManualLinkedIds(cur).forEach(id=>{
-      const next=savedMemos.find(m=>Number(m.id)===Number(id));
-      if(next&&!seen.has(Number(next.id))){seen.add(Number(next.id));queue.push(next);}
-    });
-  }
-  return savedMemos.filter(m=>seen.has(Number(m.id)));
+  const group=getConnectedComponents().find(g=>g.some(m=>Number(m.id)===Number(startId)));return group||[];
 }
-
 function layoutThoughtMindMap(){
-  const root= savedMemos.find(m=>Number(m.id)===Number(thoughtCenterId));
-  if(!root)return;
-  const component=getConnectedComponent(root.id);
-  const ids=new Set(component.map(m=>Number(m.id)));
-  const levelMap=new Map([[Number(root.id),0]]);
-  const parentMap=new Map();
-  const queue=[root];
-  while(queue.length){
-    const cur=queue.shift();
-    const curLevel=levelMap.get(Number(cur.id));
-    getManualLinkedIds(cur).forEach(id=>{
-      const n=savedMemos.find(m=>Number(m.id)===Number(id));
-      if(!n||!ids.has(Number(n.id))||levelMap.has(Number(n.id)))return;
-      levelMap.set(Number(n.id),curLevel+1);
-      parentMap.set(Number(n.id),Number(cur.id));
-      queue.push(n);
-    });
-  }
-  thoughtPositions[String(root.id)]={x:50,y:50};
-  const levels={};
-  component.forEach(m=>{const l=levelMap.get(Number(m.id));if(l!==undefined){(levels[l]||(levels[l]=[])).push(m);}});
-  Object.keys(levels).map(Number).filter(l=>l>0).sort((a,b)=>a-b).forEach(level=>{
-    const nodes=levels[level];
-    const radiusX=Math.min(44,18+level*14);
-    const radiusY=Math.min(38,15+level*11);
-    nodes.forEach((m,i)=>{
-      const angle=(-Math.PI/2)+(Math.PI*2*i/nodes.length);
-      thoughtPositions[String(m.id)]={x:50+Math.cos(angle)*radiusX,y:50+Math.sin(angle)*radiusY};
-    });
-  });
+  const root=savedMemos.find(m=>Number(m.id)===Number(thoughtCenterId));if(!root)return;const component=getActiveGroup()||getConnectedComponent(root.id);if(!component.length)return;
+  const ids=new Set(component.map(m=>Number(m.id))),levelMap=new Map([[Number(root.id),0]]),queue=[root];
+  while(queue.length){const cur=queue.shift(),level=levelMap.get(Number(cur.id));getManualLinkedIds(cur).forEach(id=>{const n=savedMemos.find(m=>Number(m.id)===Number(id));if(!n||!ids.has(Number(n.id))||levelMap.has(Number(n.id)))return;levelMap.set(Number(n.id),level+1);queue.push(n);});}
+  thoughtPositions[String(root.id)]={x:50,y:48};const levels={};component.forEach(m=>{const l=levelMap.get(Number(m.id));if(l!==undefined)(levels[l]||(levels[l]=[])).push(m);});
+  Object.keys(levels).map(Number).filter(l=>l>0).sort((a,b)=>a-b).forEach(level=>{const nodes=levels[level],radiusX=Math.min(42,18+level*13),radiusY=Math.min(38,14+level*11);nodes.forEach((m,i)=>{const angle=(-Math.PI/2)+(Math.PI*2*i/nodes.length);thoughtPositions[String(m.id)]={x:50+Math.cos(angle)*radiusX,y:48+Math.sin(angle)*radiusY};});});
   saveThoughtPositions();
 }
-
-
 function disconnectMemos(aId,bId){
-  const a=savedMemos.find(m=>m.id===aId);
-  const b=savedMemos.find(m=>m.id===bId);
-  const key=thoughtPairKey(aId,bId);
-  const blocked=getBlockedThoughtLinks();
-  blocked.add(key);
-  saveBlockedThoughtLinks(blocked);
-  if(a&&Array.isArray(a.linkedMemos))a.linkedMemos=a.linkedMemos.filter(id=>Number(id)!==Number(bId));
-  if(b&&Array.isArray(b.linkedMemos))b.linkedMemos=b.linkedMemos.filter(id=>Number(id)!==Number(aId));
-  if(a&&Array.isArray(a.autoLinkedMemos))a.autoLinkedMemos=a.autoLinkedMemos.filter(id=>Number(id)!==Number(bId));
-  if(b&&Array.isArray(b.autoLinkedMemos))b.autoLinkedMemos=b.autoLinkedMemos.filter(id=>Number(id)!==Number(aId));
-  saveMemos();
+  const a=savedMemos.find(m=>m.id===aId),b=savedMemos.find(m=>m.id===bId),key=thoughtPairKey(aId,bId),blocked=getBlockedThoughtLinks();blocked.add(key);saveBlockedThoughtLinks(blocked);
+  if(a&&Array.isArray(a.linkedMemos))a.linkedMemos=a.linkedMemos.filter(id=>Number(id)!==Number(bId));if(b&&Array.isArray(b.linkedMemos))b.linkedMemos=b.linkedMemos.filter(id=>Number(id)!==Number(aId));
+  if(a&&Array.isArray(a.autoLinkedMemos))a.autoLinkedMemos=a.autoLinkedMemos.filter(id=>Number(id)!==Number(bId));if(b&&Array.isArray(b.autoLinkedMemos))b.autoLinkedMemos=b.autoLinkedMemos.filter(id=>Number(id)!==Number(aId));saveMemos();
 }
 
-function openLinkMemoModal(memoId){
-  const target=savedMemos.find(m=>m.id===memoId);
-  if(!target)return;
-  linkingMemoId=memoId;
-  const short=String(target.text);
-  document.getElementById('linkModalTitle').textContent=`🔗 「${short.length>18?short.slice(0,18)+'…':short}」 연결`;
-  const list=document.getElementById('linkMemoList');
-  list.innerHTML='';
-  const others=[...savedMemos].filter(m=>m.id!==memoId).sort((a,b)=>b.id-a.id);
-  if(!others.length){
-    list.innerHTML='<div class="thought-empty" style="margin:0;">연결할 다른 메모가 아직 없어요.</div>';
-  }else{
-    others.forEach(memo=>{
-      const label=document.createElement('label');
-      label.className='link-memo-option';
-      const checkbox=document.createElement('input');
-      checkbox.type='checkbox';
-      checkbox.value=memo.id;
-      checkbox.checked=getManualLinkedIds(target).includes(Number(memo.id));
-      const text=document.createElement('div');
-      text.className='link-memo-option-text';
-      text.innerHTML=`<div class="link-memo-option-main">${escapeHtml(memo.text)}</div><div class="link-memo-option-meta">${formatThoughtDate(memo.id)} · ${escapeHtml(memo.category||'#미분류')}</div>`;
-      label.append(checkbox,text);
-      list.appendChild(label);
-    });
-  }
-  document.getElementById('linkMemoModalOverlay').style.display='flex';
-}
-
-function closeLinkMemoModal(){
-  document.getElementById('linkMemoModalOverlay').style.display='none';
-  linkingMemoId=null;
-}
-
-function saveMemoLinks(){
-  if(linkingMemoId===null)return;
-  const checked=[...document.querySelectorAll('#linkMemoList input[type="checkbox"]:checked')].map(x=>Number(x.value));
-  const targetId=Number(linkingMemoId);
-  savedMemos.forEach(m=>{
-    if(!Array.isArray(m.linkedMemos))m.linkedMemos=[];
-    m.linkedMemos=m.linkedMemos.filter(id=>id!==targetId);
-  });
-  const target=savedMemos.find(m=>m.id===targetId);
-  if(target)target.linkedMemos=[...new Set(checked.filter(id=>id!==targetId))];
-  checked.forEach(id=>{
-    const other=savedMemos.find(m=>m.id===id);
-    if(!other)return;
-    if(!Array.isArray(other.linkedMemos))other.linkedMemos=[];
-    if(!other.linkedMemos.includes(targetId))other.linkedMemos.push(targetId);
-  });
-  saveMemos();
-  closeLinkMemoModal();
-  renderThoughtFlow();
-}
-
-function startThoughtLink(event,id){
-  event.stopPropagation();
-  event.preventDefault();
-  linkingFromId=Number(id);
-  const temp=document.getElementById('thoughtTempEdge');
-  if(temp)temp.style.display='block';
-  document.addEventListener('pointermove',moveThoughtLink);
-  document.addEventListener('pointerup',finishThoughtLink,{once:true});
-}
-
-function getNodeCenter(id){
-  const node=document.querySelector(`.thought-node[data-id="${id}"]`);
-  const graph=document.getElementById('thoughtGraph');
-  if(!node||!graph)return null;
-  const nr=node.getBoundingClientRect(),gr=graph.getBoundingClientRect();
-  return {x:nr.left-gr.left+nr.width/2,y:nr.top-gr.top+nr.height/2};
-}
-
-function moveThoughtLink(event){
-  if(linkingFromId===null)return;
-  const graph=document.getElementById('thoughtGraph');
-  const temp=document.getElementById('thoughtTempEdge');
-  const start=getNodeCenter(linkingFromId);
-  if(!graph||!temp||!start)return;
-  const gr=graph.getBoundingClientRect();
-  const endX=Math.max(0,Math.min(graph.clientWidth,event.clientX-gr.left));
-  const endY=Math.max(0,Math.min(graph.clientHeight,event.clientY-gr.top));
-  temp.setAttribute('d',makeCurve(start.x,start.y,endX,endY));
-}
-
-function finishThoughtLink(event){
-  document.removeEventListener('pointermove',moveThoughtLink);
-  const graph=document.getElementById('thoughtGraph');
-  const temp=document.getElementById('thoughtTempEdge');
-  if(temp)temp.style.display='none';
-  if(linkingFromId===null)return;
-  const gr=graph.getBoundingClientRect();
-  const x=event.clientX-gr.left,y=event.clientY-gr.top;
-  let targetId=null;
-  document.querySelectorAll('.thought-node').forEach(node=>{
-    const r=node.getBoundingClientRect();
-    if(event.clientX>=r.left&&event.clientX<=r.right&&event.clientY>=r.top&&event.clientY<=r.bottom){
-      targetId=Number(node.dataset.id);
-    }
-  });
-  if(targetId&&targetId!==linkingFromId){
-    connectMemos(linkingFromId,targetId);
-    renderThoughtFlow();
-  }
-  linkingFromId=null;
-}
-
-function startThoughtNodeDrag(event,id){
-  if(event.target.closest('.thought-node-port'))return;
-  const node=event.currentTarget;
-  const graph=document.getElementById('thoughtGraph');
-  const gr=graph.getBoundingClientRect(),nr=node.getBoundingClientRect();
-  isDraggingThoughtNode=true;
-  thoughtDragOffset={x:event.clientX-nr.left,y:event.clientY-nr.top};
-  node.classList.add('dragging');
-  const move=e=>{
-    const x=Math.max(2,Math.min(graph.clientWidth-node.offsetWidth-2,e.clientX-gr.left-thoughtDragOffset.x));
-    const y=Math.max(2,Math.min(graph.clientHeight-node.offsetHeight-2,e.clientY-gr.top-thoughtDragOffset.y));
-    node.style.left=x+'px';
-    node.style.top=y+'px';
-    thoughtPositions[String(id)]={x:x/graph.clientWidth*100,y:y/graph.clientHeight*100};
-    renderThoughtEdgesOnly();
-  };
-  const up=()=>{
-    node.classList.remove('dragging');
-    isDraggingThoughtNode=false;
-    saveThoughtPositions();
-    document.removeEventListener('pointermove',move);
-    document.removeEventListener('pointerup',up);
-  };
-  document.addEventListener('pointermove',move);
-  document.addEventListener('pointerup',up,{once:true});
-}
-
-function makeCurve(x1,y1,x2,y2){
-  const dx=Math.max(30,Math.abs(x2-x1)*0.35);
-  const c1x=x1+(x2>=x1?dx:-dx);
-  const c2x=x2-(x2>=x1?dx:-dx);
-  return `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
-}
-
+function makeCurve(x1,y1,x2,y2){const dx=Math.max(30,Math.abs(x2-x1)*0.35),c1x=x1+(x2>=x1?dx:-dx),c2x=x2-(x2>=x1?dx:-dx);return `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;}
+function getNodeCenter(id){const node=document.querySelector(`.thought-node[data-id="${id}"]`),graph=document.getElementById('thoughtGraph');if(!node||!graph)return null;const nr=node.getBoundingClientRect(),gr=graph.getBoundingClientRect();return{x:nr.left-gr.left+nr.width/2,y:nr.top-gr.top+nr.height/2};}
 function renderThoughtEdgesOnly(){
-  const group=document.getElementById('thoughtEdges');
-  const graph=document.getElementById('thoughtGraph');
-  if(!group||!graph)return;
-  group.innerHTML='';
-  const visibleIds=new Set([...document.querySelectorAll('.thought-node')].map(n=>Number(n.dataset.id)));
-  const pairs=getConnectionPairs().filter(edge=>visibleIds.has(Number(edge.from))&&visibleIds.has(Number(edge.to)));
-  const autoPairs=getAutomaticEdges();
-  pairs.forEach(edge=>{
-    const a=getNodeCenter(edge.from),b=getNodeCenter(edge.to);
-    if(!a||!b)return;
-    const isAuto=autoPairs.some(p=>(p.from===edge.from&&p.to===edge.to)||(p.from===edge.to&&p.to===edge.from));
-    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d',makeCurve(a.x,a.y,b.x,b.y));
-    path.setAttribute('class',isAuto?'thought-edge auto':'thought-edge manual');
-    path.setAttribute('marker-end',isAuto?'url(#arrowSuggested)':'url(#arrowManual)');
-    path.style.pointerEvents='stroke';
-    path.addEventListener('click',e=>{
-      e.stopPropagation();
-      if(confirm('이 연결을 끊을까요?')){
-        disconnectMemos(edge.from,edge.to);
-        renderThoughtFlow();
-      }
-    });
-    group.appendChild(path);
-  });
+  const group=document.getElementById('thoughtEdges'),graph=document.getElementById('thoughtGraph');if(!group||!graph)return;group.innerHTML='';const visibleIds=new Set([...document.querySelectorAll('.thought-node')].map(n=>Number(n.dataset.id)));
+  getConnectionPairs().filter(e=>visibleIds.has(Number(e.from))&&visibleIds.has(Number(e.to))).forEach(edge=>{const a=getNodeCenter(edge.from),b=getNodeCenter(edge.to);if(!a||!b)return;const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',makeCurve(a.x,a.y,b.x,b.y));path.setAttribute('class',edge.type==='auto'?'thought-edge auto':'thought-edge manual');path.setAttribute('marker-end',edge.type==='auto'?'url(#arrowSuggested)':'url(#arrowManual)');path.style.pointerEvents='stroke';path.style.cursor='pointer';path.addEventListener('click',e=>{e.stopPropagation();if(confirm('이 연결을 끊을까요?')){disconnectMemos(edge.from,edge.to);renderThoughtFlow();}});group.appendChild(path);});
+}
+function buildThoughtNode(memo,isCenter=false,index=0){
+  const node=document.createElement('div');node.className='thought-node'+(isCenter?' center-node':'');node.dataset.id=memo.id;const pos=getThoughtPosition(memo,index);node.style.left=`${pos.x}%`;node.style.top=`${pos.y}%`;
+  node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><div class="thought-node-meta">${isCenter?'◎ 중심 · ':''}${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div><div class="thought-node-hint">클릭: 선택 · ● 드래그: 연결 · 선 클릭: 연결 해제</div>`;
+  node.addEventListener('pointerdown',e=>{if(e.target.closest('.thought-node-port'))return;if(e.button!==undefined&&e.button!==0)return;startThoughtNodeDrag(e,memo.id);});
+  node.addEventListener('click',e=>{if(isDraggingThoughtNode||e.target.closest('.thought-node-port'))return;selectThoughtNode(memo.id);});
+  node.querySelector('.thought-node-port.right').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));node.querySelector('.thought-node-port.left').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
+  node.addEventListener('dblclick',e=>{e.stopPropagation();const idx=savedMemos.findIndex(m=>m.id===memo.id);if(idx!==-1)openMemoModal(idx);});
+  node.addEventListener('contextmenu',e=>{e.preventDefault();openLinkMemoModal(memo.id);});return node;
+}
+function renderGroupOverview(){
+  const box=document.getElementById('thoughtGroupList');if(!box)return;const groups=getConnectedComponents();box.innerHTML='';
+  if(!groups.length){box.innerHTML='<div class="thought-empty" style="grid-column:1/-1;"><div class="thought-empty-graphic">🔗</div>아직 연결된 생각 묶음이 없어요.<br>메모를 서로 연결하면 주제별 흐름이 여기에 생겨요.</div>';return;}
+  groups.forEach((group,index)=>{const card=document.createElement('div');card.className='thought-group-card';const title=getThoughtGroupTitle(group,index);const chips=group.slice(0,4).map(m=>`<span class="thought-group-chip">${escapeHtml(m.text)}</span>`).join('');card.innerHTML=`<div class="thought-group-kicker">THOUGHT FLOW ${String(index+1).padStart(2,'0')}</div><div class="thought-group-title">${escapeHtml(title)}</div><div class="thought-group-sub">${getThoughtGroupSummary(group)}<br>이 주제의 메모를 마인드맵으로 보기</div><div class="thought-group-preview">${chips}</div><div class="thought-group-dots"><span class="thought-group-dot"></span><span class="thought-group-dot"></span><span class="thought-group-dot"></span></div>`;card.addEventListener('click',()=>enterThoughtGroup(thoughtGroupKey(group)));box.appendChild(card);});
 }
 
-function renderThoughtUnconnected(){
-  const box=document.getElementById('thoughtUnconnectedList');
-  if(!box)return;
-  const connectedIds=new Set();
-  savedMemos.forEach(m=>getManualLinkedIds(m).forEach(id=>connectedIds.add(Number(id))));
-  const unconnected=savedMemos.filter(m=>!connectedIds.has(Number(m.id)) && getManualLinkedIds(m).length===0);
-  if(!unconnected.length){
-    box.innerHTML='<div class="thought-empty" style="grid-column:1/-1;">현재 연결되지 않은 메모가 없어요.<br>새 메모를 작성하거나 연결을 해제하면 이곳에 나타나요.</div>';
-    return;
-  }
-  box.innerHTML='';
-  [...unconnected].sort((a,b)=>b.id-a.id).forEach(memo=>{
-    const card=document.createElement('div');
-    card.className='unlinked-card';
-    card.innerHTML=`<div class="unlinked-card-date">${formatThoughtDate(memo.id)}</div><div class="unlinked-card-text">${escapeHtml(memo.text)}</div><div class="unlinked-card-meta">${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div>`;
-    card.addEventListener('click',()=>openLinkMemoModal(memo.id));
-    card.addEventListener('contextmenu',e=>{e.preventDefault();openLinkMemoModal(memo.id);});
-    box.appendChild(card);
-  });
-}
-
-function switchThoughtView(view){
-  const connected=view==='connected';
-  document.getElementById('thoughtConnectedView')?.classList.toggle('active',connected);
-  document.getElementById('thoughtUnconnectedView')?.classList.toggle('active',!connected);
-  document.getElementById('thoughtConnectedBtn')?.classList.toggle('active',connected);
-  document.getElementById('thoughtUnconnectedBtn')?.classList.toggle('active',!connected);
-  if(!connected)renderThoughtUnconnected();
-}
-
-function renderThoughtChangePanel(){
-  const box=document.getElementById('thoughtChangePanel');
-  if(!box)return;
-  const linkedGroups=[];
-  const visited=new Set();
-  savedMemos.forEach(start=>{
-    if(visited.has(start.id))return;
-    const group=[],queue=[start];
-    visited.add(start.id);
-    while(queue.length){
-      const cur=queue.shift();
-      group.push(cur);
-      getManualLinkedIds(cur).forEach(id=>{
-        const next=savedMemos.find(m=>m.id===id);
-        if(next&&!visited.has(next.id)){visited.add(next.id);queue.push(next);}
-      });
-    }
-    if(group.length>=2)linkedGroups.push(group.sort((a,b)=>a.id-b.id));
-  });
-  box.innerHTML='<div class="thought-panel-title">💭 생각의 변화</div>';
-  if(!linkedGroups.length){
-    box.innerHTML+='<div style="font-size:9px;color:#999;">메모를 직접 연결하면 연결된 기록을 시간순으로 보고 생각의 변화를 확인할 수 있어요.</div>';
-    return;
-  }
-  linkedGroups.slice(0,3).forEach(group=>{
-    const div=document.createElement('div');
-    div.className='thought-change-box';
-    div.innerHTML=`${escapeHtml(summarizeThoughtChange(group))}<br><button class="thought-refresh-btn gray" style="margin-top:6px;" data-reply="${group[group.length-1].id}">💭 최근 생각 이어쓰기</button>`;
-    div.querySelector('button').onclick=()=>openThoughtReplyPrompt(group[group.length-1].id);
-    box.appendChild(div);
-  });
+function renderThoughtChangePanel(group){
+  const box=document.getElementById('thoughtChangePanel');if(!box)return;box.innerHTML='<div class="thought-panel-title">💭 생각의 변화</div>';
+  if(!group||group.length<2){box.innerHTML+='<div style="font-size:9px;color:#999;">연결된 기록이 생기면 시간순으로 생각의 변화를 확인할 수 있어요.</div>';return;}
+  const ordered=[...group].sort((a,b)=>a.id-b.id);box.innerHTML+=`<div class="thought-change-box">${escapeHtml(summarizeThoughtChange(ordered))}<br><button class="thought-refresh-btn gray" style="margin-top:6px;" data-reply="${ordered[ordered.length-1].id}">💭 최근 생각 이어쓰기</button></div>`;box.querySelector('button').onclick=()=>openThoughtReplyPrompt(ordered[ordered.length-1].id);
 }
 
 function renderThoughtFlow(){
-  normalizeMemoData();
-  autoConnectThoughtMemos();
-  const graph=document.getElementById('thoughtGraph');
-  if(!graph)return;
-  graph.querySelectorAll('.thought-node').forEach(n=>n.remove());
-
-  const centerBadge=document.getElementById('thoughtCenterBadge');
-  const center=savedMemos.find(m=>Number(m.id)===Number(thoughtCenterId));
-  if(centerBadge){
-    centerBadge.innerHTML=center ? `◎ 중심 메모: 「${escapeHtml(String(center.text).slice(0,28))}${String(center.text).length>28?'…':''}」` : '◎ 메모를 선택한 뒤 「중심으로 설정」을 눌러주세요';
-  }
-
-  if(!savedMemos.length){
-    graph.innerHTML='<div class="thought-empty" style="position:absolute;left:20px;right:20px;top:260px;">아직 메모가 없어요.<br>메모를 작성하면 이 공간에 기록들이 연결돼요.</div>';
-    const s=document.getElementById('thoughtSummary');
-    if(s)s.innerHTML='<div class="thought-panel-title">🧠 생각 흐름</div><div style="font-size:9px;color:#999;">메모를 작성하면 관련된 생각이 자동으로 연결돼요.</div>';
-    renderThoughtUnconnected();
-    return;
-  }
-
-  const globallyConnected=savedMemos.filter(m=>getManualLinkedIds(m).length>0);
-  if(!center){
-    if(!globallyConnected.length){
-      graph.innerHTML='<div class="thought-empty" style="position:absolute;left:12%;right:12%;top:230px;">아직 연결된 메모가 없어요.<br><br>메모를 두 개 이상 선택해서 연결하거나 ●를 드래그해 연결해 보세요.</div>';
-      renderThoughtChangePanel();
-      renderThoughtUnconnected();
-      updateThoughtSelectionUI();
-      return;
-    }
-    // 중심을 정하기 전에는 연결된 메모들을 선택할 수 있도록 펼쳐 놓습니다.
-    const sorted=[...globallyConnected].sort((a,b)=>a.id-b.id);
-    sorted.forEach((memo,index)=>{
-      const node=document.createElement('div');
-      node.className='thought-node';
-      node.dataset.id=memo.id;
-      const pos=getThoughtPosition(memo,index);
-      node.style.left=`${pos.x}%`;
-      node.style.top=`${pos.y}%`;
-      node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><div class="thought-node-date">${formatThoughtDate(memo.id)}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><div class="thought-node-meta">${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div><div class="thought-node-hint">클릭해서 선택 → ◎ 중심으로 설정</div>`;
-      node.addEventListener('pointerdown',e=>{if(e.target.closest('.thought-node-port'))return;if(e.button!==undefined&&e.button!==0)return;startThoughtNodeDrag(e,memo.id);});
-      node.addEventListener('click',e=>{if(isDraggingThoughtNode)return;if(e.target.closest('.thought-node-port'))return;selectThoughtNode(memo.id);});
-      node.querySelector('.thought-node-port.right').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
-      node.querySelector('.thought-node-port.left').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
-      node.addEventListener('dblclick',e=>{e.stopPropagation();const idx=savedMemos.findIndex(m=>m.id===memo.id);if(idx!==-1)openMemoModal(idx);});
-      node.addEventListener('contextmenu',e=>{e.preventDefault();openLinkMemoModal(memo.id);});
-      graph.appendChild(node);
-    });
+  normalizeMemoData();autoConnectThoughtMemos();
+  const groupOverview=document.getElementById('thoughtGroupOverview'),detail=document.getElementById('thoughtGroupDetail');if(!groupOverview||!detail)return;
+  const centerBadge=document.getElementById('thoughtCenterBadge');const active=getActiveGroup();
+  if(activeThoughtGroupKey&&active){
+    groupOverview.style.display='none';detail.style.display='block';
+    const title=getThoughtGroupTitle(active,0);document.getElementById('thoughtDetailTitle').textContent=`${title} · ${active.length}개 기록`;
+    const centerId=Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null;thoughtCenterId=centerId;const center=active.find(m=>Number(m.id)===centerId);
+    if(centerBadge)centerBadge.innerHTML=center?`◎ 중심 메모: 「${escapeHtml(String(center.text).slice(0,28))}${String(center.text).length>28?'…':''}」`:'◎ 이 주제의 중심 메모를 하나 선택해 주세요';
+    const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#7b61ff"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>`;
+    const svg=graph.querySelector('svg');active.forEach((memo,index)=>graph.appendChild(buildThoughtNode(memo,Number(memo.id)===centerId,index)));
+    if(center){layoutThoughtMindMap();active.forEach((memo,index)=>{const node=document.querySelector(`.thought-node[data-id="${memo.id}"]`);const pos=getThoughtPosition(memo,index);if(node){node.style.left=`${pos.x}%`;node.style.top=`${pos.y}%`;}});}
     renderThoughtEdgesOnly();
-    const summary=document.getElementById('thoughtSummary');
-    if(summary)summary.innerHTML=`<div class="thought-panel-title">◎ 중심 메모 선택</div><div style="font-size:9px;color:#777;line-height:1.5;">연결된 메모 <b>${globallyConnected.length}</b>개가 있어요.<br>중심으로 삼을 메모를 하나 클릭한 뒤 <b>◎ 중심으로 설정</b>을 눌러주세요.</div>`;
-    renderThoughtChangePanel();
-    renderThoughtUnconnected();
-    updateThoughtSelectionUI();
-    return;
+    const summary=document.getElementById('thoughtSummary');if(summary)summary.innerHTML=`<div class="thought-panel-title">🧠 ${escapeHtml(title)}</div><div style="font-size:9px;color:#777;line-height:1.5;">이 주제에 연결된 메모 <b>${active.length}</b>개 · 중심을 정하면 마인드맵처럼 펼쳐져요.<br>메모 두 개를 선택해 수동 연결하거나 ●를 드래그해 연결할 수 있어요.</div>`;
+    renderThoughtChangePanel(active);updateThoughtSelectionUI();return;
   }
+  groupOverview.style.display='block';detail.style.display='none';if(centerBadge)centerBadge.innerHTML='◎ 연결된 생각의 주제를 선택하면 중심 메모를 정할 수 있어요';renderGroupOverview();
+  const summary=document.getElementById('thoughtSummary');if(summary)summary.innerHTML='';const change=document.getElementById('thoughtChangePanel');if(change)change.innerHTML='';
+}
 
-  if(getManualLinkedIds(center).length===0){
-    graph.innerHTML='<div class="thought-empty" style="position:absolute;left:12%;right:12%;top:230px;">현재 중심 메모에는 연결된 기록이 없어요.<br><br>다른 메모를 연결하거나 중심을 다른 메모로 바꿔주세요.</div>';
-    renderThoughtChangePanel();
-    renderThoughtUnconnected();
-    updateThoughtSelectionUI();
-    return;
-  }
+function startThoughtLink(event,id){event.stopPropagation();event.preventDefault();linkingFromId=Number(id);const temp=document.getElementById('thoughtTempEdge');if(temp)temp.style.display='block';document.addEventListener('pointermove',moveThoughtLink);document.addEventListener('pointerup',finishThoughtLink,{once:true});}
+function moveThoughtLink(event){if(linkingFromId===null)return;const graph=document.getElementById('thoughtGraph'),temp=document.getElementById('thoughtTempEdge'),start=getNodeCenter(linkingFromId);if(!graph||!temp||!start)return;const gr=graph.getBoundingClientRect();const x=Math.max(0,Math.min(graph.clientWidth,event.clientX-gr.left)),y=Math.max(0,Math.min(graph.clientHeight,event.clientY-gr.top));temp.setAttribute('d',makeCurve(start.x,start.y,x,y));}
+function finishThoughtLink(event){document.removeEventListener('pointermove',moveThoughtLink);const graph=document.getElementById('thoughtGraph'),temp=document.getElementById('thoughtTempEdge');if(temp)temp.style.display='none';if(linkingFromId===null)return;let targetId=null;document.querySelectorAll('.thought-node').forEach(node=>{const r=node.getBoundingClientRect();if(event.clientX>=r.left&&event.clientX<=r.right&&event.clientY>=r.top&&event.clientY<=r.bottom)targetId=Number(node.dataset.id);});if(targetId&&targetId!==linkingFromId){connectMemos(linkingFromId,targetId);renderThoughtFlow();}linkingFromId=null;}
+function startThoughtNodeDrag(event,id){
+  if(event.target.closest('.thought-node-port'))return;const node=event.currentTarget,graph=document.getElementById('thoughtGraph'),gr=graph.getBoundingClientRect(),nr=node.getBoundingClientRect();isDraggingThoughtNode=true;thoughtDragOffset={x:event.clientX-nr.left,y:event.clientY-nr.top};node.classList.add('dragging');
+  const move=e=>{const x=Math.max(2,Math.min(graph.clientWidth-node.offsetWidth-2,e.clientX-gr.left-thoughtDragOffset.x)),y=Math.max(2,Math.min(graph.clientHeight-node.offsetHeight-2,e.clientY-gr.top-thoughtDragOffset.y));node.style.left=x+'px';node.style.top=y+'px';thoughtPositions[String(id)]={x:x/graph.clientWidth*100,y:y/graph.clientHeight*100};renderThoughtEdgesOnly();};
+  const up=()=>{node.classList.remove('dragging');isDraggingThoughtNode=false;saveThoughtPositions();document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up,{once:true});
+}
 
-  layoutThoughtMindMap();
-  const component=getConnectedComponent(center.id);
-  const sorted=[...component].sort((a,b)=>a.id-b.id);
-  sorted.forEach((memo,index)=>{
-    const node=document.createElement('div');
-    node.className='thought-node';
-    if(Number(memo.id)===Number(thoughtCenterId))node.classList.add('center-node');
-    node.dataset.id=memo.id;
-    const pos=getThoughtPosition(memo,index);
-    node.style.left=`${pos.x}%`;
-    node.style.top=`${pos.y}%`;
-    node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><div class="thought-node-meta">${Number(memo.id)===Number(thoughtCenterId)?'◎ 중심 · ':''}${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div><div class="thought-node-hint">클릭: 선택 · ● 드래그: 연결 · 선 클릭: 연결 해제</div>`;
-    node.addEventListener('pointerdown',e=>{
-      if(e.target.closest('.thought-node-port'))return;
-      if(e.button!==undefined&&e.button!==0)return;
-      startThoughtNodeDrag(e,memo.id);
-    });
-    node.addEventListener('click',e=>{
-      if(isDraggingThoughtNode)return;
-      if(e.target.closest('.thought-node-port'))return;
-      selectThoughtNode(memo.id);
-    });
-    node.querySelector('.thought-node-port.right').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
-    node.querySelector('.thought-node-port.left').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
-    node.addEventListener('dblclick',e=>{e.stopPropagation();const idx=savedMemos.findIndex(m=>m.id===memo.id);if(idx!==-1)openMemoModal(idx);});
-    node.addEventListener('contextmenu',e=>{e.preventDefault();openLinkMemoModal(memo.id);});
-    graph.appendChild(node);
+function getUnconnectedPosition(memo,index,total){
+  try{const d=JSON.parse(localStorage.getItem(THOUGHT_UNCONNECTED_POSITION_KEY)||'{}'),p=d[String(memo.id)];if(p&&Number.isFinite(p.x)&&Number.isFinite(p.y))return p;}catch(e){}
+  const cols=3,row=Math.floor(index/cols),col=index%cols;return {x:7+col*31,y:8+row*24};
+}
+function saveUnconnectedPosition(id,pos){let d={};try{d=JSON.parse(localStorage.getItem(THOUGHT_UNCONNECTED_POSITION_KEY)||'{}');}catch(e){}d[String(id)]=pos;localStorage.setItem(THOUGHT_UNCONNECTED_POSITION_KEY,JSON.stringify(d));}
+function renderThoughtUnconnected(){
+  const box=document.getElementById('thoughtUnconnectedList');if(!box)return;box.innerHTML='';const unconnected=savedMemos.filter(m=>getManualLinkedIds(m).length===0).sort((a,b)=>b.id-a.id);
+  if(!unconnected.length){box.innerHTML='<div class="thought-empty" style="position:absolute;left:12%;right:12%;top:260px;"><div class="thought-empty-graphic">✨</div>연결되지 않은 메모가 없어요.<br>모든 생각이 다른 기록과 연결되어 있어요.</div>';return;}
+  unconnected.forEach((memo,index)=>{const card=document.createElement('div');card.className='unlinked-card';card.dataset.id=memo.id;const pos=getUnconnectedPosition(memo,index,unconnected.length);card.style.left=pos.x+'%';card.style.top=pos.y+'%';card.style.animationDelay=`${(index%5)*-.7}s`;card.innerHTML=`<div class="unlinked-card-date">${formatThoughtDate(memo.id)}</div><div class="unlinked-card-text">${escapeHtml(memo.text)}</div><div class="unlinked-card-meta">${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div><div class="thought-node-hint">클릭: 연결하기 · 드래그: 이동</div>`;
+    card.addEventListener('click',e=>{if(card.dataset.dragged==='1'){card.dataset.dragged='0';return;}openLinkMemoModal(memo.id);});
+    card.addEventListener('dblclick',e=>{e.stopPropagation();const idx=savedMemos.findIndex(m=>m.id===memo.id);if(idx!==-1)openMemoModal(idx);});
+    card.addEventListener('pointerdown',e=>{if(e.button!==undefined&&e.button!==0)return;const br=box.getBoundingClientRect(),cr=card.getBoundingClientRect(),ox=e.clientX-cr.left,oy=e.clientY-cr.top;card.classList.add('dragging');let moved=false;const move=ev=>{const x=Math.max(1,Math.min(box.clientWidth-card.offsetWidth-2,ev.clientX-br.left-ox)),y=Math.max(1,Math.min(box.clientHeight-card.offsetHeight-2,ev.clientY-br.top-oy));card.style.left=x+'px';card.style.top=y+'px';moved=true;card.dataset.dragged='1';};const up=()=>{card.classList.remove('dragging');if(moved)saveUnconnectedPosition(memo.id,{x:parseFloat(card.style.left)/box.clientWidth*100,y:parseFloat(card.style.top)/box.clientHeight*100});document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up,{once:true});});
+    box.appendChild(card);
   });
+}
+function switchThoughtView(view){const connected=view==='connected';document.getElementById('thoughtConnectedView')?.classList.toggle('active',connected);document.getElementById('thoughtUnconnectedView')?.classList.toggle('active',!connected);document.getElementById('thoughtConnectedBtn')?.classList.toggle('active',connected);document.getElementById('thoughtUnconnectedBtn')?.classList.toggle('active',!connected);if(!connected)renderThoughtUnconnected();else renderThoughtFlow();}
 
-  renderThoughtEdgesOnly();
-  const allConnected=savedMemos.filter(m=>getManualLinkedIds(m).length>0).length;
-  const summary=document.getElementById('thoughtSummary');
-  if(summary)summary.innerHTML=`<div class="thought-panel-title">🧠 현재 생각 흐름</div><div style="font-size:9px;color:#777;line-height:1.5;">중심 메모 <b>1</b>개 · 이 흐름의 연결 메모 <b>${component.length}</b>개 · 전체 연결 메모 <b>${allConnected}</b>개<br>새 메모가 생기면 새로고침할 때 관련 기록과 자동으로 연결됩니다.</div>`;
-  renderThoughtChangePanel();
-  renderThoughtUnconnected();
-  updateThoughtSelectionUI();
+function openLinkMemoModal(memoId){
+  const target=savedMemos.find(m=>m.id===memoId);if(!target)return;linkingMemoId=memoId;const short=String(target.text);document.getElementById('linkModalTitle').textContent=`🔗 「${short.length>18?short.slice(0,18)+'…':short}」 연결`;
+  const list=document.getElementById('linkMemoList');list.innerHTML='';const others=[...savedMemos].filter(m=>m.id!==memoId).sort((a,b)=>b.id-a.id);
+  if(!others.length)list.innerHTML='<div class="thought-empty" style="margin:0;">연결할 다른 메모가 아직 없어요.</div>';else others.forEach(memo=>{const label=document.createElement('label');label.className='link-memo-option';const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.value=memo.id;checkbox.checked=getManualLinkedIds(target).includes(Number(memo.id));const text=document.createElement('div');text.className='link-memo-option-text';text.innerHTML=`<div class="link-memo-option-main">${escapeHtml(memo.text)}</div><div class="link-memo-option-meta">${formatThoughtDate(memo.id)} · ${escapeHtml(memo.category||'#미분류')}</div>`;label.append(checkbox,text);list.appendChild(label);});
+  document.getElementById('linkMemoModalOverlay').style.display='flex';
+}
+function closeLinkMemoModal(){document.getElementById('linkMemoModalOverlay').style.display='none';linkingMemoId=null;}
+function saveMemoLinks(){
+  if(linkingMemoId===null)return;const checked=[...document.querySelectorAll('#linkMemoList input[type="checkbox"]:checked')].map(x=>Number(x.value)),targetId=Number(linkingMemoId);
+  savedMemos.forEach(m=>{if(!Array.isArray(m.linkedMemos))m.linkedMemos=[];m.linkedMemos=m.linkedMemos.filter(id=>id!==targetId);});
+  const target=savedMemos.find(m=>m.id===targetId);if(target)target.linkedMemos=[...new Set(checked.filter(id=>id!==targetId))];
+  checked.forEach(id=>{const other=savedMemos.find(m=>m.id===id);if(!other)return;if(!Array.isArray(other.linkedMemos))other.linkedMemos=[];if(!other.linkedMemos.includes(targetId))other.linkedMemos.push(targetId);});
+  saveMemos();closeLinkMemoModal();renderThoughtFlow();renderThoughtUnconnected();
 }
 
-function collectThoughtRecords(){
-  refreshThoughtFlow();
-}
-
-function openThoughtReplyPrompt(parentId){
-  const parent=savedMemos.find(m=>m.id===parentId);
-  if(!parent)return;
-  const text=prompt(`「${parent.text}」\n\n이 생각은 어떻게 달라졌나요?\n새롭게 생각한 내용을 적어주세요.`);
-  if(!text||!text.trim())return;
-  const newMemo={
-    id:createMemoId(),
-    text:text.trim(),
-    category:parent.category||'#미분류',
-    tag:parent.tag||'',
-    linkedMemos:[parent.id],
-    replyTo:parent.id
-  };
-  savedMemos.push(newMemo);
-  if(!Array.isArray(parent.linkedMemos))parent.linkedMemos=[];
-  if(!parent.linkedMemos.includes(newMemo.id))parent.linkedMemos.push(newMemo.id);
-  saveMemos();
-  renderWritePage();renderCategoryPage();renderAllMemosPage();renderThoughtFlow();
-}
-
-function refreshThoughtFlow(){
-  try{
-    const latest=JSON.parse(localStorage.getItem('notepound_memos'));
-    if(Array.isArray(latest))savedMemos=latest;
-    normalizeMemoData();
-  }catch(e){}
-  thoughtPositions=loadThoughtPositions();
-  renderThoughtFlow();
-}
+function openThoughtReplyPrompt(parentId){const parent=savedMemos.find(m=>m.id===parentId);if(!parent)return;const text=prompt(`「${parent.text}」\n\n이 생각은 어떻게 달라졌나요?\n새롭게 생각한 내용을 적어주세요.`);if(!text||!text.trim())return;const newMemo={id:createMemoId(),text:text.trim(),category:parent.category||'#미분류',tag:parent.tag||'',linkedMemos:[parent.id],replyTo:parent.id};savedMemos.push(newMemo);if(!Array.isArray(parent.linkedMemos))parent.linkedMemos=[];if(!parent.linkedMemos.includes(newMemo.id))parent.linkedMemos.push(newMemo.id);saveMemos();renderWritePage();renderCategoryPage();renderAllMemosPage();renderThoughtFlow();}
+function collectThoughtRecords(){refreshThoughtFlow();}
+function refreshThoughtFlow(){try{const latest=JSON.parse(localStorage.getItem('notepound_memos'));if(Array.isArray(latest))savedMemos=latest;normalizeMemoData();}catch(e){}thoughtPositions=loadThoughtPositions();renderThoughtFlow();if(document.getElementById('thoughtUnconnectedView')?.classList.contains('active'))renderThoughtUnconnected();}
 
 </script>
 
