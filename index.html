@@ -6,6 +6,21 @@
   <title>Notepound</title>
 
   <style>
+    :root {
+      --theme-main: #4A7FE5;
+      --theme-main-dark: #3973DC;
+      --theme-soft: #EAF1FF;
+      --theme-border: #BFD2FF;
+      --theme-pale: #F3F7FF;
+      --theme-accent-soft: #E6EEFF;
+      --theme-dot-light: #C9DCFF;
+      --theme-dot-mid: #93B4F3;
+      --theme-center-shadow: rgba(74,127,229,.25);
+      --theme-shadow-blue: rgba(74,127,229,.16);
+      --theme-shadow-blue-soft: rgba(74,127,229,.13);
+      --theme-shadow-blue-strong: rgba(74,127,229,.20);
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -34,12 +49,29 @@
     }
 
     .app-header {
-      padding: 18px 20px 10px;
+      padding: 14px 16px 10px 20px;
       font-size: 18px;
       font-weight: bold;
       color: #333;
       border-bottom: 1px solid #f0f0f0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
     }
+    .theme-open-btn{
+      border:1px solid var(--theme-border);
+      background:var(--theme-soft);
+      color:var(--theme-main-dark);
+      border-radius:14px;
+      padding:6px 9px;
+      font-size:11px;
+      font-weight:800;
+      cursor:pointer;
+      line-height:1;
+    }
+    .theme-open-btn:hover{background:var(--theme-pale);}
+
 
     .tab-nav {
       display: flex;
@@ -60,8 +92,8 @@
     }
 
     .tab-btn.active {
-      color: #1a73e8;
-      border-bottom-color: #1a73e8;
+      color: var(--theme-main);
+      border-bottom-color: var(--theme-main);
       background: #fff;
     }
 
@@ -127,9 +159,9 @@
     }
 
     .cat-chip.active {
-      background: #1a73e8;
+      background: var(--theme-main);
       color: #fff;
-      border-color: #1a73e8;
+      border-color: var(--theme-main);
       font-weight: bold;
     }
 
@@ -141,12 +173,12 @@
 
     .add-cat-btn {
       font-size: 11px;
-      background: #e8f0fe;
-      color: #1a73e8;
+      background: var(--theme-soft);
+      color: var(--theme-main);
       padding: 5px 9px;
       border-radius: 12px;
       cursor: pointer;
-      border: 1px dashed #1a73e8;
+      border: 1px dashed var(--theme-main);
       font-weight: bold;
     }
 
@@ -165,7 +197,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-left: 3px solid #1a73e8;
+      border-left: 3px solid var(--theme-main);
       cursor: pointer;
       gap: 8px;
     }
@@ -217,8 +249,8 @@
 
     .classify-btn {
       font-size: 11px;
-      background: #e8f0fe;
-      color: #1a73e8;
+      background: var(--theme-soft);
+      color: var(--theme-main);
       padding: 3px 6px;
       border-radius: 6px;
       cursor: pointer;
@@ -265,7 +297,7 @@
 
     .back-btn {
       font-size: 12px;
-      color: #1a73e8;
+      color: var(--theme-main);
       background: none;
       border: none;
       cursor: pointer;
@@ -325,7 +357,7 @@
     }
 
     .sort-btn.active {
-      color: #1a73e8;
+      color: var(--theme-main);
       font-weight: bold;
     }
 
@@ -338,8 +370,8 @@
 
     .tag-badge {
       font-size: 10px;
-      background: #e8f0fe;
-      color: #1a73e8;
+      background: var(--theme-soft);
+      color: var(--theme-main);
       padding: 2px 6px;
       border-radius: 8px;
       margin-left: 4px;
@@ -404,7 +436,7 @@
     }
 
     .sticky-btn.save {
-      background: #1a73e8;
+      background: var(--theme-main);
       color: #fff;
       font-weight: bold;
     }
@@ -458,8 +490,8 @@
     }
 
     .emoji-btn.selected {
-      background: #e8f0fe;
-      border-color: #1a73e8;
+      background: var(--theme-soft);
+      border-color: var(--theme-main);
     }
 
 
@@ -467,73 +499,73 @@
     .thought-toolbar-wrap{padding:12px 14px 6px;display:flex;flex-direction:column;gap:8px}
     .thought-toolbar-top{display:flex;justify-content:space-between;align-items:center;gap:6px}
     .thought-toolbar{display:flex;gap:5px;flex-wrap:wrap}
-    .thought-refresh-btn{border:none;background:#e8f0fe;color:#1a73e8;border-radius:16px;padding:7px 9px;font-size:10px;font-weight:bold;cursor:pointer;white-space:nowrap}
+    .thought-refresh-btn{border:none;background:var(--theme-soft);color:var(--theme-main);border-radius:16px;padding:7px 9px;font-size:10px;font-weight:bold;cursor:pointer;white-space:nowrap}
     .thought-refresh-btn.green{background:#e6f4ea;color:#137333}
     .thought-refresh-btn.gray{background:#f1f3f4;color:#555}
     .thought-description{padding:0 14px 8px;font-size:10px;color:#888;line-height:1.5;display:none}.thought-help.open .thought-description{display:block}.thought-help-btn{border:none;background:#f1f3f4;color:#666;border-radius:14px;padding:7px 10px;font-size:10px;font-weight:bold;cursor:pointer}.thought-help-panel{display:none;padding:0 14px 10px}.thought-help.open .thought-help-panel{display:block}
     .thought-legend{display:flex;gap:10px;flex-wrap:wrap;padding:0 14px 8px;font-size:9px;color:#777}
     .legend-item{display:flex;align-items:center;gap:4px}
-    .legend-line{width:25px;height:0;border-top:2px solid #1a73e8}
+    .legend-line{width:25px;height:0;border-top:2px solid var(--theme-main)}
     .legend-line.dashed{border-top-style:dashed;border-top-color:#9aa0a6}
-    .legend-line.auto{border-top-color:#7b61ff}
+    .legend-line.auto{border-top-color:var(--theme-main-dark)}
      .thought-view-switch{display:flex;gap:6px;padding:0 14px 10px;}
     .thought-view-btn{flex:1;border:1px solid #e2e5e9;background:#fff;color:#777;border-radius:12px;padding:9px 8px;font-size:10px;font-weight:bold;cursor:pointer;}
-    .thought-view-btn.active{background:#e8f0fe;color:#1a73e8;border-color:#c9dcff;}
+    .thought-view-btn.active{background:var(--theme-soft);color:var(--theme-main);border-color:var(--theme-border);}
     .thought-view{display:none;}
     .thought-view.active{display:block;}
     .thought-group-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;padding:2px 10px 14px;}
     .thought-group-card{background:#fff;border:1px solid #e3e7ed;border-radius:18px;padding:15px;box-shadow:0 4px 14px rgba(0,0,0,.06);cursor:pointer;transition:.18s;min-height:145px;position:relative;overflow:hidden;}
-    .thought-group-card:hover{border-color:#7b61ff;box-shadow:0 8px 22px rgba(123,97,255,.14);transform:translateY(-2px)}
-    .thought-group-kicker{font-size:9px;color:#8b7ad8;font-weight:bold;margin-bottom:7px}
+    .thought-group-card:hover{border-color:var(--theme-main-dark);box-shadow:0 8px 22px var(--theme-shadow-blue-soft);transform:translateY(-2px)}
+    .thought-group-kicker{font-size:9px;color:var(--theme-main-dark);font-weight:bold;margin-bottom:7px}
     .thought-group-title{font-size:15px;font-weight:800;color:#333;margin-bottom:6px;line-height:1.25}
     .thought-group-title-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
     .thought-title-edit{border:1px solid #e5e7eb;background:#fff;border-radius:8px;padding:3px 6px;font-size:11px;cursor:pointer;line-height:1}
     .thought-title-edit:hover{background:#f5f7fb}
     .thought-title-edit.detail{margin-left:6px}
     .thought-topic-delete{border:1px solid #f0d5d5;background:#fff7f7;color:#d93025;border-radius:8px;padding:3px 6px;font-size:11px;cursor:pointer;line-height:1}.thought-topic-delete:hover{background:#fff0f0}
-    .unlinked-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:20;overflow:visible}.unlinked-temp-edge{fill:none;stroke:#1a73e8;stroke-width:2.8;stroke-linecap:round;opacity:.9;stroke-dasharray:7 5}
+    .unlinked-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:20;overflow:visible}.unlinked-temp-edge{fill:none;stroke:var(--theme-main);stroke-width:2.8;stroke-linecap:round;opacity:.9;stroke-dasharray:7 5}
     #thoughtDetailTitle{display:flex;align-items:center;gap:4px}
 
     .thought-group-sub{font-size:9px;color:#999;line-height:1.5;margin-bottom:10px}
     .thought-group-preview{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
-    .thought-group-chip{background:#f4f1ff;color:#6952c9;border-radius:10px;padding:4px 7px;font-size:8px;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .thought-group-chip{background:var(--theme-pale);color:var(--theme-main-dark);border-radius:10px;padding:4px 7px;font-size:8px;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .thought-group-dots{position:absolute;right:12px;bottom:11px;display:flex;gap:4px;align-items:center}
-    .thought-group-dot{width:7px;height:7px;border-radius:50%;background:#cfc7f7}
-    .thought-group-dot:nth-child(2){background:#a99be9}.thought-group-dot:nth-child(3){background:#7b61ff}
+    .thought-group-dot{width:7px;height:7px;border-radius:50%;background:var(--theme-dot-light)}
+    .thought-group-dot:nth-child(2){background:var(--theme-dot-mid)}.thought-group-dot:nth-child(3){background:var(--theme-main-dark)}
     .thought-back-btn{border:none;background:#f1f3f4;color:#555;border-radius:14px;padding:7px 10px;font-size:10px;font-weight:bold;cursor:pointer;margin:0 14px 8px}
     .thought-detail-title{padding:0 14px 8px;font-size:13px;font-weight:800;color:#333}
     .unlinked-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:#f8f9fa;overflow:auto;position:relative}
     .unlinked-graph{position:relative;width:100%;min-width:1000px;height:760px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden}
     .unlinked-card{position:absolute;width:210px;min-height:118px;background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:12px;box-shadow:0 4px 13px rgba(0,0,0,.07);cursor:grab;animation:thoughtFloat 5.2s ease-in-out infinite;transition:box-shadow .18s,border-color .18s;user-select:none;touch-action:none}
-    .unlinked-card:hover{border-color:#1a73e8;box-shadow:0 7px 20px rgba(26,115,232,.13)}
+    .unlinked-card:hover{border-color:var(--theme-main);box-shadow:0 7px 20px var(--theme-shadow-blue-soft)}
     .unlinked-card.dragging{cursor:grabbing;animation:none;z-index:30}
-    .unlinked-card.linking{border-color:#1a73e8;box-shadow:0 0 0 3px rgba(26,115,232,.12);}
+    .unlinked-card.linking{border-color:var(--theme-main);box-shadow:0 0 0 3px rgba(26,115,232,.12);}
     .unlinked-card-date{font-size:9px;color:#999;margin-bottom:6px;}
     .unlinked-card-text{font-size:12px;line-height:1.5;color:#333;word-break:break-word;}
-    .unlinked-card-meta{font-size:9px;color:#1a73e8;margin-top:7px;}
+    .unlinked-card-meta{font-size:9px;color:var(--theme-main);margin-top:7px;}
     @keyframes thoughtFloat{0%,100%{transform:translateY(0) rotate(-.3deg)}50%{transform:translateY(-8px) rotate(.3deg)}}
     .thought-empty-graphic{font-size:30px;margin-bottom:8px}
     .thought-auto-note{padding:0 14px 8px;font-size:9px;color:#777;line-height:1.5;display:none}
-    .thought-center-badge{display:inline-flex;align-items:center;gap:4px;background:#f0eaff;color:#6b4bd6;border-radius:12px;padding:5px 8px;font-size:9px;font-weight:bold;margin:0 14px 8px;}
+    .thought-center-badge{display:inline-flex;align-items:center;gap:4px;background:var(--theme-soft);color:var(--theme-main-dark);border-radius:12px;padding:5px 8px;font-size:9px;font-weight:bold;margin:0 14px 8px;}
 .thought-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:#f8f9fa;overflow:auto;position:relative}
     .thought-graph{position:relative;width:100%;min-width:1000px;height:760px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden}
     .thought-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
-    .thought-edge{fill:none;stroke:#1a73e8;stroke-width:2.2;opacity:.82}
+    .thought-edge{fill:none;stroke:var(--theme-main);stroke-width:2.2;opacity:.82}
     .thought-edge.suggested{stroke:#9aa0a6;stroke-width:1.6;opacity:.7}
-    .thought-edge.auto{stroke:#7b61ff;stroke-width:2.6;opacity:.84}
-    .thought-edge.manual{stroke:#1a73e8;stroke-width:2.5}
+    .thought-edge.auto{stroke:var(--theme-main-dark);stroke-width:2.6;opacity:.84}
+    .thought-edge.manual{stroke:var(--theme-main);stroke-width:2.5}
     .thought-node{position:absolute;width:210px;min-height:118px;background:#fff;border:1px solid #dfe3e8;border-radius:14px;padding:10px 10px 9px;box-shadow:0 4px 12px rgba(0,0,0,.09);cursor:grab;user-select:none;touch-action:none}
-    .thought-node:hover{border-color:#1a73e8;box-shadow:0 5px 14px rgba(26,115,232,.16)}
-    .thought-node.center-node{border:3px solid #7b61ff;box-shadow:0 7px 22px rgba(123,97,255,.25)}
-    .thought-node.selected{border:2px solid #1a73e8;box-shadow:0 5px 18px rgba(26,115,232,.2)}
+    .thought-node:hover{border-color:var(--theme-main);box-shadow:0 5px 14px var(--theme-shadow-blue)}
+    .thought-node.center-node{border:3px solid var(--theme-main-dark);box-shadow:0 7px 22px var(--theme-center-shadow)}
+    .thought-node.selected{border:2px solid var(--theme-main);box-shadow:0 5px 18px var(--theme-shadow-blue-strong)}
     .thought-node.dragging{cursor:grabbing;z-index:30}
     .thought-node-date{font-size:9px;color:#999;margin-bottom:5px}
     .thought-node-text{font-size:12px;line-height:1.45;color:#333;word-break:break-word;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
-    .thought-node-meta{font-size:8px;color:#1a73e8;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .thought-node-port{position:absolute;top:50%;width:13px;height:13px;margin-top:-6px;border-radius:50%;background:#fff;border:2px solid #1a73e8;z-index:4;cursor:crosshair}
+    .thought-node-meta{font-size:8px;color:var(--theme-main);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .thought-node-port{position:absolute;top:50%;width:13px;height:13px;margin-top:-6px;border-radius:50%;background:#fff;border:2px solid var(--theme-main);z-index:4;cursor:crosshair}
     .thought-node-port.left{left:-8px}
     .thought-node-port.right{right:-8px}
-    .thought-node-port:hover{background:#1a73e8}.unlinked-port{position:absolute;top:50%;width:13px;height:13px;margin-top:-6px;border-radius:50%;background:#fff;border:2px solid #1a73e8;z-index:4;cursor:crosshair}.unlinked-port.left{left:-8px}.unlinked-port.right{right:-8px}.unlinked-port:hover{background:#1a73e8}
+    .thought-node-port:hover{background:var(--theme-main)}.unlinked-port{position:absolute;top:50%;width:13px;height:13px;margin-top:-6px;border-radius:50%;background:#fff;border:2px solid var(--theme-main);z-index:4;cursor:crosshair}.unlinked-port.left{left:-8px}.unlinked-port.right{right:-8px}.unlinked-port:hover{background:var(--theme-main)}
     .thought-node-hint{font-size:9px;color:#aaa;margin-top:5px}
     .memo-delete-btn{border:none;background:#f8f9fa;color:#999;border-radius:8px;padding:5px 6px;font-size:12px;cursor:pointer;line-height:1}.memo-delete-btn:hover{background:#fff0f0;color:#d93025}
     .thought-empty{margin:20px 0;padding:24px 16px;text-align:center;background:#f8f9fa;border-radius:14px;color:#999;font-size:12px;line-height:1.6}
@@ -544,23 +576,36 @@
     .suggestion-item:first-child{border-top:none}
     .suggestion-text{flex:1;font-size:9px;color:#666;line-height:1.35;min-width:0}
     .suggestion-score{font-size:8px;color:#999;white-space:nowrap}
-    .suggestion-connect{border:none;background:#e8f0fe;color:#1a73e8;border-radius:10px;padding:4px 7px;font-size:9px;font-weight:bold;cursor:pointer}
+    .suggestion-connect{border:none;background:var(--theme-soft);color:var(--theme-main);border-radius:10px;padding:4px 7px;font-size:9px;font-weight:bold;cursor:pointer}
     .thought-change-box{margin-top:8px;padding:8px 9px;background:#fff8e1;border-radius:9px;color:#795548;font-size:9px;line-height:1.5}
-    .selected-info{padding:7px 10px;margin:0 10px 8px;background:#eef5ff;border-radius:10px;color:#4b6380;font-size:9px;line-height:1.4}
+    .selected-info{padding:7px 10px;margin:0 10px 8px;background:var(--theme-pale);border-radius:10px;color:#4b6380;font-size:9px;line-height:1.4}
+    /* 색상 테마 모달 */
+    .theme-modal-card{width:300px;max-width:calc(100vw - 34px);}
+    .theme-modal-title{font-size:15px;font-weight:800;color:#333;margin-bottom:4px;}
+    .theme-modal-sub{font-size:10px;color:#999;line-height:1.5;margin-bottom:12px;}
+    .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+    .theme-choice{border:1px solid #e5e7eb;background:#fff;border-radius:14px;padding:9px 6px;cursor:pointer;text-align:center;transition:.15s;}
+    .theme-choice:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.06);}
+    .theme-choice.active{border:2px solid var(--theme-main);background:var(--theme-pale);}
+    .theme-swatch{width:30px;height:30px;border-radius:50%;margin:0 auto 6px;border:4px solid rgba(255,255,255,.8);box-shadow:0 1px 5px rgba(0,0,0,.12);}
+    .theme-choice-name{font-size:10px;font-weight:800;color:#555;}
+    .theme-close-row{display:flex;justify-content:flex-end;margin-top:12px;}
+    .theme-close-btn{border:none;background:#f1f3f4;color:#666;border-radius:12px;padding:7px 12px;font-size:10px;font-weight:bold;cursor:pointer;}
+
     /* 연결 모달 */
     .link-modal-card{max-height:540px;display:flex;flex-direction:column;gap:10px}
     .link-modal-description{font-size:10px;color:#888;line-height:1.5}
     .link-memo-list{display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:330px;padding:2px}
     .link-memo-option{display:flex;align-items:flex-start;gap:8px;padding:9px;border:1px solid #eee;border-radius:9px;cursor:pointer;background:#fafafa}
-    .link-memo-option:hover{border-color:#1a73e8;background:#f8fbff}
-    .link-memo-option input{margin-top:2px;accent-color:#1a73e8}
+    .link-memo-option:hover{border-color:var(--theme-main);background:var(--theme-pale)}
+    .link-memo-option input{margin-top:2px;accent-color:var(--theme-main)}
     .link-memo-option-text{flex:1;min-width:0}
     .link-memo-option-main{font-size:11px;color:#333;line-height:1.4;word-break:break-word}
     .link-memo-option-meta{margin-top:3px;font-size:9px;color:#999}
     .link-modal-actions{display:flex;justify-content:flex-end;gap:6px}
     .link-modal-btn{border:none;border-radius:14px;padding:7px 13px;font-size:11px;cursor:pointer}
     .link-modal-btn.cancel{background:#eee;color:#666}
-    .link-modal-btn.save{background:#1a73e8;color:#fff;font-weight:bold}
+    .link-modal-btn.save{background:var(--theme-main);color:#fff;font-weight:bold}
   </style>
 </head>
 
@@ -568,7 +613,7 @@
 
 <div class="phone-container">
 
-  <div class="app-header">Notepound</div>
+  <div class="app-header"><span>Notepound</span><button class="theme-open-btn" type="button" onclick="openThemeModal()">🎨 테마</button></div>
 
   <div class="tab-nav">
     <div id="tabWrite" class="tab-btn active" onclick="switchTab('write')">
@@ -835,8 +880,8 @@
           <div id="thoughtGraph" class="thought-graph">
             <svg id="thoughtSvg" class="thought-svg" aria-hidden="true">
               <defs>
-                <marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path></marker>
-                <marker id="arrowSuggested" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#7b61ff"></path></marker>
+                <marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main)"></path></marker>
+                <marker id="arrowSuggested" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main-dark)"></path></marker>
               </defs>
               <g id="thoughtEdges"></g>
               <path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path>
@@ -859,6 +904,16 @@
   </div>
 
   <!-- 메모 연결 모달 -->
+
+  <!-- 색상 테마 모달 -->
+  <div id="themeModalOverlay" class="memo-modal-overlay" style="display:none;">
+    <div class="memo-modal-card theme-modal-card">
+      <div class="theme-modal-title">🎨 색상 테마</div>
+      <div class="theme-modal-sub">Notepound의 포인트 색상을 골라보세요. 선택한 색상은 다음에 다시 열어도 유지돼요.</div>
+      <div id="themeGrid" class="theme-grid"></div>
+      <div class="theme-close-row"><button class="theme-close-btn" type="button" onclick="closeThemeModal()">닫기</button></div>
+    </div>
+  </div>
 
   <div
     id="linkMemoModalOverlay"
@@ -2198,7 +2253,7 @@ function renderCategoryPage() {
           </span>
 
           <span
-            style="font-size:12px;color:#1a73e8;font-weight:bold;cursor:pointer;margin-left:8px;"
+            style="font-size:12px;color:var(--theme-main);font-weight:bold;cursor:pointer;margin-left:8px;"
             data-open
           >
             이동 ›
@@ -3295,7 +3350,7 @@ function renderThoughtFlow(){
     const title=getThoughtGroupTitle(active,0);const detailTitle=document.getElementById('thoughtDetailTitle');detailTitle.innerHTML=`<span>${escapeHtml(title)} · ${active.length}개 기록</span><button class="thought-title-edit detail" type="button" title="주제 이름 수정">✏️</button><button class="thought-topic-delete" type="button" title="이 생각 주제 삭제">🗑️</button>`;detailTitle.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(active);});detailTitle.querySelector('.thought-topic-delete').addEventListener('click',e=>{e.stopPropagation();deleteThoughtGroup(active);});
     const centerId=Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null;thoughtCenterId=centerId;const center=active.find(m=>Number(m.id)===centerId);
     if(centerBadge)centerBadge.innerHTML=center?`◎ 중심 메모: 「${escapeHtml(String(center.text).slice(0,28))}${String(center.text).length>28?'…':''}」`:'◎ 이 주제의 중심 메모를 하나 선택해 주세요';
-    const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#7b61ff"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>`;
+    const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main)"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main-dark)"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>`;
     const svg=graph.querySelector('svg');active.forEach((memo,index)=>graph.appendChild(buildThoughtNode(memo,Number(memo.id)===centerId,index)));
     if(center){
       starifyThoughtGroup(active,centerId);
@@ -3325,7 +3380,7 @@ function getUnconnectedPosition(memo,index,total){
 }
 function saveUnconnectedPosition(id,pos){let d={};try{d=JSON.parse(localStorage.getItem(THOUGHT_UNCONNECTED_POSITION_KEY)||'{}');}catch(e){}d[String(id)]=pos;localStorage.setItem(THOUGHT_UNCONNECTED_POSITION_KEY,JSON.stringify(d));}
 function renderThoughtUnconnected(){
-  const box=document.getElementById('thoughtUnconnectedList');if(!box)return;box.innerHTML=`<svg id="unlinkedTempSvg" class="unlinked-svg" aria-hidden="true"><defs><marker id="unlinkedArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1a73e8"></path></marker></defs><path id="unlinkedTempEdge" class="unlinked-temp-edge" style="display:none" marker-end="url(#unlinkedArrow)"></path></svg>`;
+  const box=document.getElementById('thoughtUnconnectedList');if(!box)return;box.innerHTML=`<svg id="unlinkedTempSvg" class="unlinked-svg" aria-hidden="true"><defs><marker id="unlinkedArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--theme-main)"></path></marker></defs><path id="unlinkedTempEdge" class="unlinked-temp-edge" style="display:none" marker-end="url(#unlinkedArrow)"></path></svg>`;
   const unconnected=savedMemos.filter(m=>getManualLinkedIds(m).length===0).sort((a,b)=>b.id-a.id);
   if(!unconnected.length){box.innerHTML='<div class="thought-empty" style="position:absolute;left:12%;right:12%;top:260px;"><div class="thought-empty-graphic">✨</div>연결되지 않은 메모가 없어요.<br>모든 생각이 다른 기록과 연결되어 있어요.</div>';return;}
   unconnected.forEach((memo,index)=>{
@@ -3408,6 +3463,35 @@ function openThoughtReplyPrompt(parentId){const parent=savedMemos.find(m=>m.id==
 function toggleThoughtHelp(){document.getElementById('thoughtHelp')?.classList.toggle('open');}
 function collectThoughtRecords(){refreshThoughtFlow();}
 function refreshThoughtFlow(){try{const latest=JSON.parse(localStorage.getItem('notepound_memos'));if(Array.isArray(latest))savedMemos=latest;normalizeMemoData();autoConnectThoughtMemos();}catch(e){}thoughtPositions=loadThoughtPositions();renderThoughtFlow();renderThoughtUnconnected();}
+
+/* =====================================================
+   색상 테마
+   ===================================================== */
+const NOTEOUND_THEME_KEY='notepound_color_theme';
+const COLOR_THEMES={
+  blue:{name:'파랑',main:'#4A7FE5',dark:'#3973DC',soft:'#EAF1FF',border:'#BFD2FF',pale:'#F3F7FF',accent:'#E6EEFF',light:'#C9DCFF',mid:'#93B4F3'},
+  yellow:{name:'노랑',main:'#E7B83E',dark:'#C99616',soft:'#FFF6D9',border:'#F0D98A',pale:'#FFFBEF',accent:'#FFF2BF',light:'#F3DE91',mid:'#E6C55E'},
+  pink:{name:'분홍',main:'#E56B9F',dark:'#D24D86',soft:'#FFEAF3',border:'#F4B8D0',pale:'#FFF4F8',accent:'#FFDCEB',light:'#F6C4D8',mid:'#EC91B5'},
+  green:{name:'초록',main:'#57A66D',dark:'#398C52',soft:'#E9F7ED',border:'#B8DEC2',pale:'#F4FBF5',accent:'#DDF1E2',light:'#BFE2C8',mid:'#7FC18F'},
+  purple:{name:'보라',main:'#8B72D8',dark:'#6E55C2',soft:'#F0EBFF',border:'#CEC2F5',pale:'#F8F5FF',accent:'#E8E0FF',light:'#D8CFF7',mid:'#AA98E8'},
+  orange:{name:'주황',main:'#E8894A',dark:'#D36A2B',soft:'#FFF0E5',border:'#F2C2A2',pale:'#FFF8F3',accent:'#FFE4D2',light:'#F5C6A7',mid:'#EEA575'}
+};
+function applyColorTheme(name){
+  const key=COLOR_THEMES[name]?name:'blue';
+  const t=COLOR_THEMES[key],root=document.documentElement;
+  root.style.setProperty('--theme-main',t.main);root.style.setProperty('--theme-main-dark',t.dark);root.style.setProperty('--theme-soft',t.soft);root.style.setProperty('--theme-border',t.border);root.style.setProperty('--theme-pale',t.pale);root.style.setProperty('--theme-accent-soft',t.accent);root.style.setProperty('--theme-dot-light',t.light);root.style.setProperty('--theme-dot-mid',t.mid);root.style.setProperty('--theme-center-shadow',hexToRgba(t.main,.25));root.style.setProperty('--theme-shadow-blue',hexToRgba(t.main,.16));root.style.setProperty('--theme-shadow-blue-soft',hexToRgba(t.main,.13));root.style.setProperty('--theme-shadow-blue-strong',hexToRgba(t.main,.20));
+  localStorage.setItem(NOTEOUND_THEME_KEY,key);
+  document.body.dataset.colorTheme=key;
+  const grid=document.getElementById('themeGrid');if(grid)grid.querySelectorAll('.theme-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.theme===key));
+}
+function hexToRgba(hex,alpha){const h=hex.replace('#','');const n=parseInt(h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${alpha})`;}
+function renderThemeChoices(){
+  const grid=document.getElementById('themeGrid');if(!grid)return;const current=localStorage.getItem(NOTEOUND_THEME_KEY)||'blue';grid.innerHTML='';
+  Object.entries(COLOR_THEMES).forEach(([key,t])=>{const btn=document.createElement('button');btn.type='button';btn.className='theme-choice'+(key===current?' active':'');btn.dataset.theme=key;btn.innerHTML=`<div class="theme-swatch" style="background:${t.main}"></div><div class="theme-choice-name">${t.name}</div>`;btn.addEventListener('click',()=>applyColorTheme(key));grid.appendChild(btn);});
+}
+function openThemeModal(){renderThemeChoices();const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='flex';}
+function closeThemeModal(){const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='none';}
+(function(){const saved=localStorage.getItem(NOTEOUND_THEME_KEY)||'blue';applyColorTheme(saved);})();
 
 </script>
 
