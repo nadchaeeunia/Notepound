@@ -823,7 +823,7 @@
         <div class="thought-legend">
           <span class="legend-item"><span class="legend-line"></span> 직접 연결</span>
           <span class="legend-item"><span class="legend-line auto"></span> 자동 연결</span>
-          <span class="legend-item">선 클릭 → 연결 끊기</span>
+          <span class="legend-item">선 클릭 → 연결 끊기</span><span class="legend-item">메모 클릭 → 중심 선택 / 이 생각에서 빼기</span>
         </div>
         <div id="thoughtSelectedInfo" class="selected-info" style="display:none;"></div>
         <div class="thought-graph-wrap">
@@ -3039,17 +3039,89 @@ function updateThoughtSelectionUI(){
   const info=document.getElementById('thoughtSelectedInfo');if(!info)return;
   if(selectedThoughtIds.length){const names=selectedThoughtIds.map(id=>{const m=savedMemos.find(x=>x.id===id);return m?`「${m.text.slice(0,18)}${m.text.length>18?'…':''}」`:'';}).filter(Boolean);info.style.display='block';info.textContent=selectedThoughtIds.length===2?`${names.join('  ↔  ')} · 🔗 선택 연결을 누르면 두 기록이 연결됩니다.`:`${names[0]} 선택됨 · 하나를 더 선택하면 바로 연결할 수 있어요.`;}else info.style.display='none';
 }
-function connectSelectedMemos(){if(selectedThoughtIds.length!==2){alert('연결할 메모 2개를 선택해주세요.');return;}connectMemos(selectedThoughtIds[0],selectedThoughtIds[1]);selectedThoughtIds=[];renderThoughtFlow();}
-function connectMemos(aId,bId){
-  if(aId===bId)return;const a=savedMemos.find(m=>m.id===aId),b=savedMemos.find(m=>m.id===bId);if(!a||!b)return;
+function connectSelectedMemos(){
+  if(selectedThoughtIds.length!==2){alert('연결할 메모 2개를 선택해주세요.');return;}
+  connectMemos(selectedThoughtIds[0],selectedThoughtIds[1]);
+  selectedThoughtIds=[];
+  renderThoughtFlow();
+}
+function addThoughtLink(aId,bId){
+  if(aId===bId)return;
+  const a=savedMemos.find(m=>Number(m.id)===Number(aId)),b=savedMemos.find(m=>Number(m.id)===Number(bId));
+  if(!a||!b)return;
   const blocked=getBlockedThoughtLinks();blocked.delete(thoughtPairKey(aId,bId));saveBlockedThoughtLinks(blocked);
-  if(!Array.isArray(a.linkedMemos))a.linkedMemos=[];if(!Array.isArray(b.linkedMemos))b.linkedMemos=[];
-  if(!a.linkedMemos.includes(bId))a.linkedMemos.push(bId);if(!b.linkedMemos.includes(aId))b.linkedMemos.push(aId);saveMemos();
+  if(!Array.isArray(a.linkedMemos))a.linkedMemos=[];
+  if(!Array.isArray(b.linkedMemos))b.linkedMemos=[];
+  if(!a.linkedMemos.includes(Number(bId)))a.linkedMemos.push(Number(bId));
+  if(!b.linkedMemos.includes(Number(aId)))b.linkedMemos.push(Number(aId));
+}
+function connectMemos(aId,bId){
+  if(aId===bId)return;
+  const group=getActiveGroup();
+  const centerId=group?Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null:null;
+  if(centerId && (Number(aId)!==centerId && Number(bId)!==centerId)){
+    addThoughtLink(centerId,aId);
+    addThoughtLink(centerId,bId);
+  }else{
+    addThoughtLink(aId,bId);
+  }
+  saveMemos();
+}
+function starifyThoughtGroup(group,centerId){
+  const ids=new Set(group.map(m=>Number(m.id)));
+  const center=savedMemos.find(m=>Number(m.id)===Number(centerId));
+  if(!center)return;
+  group.forEach(memo=>{
+    if(!Array.isArray(memo.linkedMemos))memo.linkedMemos=[];
+    if(!Array.isArray(memo.autoLinkedMemos))memo.autoLinkedMemos=[];
+    memo.linkedMemos=memo.linkedMemos.filter(id=>!ids.has(Number(id)) || Number(id)===Number(centerId));
+    memo.autoLinkedMemos=memo.autoLinkedMemos.filter(id=>!ids.has(Number(id)) || Number(id)===Number(centerId));
+  });
+  center.linkedMemos=[];
+  center.autoLinkedMemos=[];
+  group.forEach(memo=>{
+    if(Number(memo.id)===Number(centerId))return;
+    center.linkedMemos.push(Number(memo.id));
+    if(!Array.isArray(memo.linkedMemos))memo.linkedMemos=[];
+    if(!memo.linkedMemos.includes(Number(centerId)))memo.linkedMemos.push(Number(centerId));
+    memo.linkedMemos=memo.linkedMemos.filter(id=>Number(id)===Number(centerId));
+    memo.autoLinkedMemos=memo.autoLinkedMemos.filter(id=>Number(id)===Number(centerId));
+  });
+  saveMemos();
+}
+function setThoughtCenterForGroup(group,centerId){
+  if(!group||!group.some(m=>Number(m.id)===Number(centerId)))return;
+  const key=thoughtGroupKey(group);
+  thoughtCenterId=Number(centerId);
+  thoughtGroupCenters[key]=thoughtCenterId;
+  saveThoughtCenter();saveThoughtGroupCenters();
+  starifyThoughtGroup(group,thoughtCenterId);
+  selectedThoughtIds=[];
+  layoutThoughtMindMap();
+  renderThoughtFlow();
 }
 function setSelectedAsThoughtCenter(){
   if(selectedThoughtIds.length!==1){alert('중심으로 만들 메모 1개를 선택해주세요.');return;}
   const group=getActiveGroup();if(!group)return;
-  const key=thoughtGroupKey(group);thoughtCenterId=Number(selectedThoughtIds[0]);thoughtGroupCenters[key]=thoughtCenterId;saveThoughtCenter();saveThoughtGroupCenters();selectedThoughtIds=[];layoutThoughtMindMap();renderThoughtFlow();
+  setThoughtCenterForGroup(group,selectedThoughtIds[0]);
+}
+function promptSetThoughtCenter(id){
+  const group=getActiveGroup();if(!group)return;
+  if(confirm('이 메모를 중심 메모로 선택하시겠습니까?'))setThoughtCenterForGroup(group,id);
+  else selectThoughtNode(id);
+}
+function removeMemoFromThought(id){
+  const group=getActiveGroup();if(!group)return;
+  const centerId=Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null;
+  if(centerId===Number(id)){alert('중심 메모는 이 생각에서 바로 뺄 수 없어요. 먼저 다른 메모를 중심으로 선택해주세요.');return;}
+  if(!confirm('이 메모를 이 생각에서 지우시겠습니까?')){selectThoughtNode(id);return;}
+  if(centerId)disconnectMemos(centerId,id);
+  else{
+    const memo=savedMemos.find(m=>Number(m.id)===Number(id));
+    if(memo)getManualLinkedIds(memo).forEach(otherId=>disconnectMemos(memo.id,otherId));
+  }
+  selectedThoughtIds=selectedThoughtIds.filter(x=>Number(x)!==Number(id));
+  renderThoughtFlow();renderThoughtUnconnected();
 }
 function clearThoughtCenter(){
   const group=getActiveGroup();if(group){delete thoughtGroupCenters[thoughtGroupKey(group)];saveThoughtGroupCenters();}thoughtCenterId=null;saveThoughtCenter();renderThoughtFlow();
@@ -3066,11 +3138,16 @@ function getConnectedComponent(startId){
   const group=getConnectedComponents().find(g=>g.some(m=>Number(m.id)===Number(startId)));return group||[];
 }
 function layoutThoughtMindMap(){
-  const root=savedMemos.find(m=>Number(m.id)===Number(thoughtCenterId));if(!root)return;const component=getActiveGroup()||getConnectedComponent(root.id);if(!component.length)return;
-  const ids=new Set(component.map(m=>Number(m.id))),levelMap=new Map([[Number(root.id),0]]),queue=[root];
-  while(queue.length){const cur=queue.shift(),level=levelMap.get(Number(cur.id));getManualLinkedIds(cur).forEach(id=>{const n=savedMemos.find(m=>Number(m.id)===Number(id));if(!n||!ids.has(Number(n.id))||levelMap.has(Number(n.id)))return;levelMap.set(Number(n.id),level+1);queue.push(n);});}
-  thoughtPositions[String(root.id)]={x:50,y:48};const levels={};component.forEach(m=>{const l=levelMap.get(Number(m.id));if(l!==undefined)(levels[l]||(levels[l]=[])).push(m);});
-  Object.keys(levels).map(Number).filter(l=>l>0).sort((a,b)=>a-b).forEach(level=>{const nodes=levels[level],radiusX=Math.min(42,18+level*13),radiusY=Math.min(38,14+level*11);nodes.forEach((m,i)=>{const angle=(-Math.PI/2)+(Math.PI*2*i/nodes.length);thoughtPositions[String(m.id)]={x:50+Math.cos(angle)*radiusX,y:48+Math.sin(angle)*radiusY};});});
+  const root=savedMemos.find(m=>Number(m.id)===Number(thoughtCenterId));if(!root)return;
+  const component=getActiveGroup()||getConnectedComponent(root.id);if(!component.length)return;
+  const children=component.filter(m=>Number(m.id)!==Number(root.id));
+  thoughtPositions[String(root.id)]={x:50,y:48};
+  const radiusX=Math.min(42,24+Math.max(0,children.length-4)*2.2);
+  const radiusY=Math.min(38,18+Math.max(0,children.length-4)*1.8);
+  children.forEach((m,i)=>{
+    const angle=(-Math.PI/2)+(Math.PI*2*i/Math.max(1,children.length));
+    thoughtPositions[String(m.id)]={x:50+Math.cos(angle)*radiusX,y:48+Math.sin(angle)*radiusY};
+  });
   saveThoughtPositions();
 }
 function disconnectMemos(aId,bId){
@@ -3089,7 +3166,14 @@ function buildThoughtNode(memo,isCenter=false,index=0){
   const node=document.createElement('div');node.className='thought-node'+(isCenter?' center-node':'');node.dataset.id=memo.id;const pos=getThoughtPosition(memo,index);node.style.left=`${pos.x}%`;node.style.top=`${pos.y}%`;
   node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><div class="thought-node-meta">${isCenter?'◎ 중심 · ':''}${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div><div class="thought-node-hint">클릭: 선택 · ● 드래그: 연결 · 선 클릭: 연결 해제</div>`;
   node.addEventListener('pointerdown',e=>{if(e.target.closest('.thought-node-port'))return;if(e.button!==undefined&&e.button!==0)return;startThoughtNodeDrag(e,memo.id);});
-  node.addEventListener('click',e=>{if(isDraggingThoughtNode||e.target.closest('.thought-node-port'))return;selectThoughtNode(memo.id);});
+  node.addEventListener('click',e=>{
+    if(isDraggingThoughtNode||e.target.closest('.thought-node-port'))return;
+    const group=getActiveGroup();
+    const centerId=group?Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null:null;
+    if(group && !centerId){promptSetThoughtCenter(memo.id);return;}
+    if(group && centerId && Number(memo.id)!==centerId){removeMemoFromThought(memo.id);return;}
+    selectThoughtNode(memo.id);
+  });
   node.querySelector('.thought-node-port.right').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));node.querySelector('.thought-node-port.left').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
   node.addEventListener('dblclick',e=>{e.stopPropagation();const idx=savedMemos.findIndex(m=>m.id===memo.id);if(idx!==-1)openMemoModal(idx);});
   node.addEventListener('contextmenu',e=>{e.preventDefault();openLinkMemoModal(memo.id);});return node;
@@ -3117,9 +3201,13 @@ function renderThoughtFlow(){
     if(centerBadge)centerBadge.innerHTML=center?`◎ 중심 메모: 「${escapeHtml(String(center.text).slice(0,28))}${String(center.text).length>28?'…':''}」`:'◎ 이 주제의 중심 메모를 하나 선택해 주세요';
     const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#7b61ff"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>`;
     const svg=graph.querySelector('svg');active.forEach((memo,index)=>graph.appendChild(buildThoughtNode(memo,Number(memo.id)===centerId,index)));
-    if(center){layoutThoughtMindMap();active.forEach((memo,index)=>{const node=document.querySelector(`.thought-node[data-id="${memo.id}"]`);const pos=getThoughtPosition(memo,index);if(node){node.style.left=`${pos.x}%`;node.style.top=`${pos.y}%`;}});}
+    if(center){
+      starifyThoughtGroup(active,centerId);
+      layoutThoughtMindMap();
+      active.forEach((memo,index)=>{const node=document.querySelector(`.thought-node[data-id="${memo.id}"]`);const pos=getThoughtPosition(memo,index);if(node){node.style.left=`${pos.x}%`;node.style.top=`${pos.y}%`;}});
+    }
     renderThoughtEdgesOnly();
-    const summary=document.getElementById('thoughtSummary');if(summary)summary.innerHTML=`<div class="thought-panel-title">🧠 ${escapeHtml(title)}</div><div style="font-size:9px;color:#777;line-height:1.5;">이 주제에 연결된 메모 <b>${active.length}</b>개 · 중심을 정하면 마인드맵처럼 펼쳐져요.<br>메모 두 개를 선택해 수동 연결하거나 ●를 드래그해 연결할 수 있어요.</div>`;
+    const summary=document.getElementById('thoughtSummary');if(summary)summary.innerHTML=`<div class="thought-panel-title">🧠 ${escapeHtml(title)}</div><div style="font-size:9px;color:#777;line-height:1.5;">이 주제에 연결된 메모 <b>${active.length}</b>개 · 중심 메모에서 가지처럼 뻗어나가요.<br>메모를 클릭하면 중심으로 선택하거나 이 생각에서 뺄 수 있어요. 두 메모 선택 / ● 드래그로도 연결할 수 있어요.</div>`;
     renderThoughtChangePanel(active);updateThoughtSelectionUI();return;
   }
   groupOverview.style.display='block';detail.style.display='none';if(centerBadge)centerBadge.innerHTML='◎ 연결된 생각의 주제를 선택하면 중심 메모를 정할 수 있어요';renderGroupOverview();
