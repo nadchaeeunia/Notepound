@@ -3232,7 +3232,7 @@ function renderThoughtChangePanel(group){
 }
 
 function renderThoughtFlow(){
-  normalizeMemoData();autoConnectThoughtMemos();
+  normalizeMemoData();
   const groupOverview=document.getElementById('thoughtGroupOverview'),detail=document.getElementById('thoughtGroupDetail');if(!groupOverview||!detail)return;
   const centerBadge=document.getElementById('thoughtCenterBadge');const active=getActiveGroup();
   if(activeThoughtGroupKey&&active){
@@ -3323,7 +3323,7 @@ function openThoughtReplyPrompt(parentId){const parent=savedMemos.find(m=>m.id==
 
 function toggleThoughtHelp(){document.getElementById('thoughtHelp')?.classList.toggle('open');}
 function collectThoughtRecords(){refreshThoughtFlow();}
-function refreshThoughtFlow(){try{const latest=JSON.parse(localStorage.getItem('notepound_memos'));if(Array.isArray(latest))savedMemos=latest;normalizeMemoData();}catch(e){}thoughtPositions=loadThoughtPositions();renderThoughtFlow();renderThoughtUnconnected();}
+function refreshThoughtFlow(){try{const latest=JSON.parse(localStorage.getItem('notepound_memos'));if(Array.isArray(latest))savedMemos=latest;normalizeMemoData();autoConnectThoughtMemos();}catch(e){}thoughtPositions=loadThoughtPositions();renderThoughtFlow();renderThoughtUnconnected();}
 
 </script>
 
