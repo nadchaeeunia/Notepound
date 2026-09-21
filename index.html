@@ -557,9 +557,9 @@
     .thought-node{position:absolute;width:210px;min-height:118px;background:#fff;border:1px solid #dfe3e8;border-radius:14px;padding:10px 10px 9px;box-shadow:0 4px 12px rgba(0,0,0,.09);cursor:grab;user-select:none;touch-action:none}
     .thought-node:hover{box-shadow:0 5px 14px var(--theme-shadow-blue)}
     /* 생각의 계층에 따라 테두리 강도를 다르게 표시 */
-    .thought-node.depth-0{border:3px double var(--theme-main-dark);box-shadow:0 7px 22px var(--theme-center-shadow)}
-    .thought-node.depth-1{border:2px solid var(--theme-main)}
-    .thought-node.depth-2{border:1px solid #aeb4bd}
+    .thought-node.depth-0{border:4px double var(--theme-main-dark);box-shadow:0 7px 22px var(--theme-center-shadow)}
+    .thought-node.depth-1{border:3px solid var(--theme-main)}
+    .thought-node.depth-2{border:1px solid #c7cbd2}
     .thought-node.depth-3,.thought-node.depth-4,.thought-node.depth-5,.thought-node.depth-6{border:1px solid transparent}
     .thought-node.depth-3{opacity:.82;}
     .thought-node.depth-4{opacity:.68;}
@@ -881,6 +881,7 @@
       <div id="thoughtGroupDetail" style="display:none;">
         <button class="thought-back-btn" onclick="exitThoughtGroup()">← 연결된 생각 주제로 돌아가기</button>
         <div id="thoughtDetailTitle" class="thought-detail-title"></div>
+      <div style="display:flex;justify-content:flex-end;margin:6px 0 10px;"><button class="thought-refresh-btn" type="button" onclick="addMemoToCurrentThought()">＋ 메모 추가하기</button></div>
         <div class="thought-legend" style="display:none;"></div>
         <div id="thoughtSelectedInfo" class="selected-info" style="display:none;"></div>
         <div class="thought-graph-wrap">
@@ -2979,6 +2980,8 @@ let thoughtPositions = loadThoughtPositions();
 let thoughtCenterId = loadThoughtCenter();
 let thoughtGroupCenters = loadThoughtGroupCenters();
 let thoughtGroupTitles = JSON.parse(localStorage.getItem('notepound_thought_titles') || '{}');
+const THOUGHT_TOPIC_MEMBERS_KEY = 'notepound_thought_topic_members';
+let thoughtTopicMembers = loadThoughtTopicMembers();
 let activeThoughtGroupKey = null;
 let selectedThoughtIds = [];
 let linkingFromId = null;
@@ -3062,19 +3065,14 @@ function getConnectionPairs(){
 }
 
 function getConnectedComponents(){
-  const byId=new Map(savedMemos.map(m=>[Number(m.id),m])),visited=new Set(),groups=[];
-  savedMemos.forEach(start=>{
-    if(visited.has(Number(start.id))||getManualLinkedIds(start).length===0)return;
-    const group=[],queue=[start];visited.add(Number(start.id));
-    while(queue.length){const cur=queue.shift();group.push(cur);getManualLinkedIds(cur).forEach(id=>{const next=byId.get(Number(id));if(next&&!visited.has(Number(next.id))){visited.add(Number(next.id));queue.push(next);}});}
-    if(group.length>=2)groups.push(group.sort((a,b)=>a.id-b.id));
-  });
-  return groups.sort((a,b)=>b.length-a.length||b[0].id-a[0].id);
+  return getThoughtTopics().map(t=>t.members);
 }
 function thoughtGroupKey(group){return group.map(m=>Number(m.id)).sort((a,b)=>a-b).join('_');}
 function getActiveGroup(){
   if(!activeThoughtGroupKey)return null;
-  return getConnectedComponents().find(g=>thoughtGroupKey(g)===activeThoughtGroupKey)||null;
+  ensureThoughtTopics();
+  const ids=(thoughtTopicMembers[activeThoughtGroupKey]||[]).map(Number);
+  return ids.map(id=>savedMemos.find(m=>Number(m.id)===id)).filter(Boolean);
 }
 function chooseTopicWord(group){
   const catCount={};group.forEach(m=>{const c=String(m.category||'').replace(/^#/,'');if(c&&c!=='미분류')catCount[c]=(catCount[c]||0)+1;});
@@ -3085,7 +3083,7 @@ function chooseTopicWord(group){
   return top?top[0]:'';
 }
 function getThoughtGroupTitle(group,index=0){
-  const key=thoughtGroupKey(group);
+  const key=getThoughtTopicKeyForGroup(group);
   if(thoughtGroupTitles[key]) return thoughtGroupTitles[key];
   const topic=chooseTopicWord(group); if(topic)return `${topic}에 대한 생각`;
   const first=String(group[0]?.text||'').trim();
@@ -3093,9 +3091,73 @@ function getThoughtGroupTitle(group,index=0){
   return `생각 흐름 ${index+1}`;
 }
 function saveThoughtGroupTitles(){localStorage.setItem('notepound_thought_titles',JSON.stringify(thoughtGroupTitles));}
+function loadThoughtTopicMembers(){try{const d=JSON.parse(localStorage.getItem(THOUGHT_TOPIC_MEMBERS_KEY));return d&&typeof d==='object'?d:{};}catch(e){return {};}}
+function saveThoughtTopicMembers(){localStorage.setItem(THOUGHT_TOPIC_MEMBERS_KEY,JSON.stringify(thoughtTopicMembers));}
+function getThoughtTopicKeyForMemo(id){
+  const nid=Number(id);
+  return Object.keys(thoughtTopicMembers).find(key=>(thoughtTopicMembers[key]||[]).some(x=>Number(x)===nid))||null;
+}
+function ensureThoughtTopics(){
+  const currentIds=new Set(savedMemos.map(m=>Number(m.id)));
+  Object.keys(thoughtTopicMembers).forEach(key=>{
+    thoughtTopicMembers[key]=(thoughtTopicMembers[key]||[]).map(Number).filter(id=>currentIds.has(id));
+    if(!thoughtTopicMembers[key].length)delete thoughtTopicMembers[key];
+  });
+  const components=[];
+  const byId=new Map(savedMemos.map(m=>[Number(m.id),m])),visited=new Set();
+  savedMemos.forEach(start=>{
+    if(visited.has(Number(start.id))||getManualLinkedIds(start).length===0)return;
+    const group=[],queue=[start];visited.add(Number(start.id));
+    while(queue.length){const cur=queue.shift();group.push(cur);getManualLinkedIds(cur).forEach(id=>{const next=byId.get(Number(id));if(next&&!visited.has(Number(next.id))){visited.add(Number(next.id));queue.push(next);}});}
+    if(group.length>=2)components.push(group);
+  });
+  components.forEach(group=>{
+    const ids=group.map(m=>Number(m.id));
+    const overlaps=Object.keys(thoughtTopicMembers).filter(key=>(thoughtTopicMembers[key]||[]).some(id=>ids.includes(Number(id))));
+    let key=overlaps[0]||ids.slice().sort((a,b)=>a-b).join('_');
+    if(!thoughtTopicMembers[key])thoughtTopicMembers[key]=[];
+    const merged=new Set(thoughtTopicMembers[key].map(Number));ids.forEach(id=>merged.add(id));
+    overlaps.slice(1).forEach(other=>{(thoughtTopicMembers[other]||[]).forEach(id=>merged.add(Number(id)));delete thoughtTopicMembers[other];delete thoughtGroupTitles[other];delete thoughtGroupCenters[other];});
+    thoughtTopicMembers[key]=[...merged].filter(id=>currentIds.has(id)).sort((a,b)=>a-b);
+  });
+  saveThoughtTopicMembers();saveThoughtGroupTitles();saveThoughtGroupCenters();
+}
+function getThoughtTopics(){
+  ensureThoughtTopics();
+  return Object.keys(thoughtTopicMembers).map(key=>({key,members:(thoughtTopicMembers[key]||[]).map(Number).map(id=>savedMemos.find(m=>Number(m.id)===id)).filter(Boolean)})).filter(t=>t.members.length>=2).sort((a,b)=>b.members.length-a.members.length||b.members[0].id-a.members[0].id);
+}
+function getThoughtTopicKeyForGroup(group){
+  if(activeThoughtGroupKey&&thoughtTopicMembers[activeThoughtGroupKey])return activeThoughtGroupKey;
+  const ids=new Set((group||[]).map(m=>Number(m.id)));
+  return Object.keys(thoughtTopicMembers).find(key=>{const members=(thoughtTopicMembers[key]||[]).map(Number);return members.some(id=>ids.has(id));})||thoughtGroupKey(group);
+}
+function addMemoToThoughtTopic(id,key=activeThoughtGroupKey){
+  if(!key)return;
+  if(!thoughtTopicMembers[key])thoughtTopicMembers[key]=[];
+  const nid=Number(id);if(!thoughtTopicMembers[key].some(x=>Number(x)===nid))thoughtTopicMembers[key].push(nid);
+  thoughtTopicMembers[key].sort((a,b)=>a-b);saveThoughtTopicMembers();
+}
+function mergeMemosIntoThoughtTopic(aId,bId,key=activeThoughtGroupKey){
+  if(!key)return;
+  const aKey=getThoughtTopicKeyForMemo(aId),bKey=getThoughtTopicKeyForMemo(bId);
+  const otherKeys=[aKey,bKey].filter(k=>k&&k!==key);
+  addMemoToThoughtTopic(aId,key);addMemoToThoughtTopic(bId,key);
+  otherKeys.forEach(other=>{
+    (thoughtTopicMembers[other]||[]).forEach(id=>addMemoToThoughtTopic(id,key));
+    delete thoughtTopicMembers[other];delete thoughtGroupTitles[other];delete thoughtGroupCenters[other];
+  });
+  saveThoughtTopicMembers();saveThoughtGroupTitles();saveThoughtGroupCenters();
+}
+function addMemoToCurrentThought(){
+  if(!activeThoughtGroupKey)return;
+  const text=prompt('이 생각에 추가할 메모를 입력하세요.');
+  if(text===null||!text.trim())return;
+  const memo={id:createMemoId(),text:text.trim(),category:currentSelectedCategory||'#미분류',tag:'',linkedMemos:[]};
+  savedMemos.push(memo);addMemoToThoughtTopic(memo.id,activeThoughtGroupKey);saveMemos();renderWritePage();renderThoughtFlow();
+}
 function editThoughtGroupTitle(group){
   if(!group||!group.length)return;
-  const key=thoughtGroupKey(group);
+  const key=getThoughtTopicKeyForGroup(group);
   const current=getThoughtGroupTitle(group,0);
   const defaultTopic=current.replace(/\s*에 대한 생각\s*$/,'').trim();
   const next=prompt('이 생각의 제목을 입력하세요.\n예: 피자 / 진로 고민 / 호주 여행',defaultTopic);
@@ -3169,6 +3231,7 @@ function connectMemos(aId,bId,preferredParentId=null){
   }else{
     addThoughtLink(aId,bId);
   }
+  if(activeThoughtGroupKey)mergeMemosIntoThoughtTopic(aId,bId,activeThoughtGroupKey);
   saveMemos();
 }
 
@@ -3176,20 +3239,30 @@ function starifyThoughtGroup(group,centerId){
   const ids=new Set(group.map(m=>Number(m.id)));
   const center=savedMemos.find(m=>Number(m.id)===Number(centerId));
   if(!center)return;
-  group.forEach(memo=>{
+  // The topic can contain disconnected/floating memos. Only normalize the
+  // part that is actually connected to the current center.
+  const connected=new Set([Number(centerId)]),queue=[center];
+  while(queue.length){
+    const cur=queue.shift();
+    getManualLinkedIds(cur).forEach(id=>{
+      const nid=Number(id);if(!ids.has(nid)||connected.has(nid))return;
+      const next=savedMemos.find(m=>Number(m.id)===nid);if(next){connected.add(nid);queue.push(next);}
+    });
+  }
+  const connectedGroup=group.filter(m=>connected.has(Number(m.id)));
+  connectedGroup.forEach(memo=>{
     if(!Array.isArray(memo.linkedMemos))memo.linkedMemos=[];
     if(!Array.isArray(memo.autoLinkedMemos))memo.autoLinkedMemos=[];
     memo.linkedMemos=memo.linkedMemos.filter(id=>{
       const nid=Number(id);
-      return !ids.has(nid) || nid===Number(centerId) || Number(memo.parentThoughtId)===nid || Number(memo.id)===nid;
+      return !connected.has(nid) || nid===Number(centerId) || Number(memo.parentThoughtId)===nid || Number(memo.id)===nid;
     });
   });
-  // 처음 중심을 지정할 때만 기존 연결을 중심 직속 가지로 정리한다.
-  // 이후에는 사용자가 만든 상위→서브→서서브 계층을 유지한다.
-  const hasHierarchy=group.some(m=>Number(m.id)!==Number(centerId)&&Number(m.parentThoughtId)>0);
-  if(!hasHierarchy){
+  // 처음 중심을 지정할 때만 기존의 실제 연결을 중심 직속 가지로 정리한다.
+  const hasHierarchy=connectedGroup.some(m=>Number(m.id)!==Number(centerId)&&Number(m.parentThoughtId)>0);
+  if(!hasHierarchy && connectedGroup.length>1){
     center.linkedMemos=[];
-    group.forEach(memo=>{
+    connectedGroup.forEach(memo=>{
       if(Number(memo.id)===Number(centerId))return;
       memo.parentThoughtId=Number(centerId);
       memo.linkedMemos=memo.linkedMemos.filter(id=>Number(id)===Number(centerId));
@@ -3197,9 +3270,8 @@ function starifyThoughtGroup(group,centerId){
       center.linkedMemos.push(Number(memo.id));
     });
   }else{
-    // 중심의 직속 자식 목록은 parentThoughtId를 기준으로 복원
     center.linkedMemos=[];
-    group.forEach(memo=>{
+    connectedGroup.forEach(memo=>{
       if(Number(memo.id)!==Number(centerId)&&Number(memo.parentThoughtId)===Number(centerId)){
         if(!memo.linkedMemos.includes(Number(centerId)))memo.linkedMemos.push(Number(centerId));
         if(!center.linkedMemos.includes(Number(memo.id)))center.linkedMemos.push(Number(memo.id));
@@ -3211,7 +3283,7 @@ function starifyThoughtGroup(group,centerId){
 
 function setThoughtCenterForGroup(group,centerId){
   if(!group||!group.some(m=>Number(m.id)===Number(centerId)))return;
-  const key=thoughtGroupKey(group);
+  const key=activeThoughtGroupKey||getThoughtTopicKeyForGroup(group);
   thoughtCenterId=Number(centerId);
   thoughtGroupCenters[key]=thoughtCenterId;
   saveThoughtCenter();saveThoughtGroupCenters();
@@ -3247,7 +3319,8 @@ function clearThoughtCenter(){
   const group=getActiveGroup();if(group){delete thoughtGroupCenters[thoughtGroupKey(group)];saveThoughtGroupCenters();}thoughtCenterId=null;saveThoughtCenter();renderThoughtFlow();
 }
 function enterThoughtGroup(key){
-  const group=getConnectedComponents().find(g=>thoughtGroupKey(g)===key);if(!group)return;
+  ensureThoughtTopics();
+  const group=(thoughtTopicMembers[key]||[]).map(id=>savedMemos.find(m=>Number(m.id)===Number(id))).filter(Boolean);if(group.length<2)return;
   activeThoughtGroupKey=key;selectedThoughtIds=[];thoughtCenterId=Number(thoughtGroupCenters[key]||'')||null;
   if(thoughtCenterId&&!group.some(m=>Number(m.id)===thoughtCenterId))thoughtCenterId=null;
   saveThoughtCenter();renderThoughtFlow();
@@ -3358,12 +3431,13 @@ function deleteThoughtGroup(group){
     if(Array.isArray(memo.autoLinkedMemos)) memo.autoLinkedMemos=memo.autoLinkedMemos.filter(id=>!ids.has(Number(id)));
     if(ids.has(Number(memo.id))) delete memo.parentThoughtId;
   });
-  const key=thoughtGroupKey(group);
+  const key=activeThoughtGroupKey||getThoughtTopicKeyForGroup(group);
+  delete thoughtTopicMembers[key];
   delete thoughtGroupTitles[key];
   delete thoughtGroupCenters[key];
   if(activeThoughtGroupKey===key) activeThoughtGroupKey=null;
   if(group.some(m=>Number(m.id)===Number(thoughtCenterId))) thoughtCenterId=null;
-  saveMemos();saveThoughtGroupTitles();saveThoughtGroupCenters();saveThoughtCenter();
+  saveMemos();saveThoughtTopicMembers();saveThoughtGroupTitles();saveThoughtGroupCenters();saveThoughtCenter();
   selectedThoughtIds=[];
   renderThoughtFlow();renderThoughtUnconnected();
 }
@@ -3371,7 +3445,7 @@ function deleteThoughtGroup(group){
 function renderGroupOverview(){
   const box=document.getElementById('thoughtGroupList');if(!box)return;const groups=getConnectedComponents();box.innerHTML='';
   if(!groups.length){box.innerHTML='<div class="thought-empty" style="grid-column:1/-1;"><div class="thought-empty-graphic">🔗</div>아직 연결된 생각 묶음이 없어요.<br>메모를 서로 연결하면 주제별 흐름이 여기에 생겨요.</div>';return;}
-  groups.forEach((group,index)=>{const card=document.createElement('div');card.className='thought-group-card';const title=getThoughtGroupTitle(group,index);const chips=group.slice(0,4).map(m=>`<span class="thought-group-chip">${escapeHtml(m.text)}</span>`).join('');card.innerHTML=`<div class="thought-group-kicker">THOUGHT FLOW ${String(index+1).padStart(2,'0')}</div><div class="thought-group-title-row"><div class="thought-group-title">${escapeHtml(title)}</div><button class="thought-title-edit" type="button" title="주제 이름 수정">✏️</button><button class="thought-topic-delete" type="button" title="이 생각 주제 삭제">🗑️</button></div><div class="thought-group-sub">${getThoughtGroupSummary(group)}<br>이 주제의 메모를 마인드맵으로 보기</div><div class="thought-group-preview">${chips}</div><div class="thought-group-dots"><span class="thought-group-dot"></span><span class="thought-group-dot"></span><span class="thought-group-dot"></span></div>`;card.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(group);});card.querySelector('.thought-topic-delete').addEventListener('click',e=>{e.stopPropagation();deleteThoughtGroup(group);});card.addEventListener('click',()=>enterThoughtGroup(thoughtGroupKey(group)));box.appendChild(card);});
+  groups.forEach((group,index)=>{const card=document.createElement('div');card.className='thought-group-card';const title=getThoughtGroupTitle(group,index);const chips=group.slice(0,4).map(m=>`<span class="thought-group-chip">${escapeHtml(m.text)}</span>`).join('');card.innerHTML=`<div class="thought-group-kicker">THOUGHT FLOW ${String(index+1).padStart(2,'0')}</div><div class="thought-group-title-row"><div class="thought-group-title">${escapeHtml(title)}</div><button class="thought-title-edit" type="button" title="주제 이름 수정">✏️</button><button class="thought-topic-delete" type="button" title="이 생각 주제 삭제">🗑️</button></div><div class="thought-group-sub">${getThoughtGroupSummary(group)}<br>이 주제의 메모를 마인드맵으로 보기</div><div class="thought-group-preview">${chips}</div><div class="thought-group-dots"><span class="thought-group-dot"></span><span class="thought-group-dot"></span><span class="thought-group-dot"></span></div>`;card.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(group);});card.querySelector('.thought-topic-delete').addEventListener('click',e=>{e.stopPropagation();deleteThoughtGroup(group);});card.addEventListener('click',()=>enterThoughtGroup(getThoughtTopicKeyForGroup(group)));box.appendChild(card);});
 }
 
 function renderThoughtChangePanel(group){
@@ -3420,7 +3494,8 @@ function getUnconnectedPosition(memo,index,total){
 function saveUnconnectedPosition(id,pos){let d={};try{d=JSON.parse(localStorage.getItem(THOUGHT_UNCONNECTED_POSITION_KEY)||'{}');}catch(e){}d[String(id)]=pos;localStorage.setItem(THOUGHT_UNCONNECTED_POSITION_KEY,JSON.stringify(d));}
 function renderThoughtUnconnected(){
   const box=document.getElementById('thoughtUnconnectedList');if(!box)return;box.innerHTML=`<svg id="unlinkedTempSvg" class="unlinked-svg" aria-hidden="true"><defs><marker id="unlinkedArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--theme-main)"></path></marker></defs><path id="unlinkedTempEdge" class="unlinked-temp-edge" style="display:none" marker-end="url(#unlinkedArrow)"></path></svg>`;
-  const unconnected=savedMemos.filter(m=>getManualLinkedIds(m).length===0).sort((a,b)=>b.id-a.id);
+  const topicMemoIds=new Set(Object.values(thoughtTopicMembers).flat().map(Number));
+  const unconnected=savedMemos.filter(m=>getManualLinkedIds(m).length===0&&!topicMemoIds.has(Number(m.id))).sort((a,b)=>b.id-a.id);
   if(!unconnected.length){box.innerHTML='<div class="thought-empty" style="position:absolute;left:12%;right:12%;top:260px;"><div class="thought-empty-graphic">✨</div>연결되지 않은 메모가 없어요.<br>모든 생각이 다른 기록과 연결되어 있어요.</div>';return;}
   unconnected.forEach((memo,index)=>{
     const card=document.createElement('div');card.className='unlinked-card';card.dataset.id=memo.id;
