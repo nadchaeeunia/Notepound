@@ -475,24 +475,36 @@
     .legend-item{display:flex;align-items:center;gap:4px}
     .legend-line{width:25px;height:0;border-top:2px solid #1a73e8}
     .legend-line.dashed{border-top-style:dashed;border-top-color:#9aa0a6}
-    .thought-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:#f8f9fa;overflow:auto;position:relative}
-    .thought-graph{position:relative;width:100%;min-width:350px;height:470px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden}
+     .thought-view-switch{display:flex;gap:6px;padding:0 14px 10px;}
+    .thought-view-btn{flex:1;border:1px solid #e2e5e9;background:#fff;color:#777;border-radius:12px;padding:9px 8px;font-size:10px;font-weight:bold;cursor:pointer;}
+    .thought-view-btn.active{background:#e8f0fe;color:#1a73e8;border-color:#c9dcff;}
+    .thought-view{display:none;}
+    .thought-view.active{display:block;}
+    .unlinked-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;padding:0 10px 10px;}
+    .unlinked-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:12px;box-shadow:0 3px 10px rgba(0,0,0,.06);cursor:pointer;}
+    .unlinked-card:hover{border-color:#1a73e8;}
+    .unlinked-card-date{font-size:9px;color:#999;margin-bottom:6px;}
+    .unlinked-card-text{font-size:12px;line-height:1.5;color:#333;word-break:break-word;}
+    .unlinked-card-meta{font-size:9px;color:#1a73e8;margin-top:7px;}
+    .thought-auto-note{padding:0 14px 8px;font-size:9px;color:#777;line-height:1.5;}
+.thought-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:#f8f9fa;overflow:auto;position:relative}
+    .thought-graph{position:relative;width:100%;min-width:700px;height:680px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden}
     .thought-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
     .thought-edge{fill:none;stroke:#1a73e8;stroke-width:2.2;opacity:.82}
     .thought-edge.suggested{stroke:#9aa0a6;stroke-width:1.6;stroke-dasharray:6 5;opacity:.7}
     .thought-edge.manual{stroke:#1a73e8;stroke-width:2.5}
-    .thought-node{position:absolute;width:142px;min-height:92px;background:#fff;border:1px solid #dfe3e8;border-radius:14px;padding:10px 10px 9px;box-shadow:0 4px 12px rgba(0,0,0,.09);cursor:grab;user-select:none;touch-action:none}
+    .thought-node{position:absolute;width:190px;min-height:118px;background:#fff;border:1px solid #dfe3e8;border-radius:14px;padding:10px 10px 9px;box-shadow:0 4px 12px rgba(0,0,0,.09);cursor:grab;user-select:none;touch-action:none}
     .thought-node:hover{border-color:#1a73e8;box-shadow:0 5px 14px rgba(26,115,232,.16)}
     .thought-node.selected{border:2px solid #1a73e8;box-shadow:0 5px 18px rgba(26,115,232,.2)}
     .thought-node.dragging{cursor:grabbing;z-index:30}
     .thought-node-date{font-size:9px;color:#999;margin-bottom:5px}
-    .thought-node-text{font-size:11px;line-height:1.45;color:#333;word-break:break-word;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+    .thought-node-text{font-size:12px;line-height:1.45;color:#333;word-break:break-word;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
     .thought-node-meta{font-size:8px;color:#1a73e8;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .thought-node-port{position:absolute;top:50%;width:13px;height:13px;margin-top:-6px;border-radius:50%;background:#fff;border:2px solid #1a73e8;z-index:4;cursor:crosshair}
     .thought-node-port.left{left:-8px}
     .thought-node-port.right{right:-8px}
     .thought-node-port:hover{background:#1a73e8}
-    .thought-node-hint{font-size:8px;color:#aaa;margin-top:5px}
+    .thought-node-hint{font-size:9px;color:#aaa;margin-top:5px}
     .thought-empty{margin:20px 0;padding:24px 16px;text-align:center;background:#f8f9fa;border-radius:14px;color:#999;font-size:12px;line-height:1.6}
     .thought-bottom{padding:10px 10px 20px}
     .thought-panel{background:#fff;border:1px solid #eee;border-radius:14px;padding:10px;margin-top:8px}
@@ -752,7 +764,7 @@
   <div id="pageThought" class="tab-content">
     <div class="thought-toolbar-wrap">
       <div class="thought-toolbar-top">
-        <div class="section-title">🧠 생각 연결</div>
+        <div class="section-title">🧠 생각 흐름</div>
         <div class="thought-toolbar">
           <button class="thought-refresh-btn" onclick="refreshThoughtFlow()">↻ 새로고침</button>
           <button class="thought-refresh-btn green" onclick="connectSelectedMemos()">🔗 선택 연결</button>
@@ -764,34 +776,41 @@
       </div>
     </div>
     <div class="thought-description">
-      메모를 노드처럼 배치했어요. 연결된 메모는 선으로 이어지고, 연결되지 않은 메모는 자유롭게 떠 있어요.<br>
-      카드의 ●를 다른 카드로 드래그하면 직접 연결할 수 있고, 카드를 선택한 뒤 두 개를 선택해도 연결할 수 있어요.
+      관련된 메모는 자동으로 연결하고, 원하는 메모끼리는 직접 연결할 수 있어요.<br>
+      카드의 ●를 다른 카드로 드래그하거나 두 카드를 선택해 연결할 수 있어요. 연결선은 클릭해서 해제할 수 있어요.
     </div>
-    <div class="thought-legend">
-      <span class="legend-item"><span class="legend-line"></span> 직접 연결</span>
-      <span class="legend-item"><span class="legend-line dashed"></span> 자동 유사도 후보</span>
+    <div class="thought-auto-note">✨ 자동 연결은 메모 내용·카테고리·태그·생각 이어쓰기 관계를 분석해 만들어집니다.</div>
+    <div class="thought-view-switch">
+      <button id="thoughtConnectedBtn" class="thought-view-btn active" onclick="switchThoughtView('connected')">🔗 연결된 생각 흐름</button>
+      <button id="thoughtUnconnectedBtn" class="thought-view-btn" onclick="switchThoughtView('unconnected')">○ 연결되지 않은 메모</button>
     </div>
-    <div id="thoughtSelectedInfo" class="selected-info" style="display:none;"></div>
-    <div class="thought-graph-wrap">
-      <div id="thoughtGraph" class="thought-graph">
-        <svg id="thoughtSvg" class="thought-svg" aria-hidden="true">
-          <defs>
-            <marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-              <path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path>
-            </marker>
-            <marker id="arrowSuggested" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-              <path d="M0,0 L7,3.5 L0,7 z" fill="#9aa0a6"></path>
-            </marker>
-          </defs>
-          <g id="thoughtEdges"></g>
-          <path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path>
-        </svg>
+
+    <div id="thoughtConnectedView" class="thought-view active">
+      <div class="thought-legend">
+        <span class="legend-item"><span class="legend-line"></span> 직접 연결</span>
+        <span class="legend-item"><span class="legend-line dashed"></span> 자동 연결</span>
+      </div>
+      <div id="thoughtSelectedInfo" class="selected-info" style="display:none;"></div>
+      <div class="thought-graph-wrap">
+        <div id="thoughtGraph" class="thought-graph">
+          <svg id="thoughtSvg" class="thought-svg" aria-hidden="true">
+            <defs>
+              <marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path></marker>
+              <marker id="arrowSuggested" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#7b61ff"></path></marker>
+            </defs>
+            <g id="thoughtEdges"></g>
+            <path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="thought-bottom">
+        <div id="thoughtSummary" class="thought-panel"></div>
+        <div id="thoughtChangePanel" class="thought-panel"></div>
       </div>
     </div>
-    <div class="thought-bottom">
-      <div id="thoughtSummary" class="thought-panel"></div>
-      <div id="thoughtSuggestions" class="thought-panel"></div>
-      <div id="thoughtChangePanel" class="thought-panel"></div>
+
+    <div id="thoughtUnconnectedView" class="thought-view">
+      <div id="thoughtUnconnectedList" class="unlinked-list"></div>
     </div>
   </div>
 
@@ -2923,7 +2942,7 @@ function findThoughtRelatedMemos(targetMemo,limit=8){
     .slice(0,limit);
 }
 
-function getSuggestedEdges(){
+function getAutomaticEdges(){
   const edges=[];
   const seen=new Set();
   for(let i=0;i<savedMemos.length;i++){
@@ -2934,15 +2953,42 @@ function getSuggestedEdges(){
       const strong=result.shared.length>=2 || (
         result.shared.length>=1 &&
         a.category&&b.category&&a.category===b.category&&a.category!=='#미분류'
-      );
+      ) || result.score>=9;
       if(!strong)continue;
       const key=[a.id,b.id].sort((x,y)=>x-y).join('-');
       if(seen.has(key))continue;
       seen.add(key);
-      edges.push({from:a.id,to:b.id,score:result.score,shared:result.shared});
+      edges.push({from:a.id,to:b.id,score:result.score,shared:result.shared,type:'auto'});
     }
   }
-  return edges.sort((a,b)=>b.score-a.score).slice(0,10);
+  return edges;
+}
+
+function getSuggestedEdges(){
+  return getAutomaticEdges();
+}
+
+function autoConnectThoughtMemos(){
+  let changed=false;
+  getAutomaticEdges().forEach(edge=>{
+    const a=savedMemos.find(m=>m.id===edge.from);
+    const b=savedMemos.find(m=>m.id===edge.to);
+    if(!a||!b)return;
+    if(!Array.isArray(a.linkedMemos))a.linkedMemos=[];
+    if(!Array.isArray(b.linkedMemos))b.linkedMemos=[];
+    if(!a.linkedMemos.includes(b.id)){a.linkedMemos.push(b.id);changed=true;}
+    if(!b.linkedMemos.includes(a.id)){b.linkedMemos.push(a.id);changed=true;}
+    if(!Array.isArray(a.autoLinkedMemos))a.autoLinkedMemos=[];
+    if(!Array.isArray(b.autoLinkedMemos))b.autoLinkedMemos=[];
+    if(!a.autoLinkedMemos.includes(b.id)){a.autoLinkedMemos.push(b.id);changed=true;}
+    if(!b.autoLinkedMemos.includes(a.id)){b.autoLinkedMemos.push(a.id);changed=true;}
+  });
+  if(changed)saveMemos();
+}
+
+function getAutoLinkedIds(memo){
+  if(!memo||!Array.isArray(memo.autoLinkedMemos))return [];
+  return memo.autoLinkedMemos.map(Number).filter(id=>!Number.isNaN(id));
 }
 
 function formatThoughtDate(timestamp){
@@ -3082,6 +3128,8 @@ function disconnectMemos(aId,bId){
   const b=savedMemos.find(m=>m.id===bId);
   if(a&&Array.isArray(a.linkedMemos))a.linkedMemos=a.linkedMemos.filter(id=>Number(id)!==Number(bId));
   if(b&&Array.isArray(b.linkedMemos))b.linkedMemos=b.linkedMemos.filter(id=>Number(id)!==Number(aId));
+  if(a&&Array.isArray(a.autoLinkedMemos))a.autoLinkedMemos=a.autoLinkedMemos.filter(id=>Number(id)!==Number(bId));
+  if(b&&Array.isArray(b.autoLinkedMemos))b.autoLinkedMemos=b.autoLinkedMemos.filter(id=>Number(id)!==Number(aId));
   saveMemos();
 }
 
@@ -3231,36 +3279,21 @@ function renderThoughtEdgesOnly(){
   const graph=document.getElementById('thoughtGraph');
   if(!group||!graph)return;
   group.innerHTML='';
-  getConnectionPairs().forEach(edge=>{
+  const pairs=getConnectionPairs();
+  const autoPairs=getAutomaticEdges();
+  pairs.forEach(edge=>{
     const a=getNodeCenter(edge.from),b=getNodeCenter(edge.to);
     if(!a||!b)return;
+    const isAuto=autoPairs.some(p=>(p.from===edge.from&&p.to===edge.to)||(p.from===edge.to&&p.to===edge.from));
     const path=document.createElementNS('http://www.w3.org/2000/svg','path');
     path.setAttribute('d',makeCurve(a.x,a.y,b.x,b.y));
-    path.setAttribute('class','thought-edge manual');
-    path.setAttribute('marker-end','url(#arrowManual)');
+    path.setAttribute('class',isAuto?'thought-edge suggested':'thought-edge manual');
+    path.setAttribute('marker-end',isAuto?'url(#arrowSuggested)':'url(#arrowManual)');
     path.style.pointerEvents='stroke';
     path.addEventListener('click',e=>{
       e.stopPropagation();
-      if(confirm('이 연결을 해제할까요?')){
+      if(confirm(isAuto?'이 자동 연결을 해제할까요?':'이 연결을 해제할까요?')){
         disconnectMemos(edge.from,edge.to);
-        renderThoughtFlow();
-      }
-    });
-    group.appendChild(path);
-  });
-  getSuggestedEdges().forEach(edge=>{
-    if(getConnectionPairs().some(p=>(p.from===edge.from&&p.to===edge.to)||(p.from===edge.to&&p.to===edge.from)))return;
-    const a=getNodeCenter(edge.from),b=getNodeCenter(edge.to);
-    if(!a||!b)return;
-    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d',makeCurve(a.x,a.y,b.x,b.y));
-    path.setAttribute('class','thought-edge suggested');
-    path.setAttribute('marker-end','url(#arrowSuggested)');
-    path.style.pointerEvents='stroke';
-    path.addEventListener('click',e=>{
-      e.stopPropagation();
-      if(confirm('자동 유사도 후보를 직접 연결할까요?')){
-        connectMemos(edge.from,edge.to);
         renderThoughtFlow();
       }
     });
@@ -3268,27 +3301,37 @@ function renderThoughtEdgesOnly(){
   });
 }
 
-function renderThoughtSuggestions(){
-  const box=document.getElementById('thoughtSuggestions');
+function renderThoughtUnconnected(){
+  const box=document.getElementById('thoughtUnconnectedList');
   if(!box)return;
-  const suggestions=getSuggestedEdges();
-  if(!suggestions.length){
-    box.innerHTML='<div class="thought-panel-title">✨ 자동 연결 후보</div><div style="font-size:9px;color:#999;">현재 뚜렷한 유사 기록이 없어요. 메모를 더 기록하면 후보가 생길 수 있어요.</div>';
+  const connectedIds=new Set();
+  savedMemos.forEach(m=>getManualLinkedIds(m).forEach(id=>connectedIds.add(Number(id))));
+  const unconnected=savedMemos.filter(m=>!connectedIds.has(Number(m.id)) && getManualLinkedIds(m).length===0);
+  if(!unconnected.length){
+    box.innerHTML='<div class="thought-empty" style="grid-column:1/-1;">현재 연결되지 않은 메모가 없어요.<br>새 메모를 작성하거나 연결을 해제하면 이곳에 나타나요.</div>';
     return;
   }
-  box.innerHTML='<div class="thought-panel-title">✨ 자동 연결 후보</div>';
-  suggestions.slice(0,6).forEach(edge=>{
-    const a=savedMemos.find(m=>m.id===edge.from),b=savedMemos.find(m=>m.id===edge.to);
-    if(!a||!b)return;
-    const row=document.createElement('div');
-    row.className='suggestion-item';
-    row.innerHTML=`<div class="suggestion-text">「${escapeHtml(a.text.slice(0,14))}${a.text.length>14?'…':''}」 ↔ 「${escapeHtml(b.text.slice(0,14))}${b.text.length>14?'…':''}」<br><span style="color:#999;">공통 키워드: ${escapeHtml(edge.shared.slice(0,4).join(', ')||'관련 내용')}</span></div><div class="suggestion-score">${Math.round(edge.score)}점</div><button class="suggestion-connect">연결</button>`;
-    row.querySelector('button').onclick=()=>{
-      connectMemos(edge.from,edge.to);
-      renderThoughtFlow();
-    };
-    box.appendChild(row);
+  box.innerHTML='';
+  [...unconnected].sort((a,b)=>b.id-a.id).forEach(memo=>{
+    const card=document.createElement('div');
+    card.className='unlinked-card';
+    card.innerHTML=`<div class="unlinked-card-date">${formatThoughtDate(memo.id)}</div><div class="unlinked-card-text">${escapeHtml(memo.text)}</div><div class="unlinked-card-meta">${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div>`;
+    card.addEventListener('click',()=>{
+      switchThoughtView('connected');
+      setTimeout(()=>selectThoughtNode(memo.id),0);
+    });
+    card.addEventListener('contextmenu',e=>{e.preventDefault();openLinkMemoModal(memo.id);});
+    box.appendChild(card);
   });
+}
+
+function switchThoughtView(view){
+  const connected=view==='connected';
+  document.getElementById('thoughtConnectedView')?.classList.toggle('active',connected);
+  document.getElementById('thoughtUnconnectedView')?.classList.toggle('active',!connected);
+  document.getElementById('thoughtConnectedBtn')?.classList.toggle('active',connected);
+  document.getElementById('thoughtUnconnectedBtn')?.classList.toggle('active',!connected);
+  if(!connected)renderThoughtUnconnected();
 }
 
 function renderThoughtChangePanel(){
@@ -3326,60 +3369,62 @@ function renderThoughtChangePanel(){
 
 function renderThoughtFlow(){
   normalizeMemoData();
+  autoConnectThoughtMemos();
   const graph=document.getElementById('thoughtGraph');
   if(!graph)return;
   graph.querySelectorAll('.thought-node').forEach(n=>n.remove());
 
   if(!savedMemos.length){
-    graph.innerHTML='<div class="thought-empty" style="position:absolute;left:20px;right:20px;top:150px;">아직 메모가 없어요.<br>메모를 작성하면 이 공간에 기록들이 떠다녀요.</div>';
+    graph.innerHTML='<div class="thought-empty" style="position:absolute;left:20px;right:20px;top:220px;">아직 메모가 없어요.<br>메모를 작성하면 이 공간에 기록들이 떠다녀요.</div>';
     const s=document.getElementById('thoughtSummary');
-    if(s)s.innerHTML='<div class="thought-panel-title">🧠 생각 연결</div><div style="font-size:9px;color:#999;">메모를 작성한 뒤 연결해보세요.</div>';
+    if(s)s.innerHTML='<div class="thought-panel-title">🧠 생각 흐름</div><div style="font-size:9px;color:#999;">메모를 작성하면 관련된 생각이 자동으로 연결돼요.</div>';
+    renderThoughtUnconnected();
     return;
   }
-  // SVG가 지워지지 않도록 없으면 복구
   if(!document.getElementById('thoughtSvg')){
-    graph.innerHTML='<svg id="thoughtSvg" class="thought-svg"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path></marker><marker id="arrowSuggested" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#9aa0a6"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>';
+    graph.innerHTML='<svg id="thoughtSvg" class="thought-svg"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path></marker><marker id="arrowSuggested" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#7b61ff"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>';
   }
-  const sorted=[...savedMemos].sort((a,b)=>a.id-b.id);
-  sorted.forEach((memo,index)=>{
-    const node=document.createElement('div');
-    node.className='thought-node';
-    node.dataset.id=memo.id;
-    const pos=getThoughtPosition(memo,index);
-    node.style.left=`${pos.x}%`;
-    node.style.top=`${pos.y}%`;
-    node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><div class="thought-node-meta">${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div><div class="thought-node-hint">클릭: 선택 · ● 드래그: 연결</div>`;
-    node.addEventListener('pointerdown',e=>{
-      if(e.target.closest('.thought-node-port'))return;
-      if(e.button!==undefined&&e.button!==0)return;
-      startThoughtNodeDrag(e,memo.id);
+  const connectedIds=new Set();
+  savedMemos.forEach(m=>getManualLinkedIds(m).forEach(id=>connectedIds.add(Number(id))));
+  const connectedMemos=savedMemos.filter(m=>connectedIds.has(Number(m.id)));
+  const sorted=[...connectedMemos].sort((a,b)=>a.id-b.id);
+  if(!sorted.length){
+    graph.innerHTML='<div class="thought-empty" style="position:absolute;left:20px;right:20px;top:220px;">아직 연결된 생각이 없어요.<br>자동 연결될 만한 기록이 생기거나 직접 메모를 연결하면 이곳에 나타나요.</div>';
+  }else{
+    sorted.forEach((memo,index)=>{
+      const node=document.createElement('div');
+      node.className='thought-node';
+      node.dataset.id=memo.id;
+      const pos=getThoughtPosition(memo,index);
+      node.style.left=`${pos.x}%`;
+      node.style.top=`${pos.y}%`;
+      node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><div class="thought-node-meta">${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div><div class="thought-node-hint">클릭: 선택 · ● 드래그: 연결</div>`;
+      node.addEventListener('pointerdown',e=>{
+        if(e.target.closest('.thought-node-port'))return;
+        if(e.button!==undefined&&e.button!==0)return;
+        startThoughtNodeDrag(e,memo.id);
+      });
+      node.addEventListener('click',e=>{
+        if(isDraggingThoughtNode)return;
+        if(e.target.closest('.thought-node-port'))return;
+        selectThoughtNode(memo.id);
+      });
+      node.querySelector('.thought-node-port.right').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
+      node.querySelector('.thought-node-port.left').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
+      node.addEventListener('dblclick',e=>{e.stopPropagation();const idx=savedMemos.findIndex(m=>m.id===memo.id);if(idx!==-1)openMemoModal(idx);});
+      node.addEventListener('contextmenu',e=>{e.preventDefault();openLinkMemoModal(memo.id);});
+      graph.appendChild(node);
     });
-    node.addEventListener('click',e=>{
-      if(isDraggingThoughtNode)return;
-      if(e.target.closest('.thought-node-port'))return;
-      selectThoughtNode(memo.id);
-    });
-    node.querySelector('.thought-node-port.right').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
-    node.querySelector('.thought-node-port.left').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
-    node.addEventListener('dblclick',e=>{
-      e.stopPropagation();
-      const idx=savedMemos.findIndex(m=>m.id===memo.id);
-      if(idx!==-1)openMemoModal(idx);
-    });
-    node.addEventListener('contextmenu',e=>{
-      e.preventDefault();
-      openLinkMemoModal(memo.id);
-    });
-    graph.appendChild(node);
-  });
+  }
   saveThoughtPositions();
   renderThoughtEdgesOnly();
-  const manualCount=getConnectionPairs().length;
-  const suggestions=getSuggestedEdges().length;
+  const manualCount=getConnectionPairs().filter(edge=>!getAutomaticEdges().some(p=>(p.from===edge.from&&p.to===edge.to)||(p.from===edge.to&&p.to===edge.from))).length;
+  const autoCount=getAutomaticEdges().length;
+  const connectedCount=connectedMemos.length;
   const summary=document.getElementById('thoughtSummary');
-  if(summary)summary.innerHTML=`<div class="thought-panel-title">🧠 현재 기록 상태</div><div style="font-size:9px;color:#777;line-height:1.5;">총 <b>${savedMemos.length}</b>개의 메모 · 직접 연결 <b>${manualCount}</b>개 · 자동 유사도 후보 <b>${suggestions}</b>개<br>연결되지 않은 메모도 그대로 남아 있어요. 원하는 기록끼리 선으로 묶어보세요.</div>`;
-  renderThoughtSuggestions();
+  if(summary)summary.innerHTML=`<div class="thought-panel-title">🧠 현재 생각 흐름</div><div style="font-size:9px;color:#777;line-height:1.5;">연결된 메모 <b>${connectedCount}</b>개 · 직접 연결 <b>${manualCount}</b>개 · 자동 연결 <b>${autoCount}</b>개<br>관련 메모가 새로 생기면 새로고침할 때 자동으로 연결됩니다.</div>`;
   renderThoughtChangePanel();
+  renderThoughtUnconnected();
   updateThoughtSelectionUI();
 }
 
@@ -3421,3 +3466,22 @@ function refreshThoughtFlow(){
 
 </body>
 </html>
+'''
+
+BASE_DIR = Path(__file__).resolve().parent
+OUTPUT_HTML = BASE_DIR / "Notepound_실행용.html"
+
+
+def create_html():
+    OUTPUT_HTML.write_text(HTML, encoding="utf-8")
+    return OUTPUT_HTML
+
+
+def main():
+    path = create_html()
+    print(f"Notepound 실행 파일 생성: {path}")
+    webbrowser.open(path.as_uri())
+
+
+if __name__ == "__main__":
+    main()
