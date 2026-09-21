@@ -843,7 +843,6 @@
         <div class="section-title">🧠 생각 흐름</div>
         <div class="thought-toolbar">
           <button class="thought-refresh-btn" onclick="refreshThoughtFlow()">↻ 새로고침</button>
-          <button class="thought-refresh-btn green" onclick="connectSelectedMemos()">🔗 선택 연결</button>
         </div>
       </div>
       <div class="thought-toolbar">
@@ -3474,7 +3473,14 @@ const COLOR_THEMES={
   pink:{name:'분홍',main:'#E56B9F',dark:'#D24D86',soft:'#FFEAF3',border:'#F4B8D0',pale:'#FFF4F8',accent:'#FFDCEB',light:'#F6C4D8',mid:'#EC91B5'},
   green:{name:'초록',main:'#57A66D',dark:'#398C52',soft:'#E9F7ED',border:'#B8DEC2',pale:'#F4FBF5',accent:'#DDF1E2',light:'#BFE2C8',mid:'#7FC18F'},
   purple:{name:'보라',main:'#8B72D8',dark:'#6E55C2',soft:'#F0EBFF',border:'#CEC2F5',pale:'#F8F5FF',accent:'#E8E0FF',light:'#D8CFF7',mid:'#AA98E8'},
-  orange:{name:'주황',main:'#E8894A',dark:'#D36A2B',soft:'#FFF0E5',border:'#F2C2A2',pale:'#FFF8F3',accent:'#FFE4D2',light:'#F5C6A7',mid:'#EEA575'}
+  orange:{name:'주황',main:'#E8894A',dark:'#D36A2B',soft:'#FFF0E5',border:'#F2C2A2',pale:'#FFF8F3',accent:'#FFE4D2',light:'#F5C6A7',mid:'#EEA575'},
+  red:{name:'빨강',main:'#E85D68',dark:'#CF3F4B',soft:'#FFECEF',border:'#F3B8BE',pale:'#FFF7F8',accent:'#FFDDE1',light:'#F5C7CC',mid:'#EE8F98'},
+  lime:{name:'연두',main:'#8DBF4A',dark:'#6E9E2D',soft:'#F1F8E7',border:'#C9E0A7',pale:'#FAFDF5',accent:'#E6F2D1',light:'#D2E7B5',mid:'#AACD75'},
+  black:{name:'블랙',main:'#333333',dark:'#171717',soft:'#F0F0F0',border:'#CFCFCF',pale:'#FAFAFA',accent:'#E5E5E5',light:'#D8D8D8',mid:'#999999'},
+  sky:{name:'하늘',main:'#55AEEA',dark:'#2D8FD3',soft:'#E9F6FF',border:'#B8DDF6',pale:'#F5FBFF',accent:'#DDF0FC',light:'#C8E7FA',mid:'#82C6F0'},
+  mint:{name:'민트',main:'#52BFA8',dark:'#2D9E89',soft:'#E8F8F4',border:'#B5E2D8',pale:'#F5FCFA',accent:'#D9F1EB',light:'#C4E8DF',mid:'#7CCFBC'},
+  navy:{name:'남색',main:'#405B9A',dark:'#293F76',soft:'#E9EEF9',border:'#B9C5E2',pale:'#F6F8FC',accent:'#DCE4F4',light:'#CBD5E9',mid:'#7187B8'},
+  gray:{name:'회색',main:'#7B818A',dark:'#5C626B',soft:'#F0F1F3',border:'#D0D3D7',pale:'#FAFAFB',accent:'#E5E7EA',light:'#D9DBDE',mid:'#A8ACB2'}
 };
 function applyColorTheme(name){
   const key=COLOR_THEMES[name]?name:'blue';
