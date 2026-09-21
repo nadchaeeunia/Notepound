@@ -505,6 +505,7 @@
     .unlinked-card{position:absolute;width:210px;min-height:118px;background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:12px;box-shadow:0 4px 13px rgba(0,0,0,.07);cursor:grab;animation:thoughtFloat 5.2s ease-in-out infinite;transition:box-shadow .18s,border-color .18s;user-select:none;touch-action:none}
     .unlinked-card:hover{border-color:#1a73e8;box-shadow:0 7px 20px rgba(26,115,232,.13)}
     .unlinked-card.dragging{cursor:grabbing;animation:none;z-index:30}
+    .unlinked-card.linking{border-color:#1a73e8;box-shadow:0 0 0 3px rgba(26,115,232,.12);}
     .unlinked-card-date{font-size:9px;color:#999;margin-bottom:6px;}
     .unlinked-card-text{font-size:12px;line-height:1.5;color:#333;word-break:break-word;}
     .unlinked-card-meta{font-size:9px;color:#1a73e8;margin-top:7px;}
@@ -532,6 +533,7 @@
     .thought-node-port.right{right:-8px}
     .thought-node-port:hover{background:#1a73e8}.unlinked-port{position:absolute;top:50%;width:13px;height:13px;margin-top:-6px;border-radius:50%;background:#fff;border:2px solid #1a73e8;z-index:4;cursor:crosshair}.unlinked-port.left{left:-8px}.unlinked-port.right{right:-8px}.unlinked-port:hover{background:#1a73e8}
     .thought-node-hint{font-size:9px;color:#aaa;margin-top:5px}
+    .memo-delete-btn{border:none;background:#f8f9fa;color:#999;border-radius:8px;padding:5px 6px;font-size:12px;cursor:pointer;line-height:1}.memo-delete-btn:hover{background:#fff0f0;color:#d93025}
     .thought-empty{margin:20px 0;padding:24px 16px;text-align:center;background:#f8f9fa;border-radius:14px;color:#999;font-size:12px;line-height:1.6}
     .thought-bottom{padding:10px 10px 20px}
     .thought-panel{background:#fff;border:1px solid #eee;border-radius:14px;padding:10px;margin-top:8px}
@@ -2348,6 +2350,11 @@ function renderDetailMemoList() {
       </div>
     `;
 
+    item.querySelector('.memo-delete-btn').addEventListener('click', function(event) {
+      event.stopPropagation();
+      deleteMemo(Number(this.dataset.deleteIndex));
+    });
+
     list.appendChild(item);
 
   });
@@ -2610,8 +2617,11 @@ function renderAllMemosPage(
 
       </div>
 
-      <div class="timestamp-box">
-        ${formatTimestamp(memo.id)}
+      <div style="display:flex;align-items:center;gap:7px;">
+        <div class="timestamp-box">
+          ${formatTimestamp(memo.id)}
+        </div>
+        <button type="button" class="memo-delete-btn" data-delete-index="${index}" title="이 메모 삭제">🗑️</button>
       </div>
     `;
 
@@ -3308,21 +3318,34 @@ function renderThoughtUnconnected(){
   });
 }
 function startUnconnectedLink(event,id){
-  event.stopPropagation();event.preventDefault();linkingFromId=Number(id);
-  const move=e=>{};
+  event.stopPropagation();
+  event.preventDefault();
+  linkingFromId=Number(id);
+  const box=document.getElementById('thoughtUnconnectedList');
+  if(!box)return;
+  let moved=false;
+  const sourceCard=[...box.querySelectorAll('.unlinked-card')].find(card=>Number(card.dataset.id)===Number(id));
+  if(sourceCard)sourceCard.classList.add('linking');
+  const move=()=>{moved=true;};
   const up=e=>{
+    document.removeEventListener('pointermove',move);
     document.removeEventListener('pointerup',up);
-    if(linkingFromId===null)return;
-    const target=[...document.querySelectorAll('.unlinked-card')].find(card=>{const r=card.getBoundingClientRect();return e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;});
-    if(target&&Number(target.dataset.id)!==linkingFromId){
-      addThoughtLink(linkingFromId,Number(target.dataset.id));
-      const child=savedMemos.find(m=>Number(m.id)===Number(target.dataset.id));
-      if(child)child.parentThoughtId=Number(linkingFromId);
-      saveMemos();renderThoughtUnconnected();renderThoughtFlow();
+    if(sourceCard)sourceCard.classList.remove('linking');
+    const el=document.elementFromPoint(e.clientX,e.clientY);
+    const targetCard=el?.closest?.('.unlinked-card');
+    if(moved && targetCard && Number(targetCard.dataset.id)!==linkingFromId){
+      const targetId=Number(targetCard.dataset.id);
+      addThoughtLink(linkingFromId,targetId);
+      const child=savedMemos.find(m=>Number(m.id)===targetId);
+      if(child)child.parentThoughtId=linkingFromId;
+      saveMemos();
+      renderThoughtUnconnected();
+      renderThoughtFlow();
     }
     linkingFromId=null;
   };
-  document.addEventListener('pointerup',up,{once:true});
+  document.addEventListener('pointermove',move);
+  document.addEventListener('pointerup',up);
 }
 
 function switchThoughtView(view){const connected=view==='connected';document.getElementById('thoughtConnectedView')?.classList.toggle('active',connected);document.getElementById('thoughtUnconnectedView')?.classList.toggle('active',!connected);document.getElementById('thoughtConnectedBtn')?.classList.toggle('active',connected);document.getElementById('thoughtUnconnectedBtn')?.classList.toggle('active',!connected);if(!connected)renderThoughtUnconnected();else renderThoughtFlow();}
