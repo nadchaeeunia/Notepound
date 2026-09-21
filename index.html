@@ -1190,7 +1190,4338 @@
         isUserManuallySelected = false;
         document.getElementById('categoryHeaderBox').style.display = 'none';
         document.getElementById('categoryChips').innerHTML = '';
+        rende<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notepound</title>
+
+  <style>
+    body {
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .phone-container {
+      width: 375px;
+      height: 730px;
+      background-color: #ffffff;
+      border-radius: 36px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      border: 8px solid #333333;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-header {
+      padding: 18px 20px 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333333;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .tab-nav {
+      display: flex;
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #eee;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 2px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: bold;
+      color: #888;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      color: #1a73e8;
+      border-bottom: 2px solid #1a73e8;
+      background-color: #ffffff;
+    }
+
+    .tab-content {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    .content-area {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .memo-input {
+      width: 100%;
+      height: 65px;
+      border: none;
+      outline: none;
+      resize: none;
+      font-size: 15px;
+      line-height: 1.4;
+      color: #222222;
+      box-sizing: border-box;
+    }
+
+    .section-header-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: #777;
+    }
+
+    .category-select-container {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      align-items: center;
+      min-height: 30px;
+    }
+
+    .cat-chip {
+      font-size: 12px;
+      background-color: #f1f3f4;
+      color: #333;
+      padding: 5px 10px;
+      border-radius: 16px;
+      cursor: pointer;
+      white-space: nowrap;
+      border: 1px solid #e0e0e0;
+      transition: all 0.2s ease;
+    }
+
+    .cat-chip.active {
+      background-color: #1a73e8;
+      color: #ffffff;
+      border-color: #1a73e8;
+      font-weight: bold;
+    }
+
+    .cat-chip.new-rec {
+      background-color: #e6f4ea;
+      color: #137333;
+      border: 1px dashed #34a853;
+    }
+
+    .add-cat-btn {
+      font-size: 11px;
+      background-color: #e8f0fe;
+      color: #1a73e8;
+      padding: 4px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 1px dashed #1a73e8;
+      font-weight: bold;
+    }
+
+    .recent-memos-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .recent-card {
+      background-color: #f8f9fa;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 3px solid #1a73e8;
+      cursor: pointer;
+      gap: 8px;
+    }
+
+    .recent-card:hover {
+      text-decoration: underline;
+    }
+
+    .persistent-dock {
+      margin-top: auto;
+      background-color: #fff8f8;
+      border-top: 2px dashed #ffcdd2;
+      border-radius: 16px 16px 0 0;
+      padding: 12px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .dock-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: #d32f2f;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .memo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .memo-item {
+      background-color: #ffffff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .memo-text-clickable {
+      cursor: pointer;
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .memo-text-clickable:hover {
+      text-decoration: underline;
+    }
+
+    .classify-btn {
+      font-size: 11px;
+      background-color: #e8f0fe;
+      color: #1a73e8;
+      padding: 3px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      margin-right: 4px;
+    }
+
+    .category-grid {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .category-folder-card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e9ecef;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+
+    .edit-icon-btn {
+      cursor: pointer;
+      font-size: 12px;
+      color: #888;
+      margin-left: 6px;
+    }
+
+    .edit-icon-btn:hover {
+      color: #1a73e8;
+    }
+
+    .back-btn {
+      font-size: 12px;
+      color: #1a73e8;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      padding: 0;
+    }
+
+    .search-box-container {
+      position: relative;
+      padding: 12px 16px 4px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 20px;
+      border: 1px solid #ddd;
+      font-size: 13px;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .history-popup {
+      display: none;
+      position: absolute;
+      top: 48px;
+      left: 16px;
+      right: 16px;
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      z-index: 100;
+      padding: 6px 0;
+    }
+
+    .history-item {
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sort-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px 6px;
+    }
+
+    .sort-btn {
+      font-size: 11px;
+      color: #888;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 4px;
+    }
+
+    .sort-btn.active {
+      color: #1a73e8;
+      font-weight: bold;
+    }
+
+    .timestamp-box {
+      font-size: 11px;
+      color: #666;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .time-part {
+      font-size: 10px;
+      color: #999;
+    }
+
+    .tag-badge {
+      font-size: 10px;
+      background-color: #e8f0fe;
+      color: #1a73e8;
+      padding: 2px 6px;
+      border-radius: 8px;
+      margin-left: 4px;
+      cursor: pointer;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #aaa;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .delete-btn:hover {
+      color: #d32f2f;
+    }
+
+    /* 메모 수정 모달 */
+
+    .memo-modal-overlay {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .memo-sticky-note {
+      width: 280px;
+      background-color: #fffde7;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      border: 1px solid #fff59d;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sticky-header {
+      font-size: 13px;
+      font-weight: bold;
+      color: #f57f17;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .sticky-textarea {
+      width: 100%;
+      height: 90px;
+      border: 1px solid #fff59d;
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 14px;
+      outline: none;
+      resize: none;
+      box-sizing: border-box;
+    }
+
+    .sticky-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .sticky-btn {
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .sticky-btn.save {
+      background-color: #1a73e8;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .sticky-btn.cancel {
+      background-color: #e0e0e0;
+      color: #666;
+    }
+
+    /* 카테고리 모달 */
+
+    .cat-modal-card {
+      width: 280px;
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cat-modal-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .cat-input-field {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      box-sizing: border-box;
+      margin-top: 4px;
+    }
+
+    .emoji-rec-box {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+      min-height: 38px;
+      flex-wrap: wrap;
+    }
+
+    .emoji-btn {
+      font-size: 20px;
+      padding: 4px 8px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .emoji-btn:hover {
+      background-color: #e8f0fe;
+    }
+
+    .emoji-btn.selected {
+      background-color: #e8f0fe;
+      border-color: #1a73e8;
+      transform: scale(1.15);
+      box-shadow: 0 2px 5px rgba(26,115,232,0.2);
+    }
+
+    /* =========================================
+       생각의 흐름
+       ========================================= */
+
+    .thought-refresh-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px 4px;
+    }
+
+    .thought-refresh-btn {
+      border: none;
+      background-color: #e8f0fe;
+      color: #1a73e8;
+      border-radius: 16px;
+      padding: 7px 12px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .thought-refresh-btn:hover {
+      background-color: #d2e3fc;
+    }
+
+    .thought-description {
+      padding: 4px 16px 10px;
+      font-size: 11px;
+      color: #888;
+      line-height: 1.5;
+    }
+
+    .thought-flow-list {
+      padding: 8px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .thought-group {
+      background-color: #f8f9fa;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 16px;
+      border: 1px solid #eeeeee;
+    }
+
+    .thought-group-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .thought-group-info {
+      font-size: 10px;
+      color: #999;
+      margin-bottom: 12px;
+    }
+
+    .thought-flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .thought-card {
+      width: 100%;
+      box-sizing: border-box;
+      background-color: #ffffff;
+      border: 1px solid #e3e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      cursor: pointer;
+    }
+
+    .thought-card:hover {
+      border-color: #1a73e8;
+    }
+
+    .thought-card-date {
+      font-size: 10px;
+      color: #999;
+      margin-bottom: 6px;
+    }
+
+    .thought-card-text {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #333;
+      word-break: break-word;
+    }
+
+    .thought-card-category {
+      margin-top: 8px;
+      font-size: 10px;
+      color: #1a73e8;
+    }
+
+    .thought-arrow {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1a73e8;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .thought-empty {
+      margin: 30px 16px;
+      padding: 24px 16px;
+      text-align: center;
+      background-color: #f8f9fa;
+      border-radius: 14px;
+      color: #999;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .thought-new-badge {
+      display: inline-block;
+      margin-left: 5px;
+      padding: 2px 5px;
+      border-radius: 7px;
+      background-color: #e6f4ea;
+      color: #137333;
+      font-size: 9px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="phone-container">
+
+    <div class="app-header">
+      Notepound
+    </div>
+
+    <!-- 상단 탭 -->
+
+    <div class="tab-nav">
+
+      <div
+        id="tabWrite"
+        class="tab-btn active"
+        onclick="switchTab('write')"
+      >
+        📝 메모 작성
+      </div>
+
+      <div
+        id="tabCategory"
+        class="tab-btn"
+        onclick="switchTab('category')"
+      >
+        🗂️ 카테고리
+      </div>
+
+      <div
+        id="tabSearch"
+        class="tab-btn"
+        onclick="switchTab('search')"
+      >
+        🔍 전체 메모
+      </div>
+
+      <div
+        id="tabThought"
+        class="tab-btn"
+        onclick="switchTab('thought')"
+      >
+        🧠 생각 흐름
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         탭 1: 메모 작성
+         ========================================= -->
+
+    <div id="pageWrite" class="tab-content active">
+
+      <div class="content-area">
+
+        <textarea
+          id="memoInput"
+          class="memo-input"
+          placeholder="생각을 던져놓으세요... (엔터 누르면 바로 저장)"
+        ></textarea>
+
+
+        <div
+          id="categoryHeaderBox"
+          class="section-header-box"
+          style="display:none;"
+        >
+
+          <span class="section-title">
+            ✨ 스마트 카테고리 추천
+          </span>
+
+          <span
+            class="add-cat-btn"
+            onclick="openNewCategoryModal()"
+          >
+            + 수동 추가
+          </span>
+
+        </div>
+
+
+        <div
+          id="categoryChips"
+          class="category-select-container"
+        ></div>
+
+
+        <div class="section-title">
+          ⚡ 최근 작성한 메모 (최근 4개 - 클릭 시 수정)
+        </div>
+
+
+        <div
+          id="recentMemoList"
+          class="recent-memos-list"
+        ></div>
+
+
+        <div class="persistent-dock">
+
+          <div class="dock-title">
+
+            <span>
+              📌 채은님의 손길이 필요한 메모가 남아있어요
+            </span>
+
+            <span
+              id="unclassifiedCount"
+              style="color:#d32f2f;"
+            >
+              0
+            </span>
+
+          </div>
+
+
+          <div
+            id="unclassifiedMemoList"
+            class="memo-list"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         탭 2: 카테고리 보관함
+         ========================================= -->
+
+    <div id="pageCategory" class="tab-content">
+
+      <div
+        style="padding:12px 16px 0; text-align:right;"
+      >
+
+        <button
+          class="add-cat-btn"
+          onclick="openNewCategoryModal()"
+        >
+          + 새 카테고리 만들기
+        </button>
+
+      </div>
+
+
+      <div
+        id="categoryGrid"
+        class="category-grid"
+      ></div>
+
+    </div>
+
+
+    <!-- =========================================
+         카테고리 상세 페이지
+         ========================================= -->
+
+    <div id="pageCategoryDetail" class="tab-content">
+
+      <div
+        style="
+          padding:14px 16px 8px;
+          border-bottom:1px solid #eee;
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+        "
+      >
+
+        <button
+          class="back-btn"
+          onclick="backToCategoryList()"
+        >
+          ← 카테고리 목록
+        </button>
+
+
+        <button
+          class="add-cat-btn"
+          id="addMemoInDetailBtn"
+        >
+          + 이 카테고리에 메모 추가
+        </button>
+
+      </div>
+
+
+      <div class="content-area">
+
+        <div class="section-header-box">
+
+          <div
+            class="section-title"
+            id="detailCategoryTitle"
+            style="font-size:14px; color:#333;"
+          ></div>
+
+
+          <span
+            class="edit-icon-btn"
+            id="editDetailCatBtn"
+          >
+            ✏️ 이름/이모지 수정
+          </span>
+
+        </div>
+
+
+        <div
+          id="detailMemoList"
+          class="memo-list"
+        ></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         탭 3: 전체 메모 & 검색
+         ========================================= -->
+
+    <div id="pageSearch" class="tab-content">
+
+      <div class="search-box-container">
+
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="검색어를 입력하세요"
+          onfocus="showHistoryPopup()"
+          oninput="handleSearch()"
+        />
+
+
+        <div
+          id="historyPopup"
+          class="history-popup"
+        ></div>
+
+      </div>
+
+
+      <div
+        style="padding:0 16px 16px;"
+        class="content-area"
+      >
+
+        <div class="sort-bar">
+
+          <span class="section-title">
+            🕒 전체 메모 (클릭 시 내용 수정)
+          </span>
+
+
+          <div>
+
+            <button
+              id="sortNewest"
+              class="sort-btn active"
+              onclick="setSortOrder('newest')"
+            >
+              최신순
+            </button>
+
+            <span style="font-size:10px; color:#ccc;">
+              |
+            </span>
+
+            <button
+              id="sortOldest"
+              class="sort-btn"
+              onclick="setSortOrder('oldest')"
+            >
+              오래된순
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="allMemosList"
+          class="memo-list"
+        ></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         탭 4: 생각의 흐름
+         ========================================= -->
+
+    <div id="pageThought" class="tab-content">
+
+      <div class="thought-refresh-area">
+
+        <div class="section-title">
+          🧠 생각의 흐름
+        </div>
+
+
+        <button
+          class="thought-refresh-btn"
+          onclick="refreshThoughtFlow()"
+        >
+          🔄 흐름 새로고침
+        </button>
+
+      </div>
+
+
+      <div class="thought-description">
+
+        서로 관련된 메모를 찾아 시간순으로 연결해 보여줍니다.<br>
+
+        새로운 메모를 작성한 뒤
+        <b>흐름 새로고침</b>을 누르면 새 기록도 반영됩니다.
+
+      </div>
+
+
+      <div
+        id="thoughtFlowList"
+        class="thought-flow-list"
+      ></div>
+
+    </div>
+
+
+    <!-- =========================================
+         메모 수정 모달
+         ========================================= -->
+
+    <div
+      id="memoModalOverlay"
+      class="memo-modal-overlay"
+    >
+
+      <div class="memo-sticky-note">
+
+        <div class="sticky-header">
+
+          <span>
+            📌 메모 수정하기
+          </span>
+
+          <span
+            style="cursor:pointer;"
+            onclick="closeMemoModal()"
+          >
+            ✕
+          </span>
+
+        </div>
+
+
+        <textarea
+          id="modalTextarea"
+          class="sticky-textarea"
+        ></textarea>
+
+
+        <div class="sticky-actions">
+
+          <button
+            class="sticky-btn cancel"
+            onclick="closeMemoModal()"
+          >
+            취소
+          </button>
+
+
+          <button
+            class="sticky-btn save"
+            style="background-color:#fbc02d; color:#333;"
+            onclick="saveMemoModal()"
+          >
+            저장
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         카테고리 추가 / 수정 모달
+         ========================================= -->
+
+    <div
+      id="catModalOverlay"
+      class="memo-modal-overlay"
+    >
+
+      <div class="cat-modal-card">
+
+        <div
+          class="cat-modal-title"
+          id="catModalHeaderTitle"
+        >
+          📂 카테고리 설정
+        </div>
+
+
+        <div>
+
+          <span
+            style="
+              font-size:11px;
+              color:#666;
+              font-weight:bold;
+            "
+          >
+            카테고리 이름
+          </span>
+
+
+          <input
+            type="text"
+            id="newCatNameInput"
+            class="cat-input-field"
+            placeholder="예: 일기, 컴활, 운동..."
+            oninput="updateEmojiRecommendations()"
+          />
+
+        </div>
+
+
+        <div>
+
+          <span
+            style="
+              font-size:11px;
+              color:#666;
+              font-weight:bold;
+              display:block;
+            "
+          >
+            추천 이모지 (클릭 시 선택 적용)
+          </span>
+
+
+          <div
+            id="emojiRecBox"
+            class="emoji-rec-box"
+          ></div>
+
+        </div>
+
+
+        <div
+          class="sticky-actions"
+          style="margin-top:8px;"
+        >
+
+          <button
+            class="sticky-btn cancel"
+            onclick="closeCatModal()"
+          >
+            취소
+          </button>
+
+
+          <button
+            class="sticky-btn save"
+            onclick="submitCategoryModal()"
+          >
+            완료
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    /* =========================================
+       기본 데이터
+       ========================================= */
+
+    let savedMemos =
+      JSON.parse(
+        localStorage.getItem('notepound_memos')
+      ) || [];
+
+
+    let categories =
+      JSON.parse(
+        localStorage.getItem('notepound_categories')
+      ) || [
+
+        {
+          name: '일정',
+          icon: '📅'
+        },
+
+        {
+          name: '아이디어',
+          icon: '💡'
+        },
+
+        {
+          name: '좋아하는 음식',
+          icon: '🍕'
+        },
+
+        {
+          name: '위시리스트',
+          icon: '🛍️'
+        }
+
+      ];
+
+
+    let searchHistory =
+      JSON.parse(
+        localStorage.getItem('notepound_search_history')
+      ) || [];
+
+
+    /* =========================================
+       현재 상태
+       ========================================= */
+
+    let currentSelectedCategory = '';
+
+    let isUserManuallySelected = false;
+
+    let activeCategoryDetail = '';
+
+    let currentSortOrder = 'newest';
+
+    let editingMemoIndex = null;
+
+    let selectedEmoji = '📁';
+
+    let editingCategoryIndex = null;
+
+
+    const memoInput =
+      document.getElementById('memoInput');
+
+
+    /* =========================================
+       탭 전환
+       ========================================= */
+
+    function switchTab(tabName) {
+
+      document
+        .getElementById('tabWrite')
+        .classList
+        .toggle(
+          'active',
+          tabName === 'write'
+        );
+
+
+      document
+        .getElementById('tabCategory')
+        .classList
+        .toggle(
+          'active',
+          tabName === 'category' ||
+          tabName === 'categoryDetail'
+        );
+
+
+      document
+        .getElementById('tabSearch')
+        .classList
+        .toggle(
+          'active',
+          tabName === 'search'
+        );
+
+
+      document
+        .getElementById('tabThought')
+        .classList
+        .toggle(
+          'active',
+          tabName === 'thought'
+        );
+
+
+      document
+        .getElementById('pageWrite')
+        .classList
+        .toggle(
+          'active',
+          tabName === 'write'
+        );
+
+
+      document
+        .getElementById('pageCategory')
+        .classList
+        .toggle(
+          'active',
+          tabName === 'category'
+        );
+
+
+      document
+        .getElementById('pageCategoryDetail')
+        .classList
+        .toggle(
+          'active',
+          tabName === 'categoryDetail'
+        );
+
+
+      document
+        .getElementById('pageSearch')
+        .classList
+        .toggle(
+          'active',
+          tabName === 'search'
+        );
+
+
+      document
+        .getElementById('pageThought')
+        .classList
+        .toggle(
+          'active',
+          tabName === 'thought'
+        );
+
+
+      hideHistoryPopup();
+
+
+      if (tabName === 'category') {
+        renderCategoryPage();
+      }
+
+
+      if (tabName === 'search') {
+        renderAllMemosPage();
+      }
+
+
+      if (tabName === 'thought') {
+        renderThoughtFlow();
+      }
+
+    }
+
+
+    /* =========================================
+       카테고리 추가 / 수정
+       ========================================= */
+
+    function openNewCategoryModal() {
+
+      editingCategoryIndex = null;
+
+      document
+        .getElementById('catModalHeaderTitle')
+        .textContent = '📂 새 카테고리 추가';
+
+
+      document
+        .getElementById('newCatNameInput')
+        .value = '';
+
+
+      selectedEmoji = '📁';
+
+      updateEmojiRecommendations();
+
+
+      document
+        .getElementById('catModalOverlay')
+        .style
+        .display = 'flex';
+
+
+      setTimeout(
+        () => {
+          document
+            .getElementById('newCatNameInput')
+            .focus();
+        },
+        100
+      );
+
+    }
+
+
+    function editCategoryNamePrompt(catIdx) {
+
+      editingCategoryIndex = catIdx;
+
+      const cat = categories[catIdx];
+
+
+      document
+        .getElementById('catModalHeaderTitle')
+        .textContent = '✏️ 카테고리 수정';
+
+
+      document
+        .getElementById('newCatNameInput')
+        .value = cat.name;
+
+
+      selectedEmoji = cat.icon;
+
+      updateEmojiRecommendations();
+
+
+      document
+        .getElementById('catModalOverlay')
+        .style
+        .display = 'flex';
+
+
+      setTimeout(
+        () => {
+          document
+            .getElementById('newCatNameInput')
+            .focus();
+        },
+        100
+      );
+
+    }
+
+
+    function closeCatModal() {
+
+      document
+        .getElementById('catModalOverlay')
+        .style
+        .display = 'none';
+
+      editingCategoryIndex = null;
+
+    }
+
+
+    /* =========================================
+       카테고리 이모지 추천
+       ========================================= */
+
+    function updateEmojiRecommendations() {
+
+      const name =
+        document
+          .getElementById('newCatNameInput')
+          .value
+          .trim();
+
+
+      const recBox =
+        document.getElementById('emojiRecBox');
+
+
+      recBox.innerHTML = '';
+
+
+      let emojis = [
+        '📁',
+        '📌',
+        '✨',
+        '🏷️',
+        '📝'
+      ];
+
+
+      if (
+        name.includes('일기') ||
+        name.includes('일상') ||
+        name.includes('생각') ||
+        name.includes('기록') ||
+        name.includes('할 일') ||
+        name.includes('할일')
+      ) {
+
+        emojis = [
+          '📖',
+          '📔',
+          '✏️',
+          '🗓️',
+          '💭'
+        ];
+
+      } else if (
+        name.includes('학교') ||
+        name.includes('수원대') ||
+        name.includes('과제') ||
+        name.includes('공부') ||
+        name.includes('시험') ||
+        name.includes('컴활') ||
+        name.includes('토익')
+      ) {
+
+        emojis = [
+          '🎓',
+          '📚',
+          '💻',
+          '✍️',
+          '🎯'
+        ];
+
+      } else if (
+        name.includes('음식') ||
+        name.includes('먹') ||
+        name.includes('맛집') ||
+        name.includes('카페') ||
+        name.includes('디저트') ||
+        name.includes('좋아하는')
+      ) {
+
+        emojis = [
+          '🍕',
+          '🍰',
+          '☕',
+          '🍧',
+          '🍲'
+        ];
+
+      } else if (
+        name.includes('운동') ||
+        name.includes('헬스') ||
+        name.includes('러닝') ||
+        name.includes('건강')
+      ) {
+
+        emojis = [
+          '⚽',
+          '🏋️‍♂️',
+          '🏃‍♀️',
+          '🥊',
+          '🧘‍♀️'
+        ];
+
+      } else if (
+        name.includes('쇼핑') ||
+        name.includes('위시') ||
+        name.includes('구매') ||
+        name.includes('사고')
+      ) {
+
+        emojis = [
+          '🛍️',
+          '🛒',
+          '💳',
+          '🎁',
+          '👗'
+        ];
+
+      } else if (
+        name.includes('영화') ||
+        name.includes('드라마') ||
+        name.includes('게임') ||
+        name.includes('아이디어')
+      ) {
+
+        emojis = [
+          '💡',
+          '🎬',
+          '🍿',
+          '🎮',
+          '🎧'
+        ];
+
+      } else if (
+        name.includes('알바') ||
+        name.includes('업무') ||
+        name.includes('직장') ||
+        name.includes('일정')
+      ) {
+
+        emojis = [
+          '📅',
+          '💼',
+          '⏰',
+          '🍔',
+          '💰'
+        ];
+
+      }
+
+
+      if (!emojis.includes(selectedEmoji)) {
+        emojis.unshift(selectedEmoji);
+      }
+
+
+      emojis.forEach(emo => {
+
+        const btn =
+          document.createElement('button');
+
+
+        btn.type = 'button';
+
+        btn.className =
+          'emoji-btn' +
+          (
+            selectedEmoji === emo
+              ? ' selected'
+              : ''
+          );
+
+
+        btn.textContent = emo;
+
+
+        btn.onclick = () => {
+
+          selectedEmoji = emo;
+
+          updateEmojiRecommendations();
+
+        };
+
+
+        recBox.appendChild(btn);
+
+      });
+
+    }
+
+
+    /* =========================================
+       카테고리 저장
+       ========================================= */
+
+    function submitCategoryModal() {
+
+      const name =
+        document
+          .getElementById('newCatNameInput')
+          .value
+          .trim();
+
+
+      if (!name) {
+
+        alert('카테고리 이름을 입력해주세요.');
+
+        return;
+
+      }
+
+
+      const wasEditing =
+        editingCategoryIndex !== null;
+
+
+      if (wasEditing) {
+
+        const oldCat =
+          categories[editingCategoryIndex];
+
+
+        const oldFullName =
+          `${oldCat.icon} ${oldCat.name}`;
+
+
+        const newFullName =
+          `${selectedEmoji} ${name}`;
+
+
+        savedMemos.forEach(memo => {
+
+          if (memo.category === oldFullName) {
+
+            memo.category = newFullName;
+
+          }
+
+        });
+
+
+        categories[editingCategoryIndex] = {
+          name: name,
+          icon: selectedEmoji
+        };
+
+
+        localStorage.setItem(
+          'notepound_memos',
+          JSON.stringify(savedMemos)
+        );
+
+
+        if (
+          activeCategoryDetail === oldFullName
+        ) {
+
+          activeCategoryDetail =
+            newFullName;
+
+        }
+
+      } else {
+
+        categories.push({
+          name: name,
+          icon: selectedEmoji
+        });
+
+      }
+
+
+      localStorage.setItem(
+        'notepound_categories',
+        JSON.stringify(categories)
+      );
+
+
+      const newCategoryFullName =
+        `${selectedEmoji} ${name}`;
+
+
+      closeCatModal();
+
+
+      renderCategoryPage();
+
+      renderWritePage();
+
+
+      if (
+        memoInput.value.trim() &&
+        !wasEditing
+      ) {
+
+        currentSelectedCategory =
+          newCategoryFullName;
+
+
+        isUserManuallySelected = true;
+
+
+        renderLiveCategoryChips();
+
+      }
+
+
+      if (
+        activeCategoryDetail &&
+        wasEditing
+      ) {
+
+        openCategoryDetail(
+          activeCategoryDetail
+        );
+
+      }
+
+    }
+
+
+    /* =========================================
+       메모 입력 중 카테고리 추천
+       ========================================= */
+
+    memoInput.addEventListener(
+      'input',
+      function() {
+
+        const text =
+          memoInput.value.trim();
+
+
+        const headerBox =
+          document.getElementById(
+            'categoryHeaderBox'
+          );
+
+
+        const container =
+          document.getElementById(
+            'categoryChips'
+          );
+
+
+        if (!text) {
+
+          headerBox.style.display = 'none';
+
+          container.innerHTML = '';
+
+          currentSelectedCategory = '';
+
+          isUserManuallySelected = false;
+
+          return;
+
+        }
+
+
+        headerBox.style.display = 'flex';
+
+
+        let dynamicNewCat = null;
+
+
+        if (!isUserManuallySelected) {
+
+          if (
+            text.includes('과제') ||
+            text.includes('시험') ||
+            text.includes('약속') ||
+            text.includes('오늘')
+          ) {
+
+            currentSelectedCategory =
+              findCategoryFullName('일정') ||
+              findCategoryFullName('📅');
+
+          } else if (
+            text.includes('먹') ||
+            text.includes('음식') ||
+            text.includes('맛집')
+          ) {
+
+            currentSelectedCategory =
+              findCategoryFullName('음식') ||
+              findCategoryFullName('🍕');
+
+          } else if (
+            text.includes('사고') ||
+            text.includes('살까') ||
+            text.includes('위시')
+          ) {
+
+            currentSelectedCategory =
+              findCategoryFullName('위시') ||
+              findCategoryFullName('🛍️');
+
+          } else if (
+            text.includes('생각') ||
+            text.includes('아이디어')
+          ) {
+
+            currentSelectedCategory =
+              findCategoryFullName('아이디어') ||
+              findCategoryFullName('💡');
+
+          } else {
+
+            const newKey =
+              extractNewCategoryKeyword(text);
+
+
+            if (newKey) {
+
+              const exists =
+                categories.some(
+                  c => c.name === newKey.name
+                );
+
+
+              if (!exists) {
+
+                dynamicNewCat =
+                  `${newKey.icon} ${newKey.name}`;
+
+              }
+
+            }
+
+          }
+
+        }
+
+
+        renderLiveCategoryChips(
+          dynamicNewCat
+        );
+
+      }
+    );
+
+
+    function extractNewCategoryKeyword(text) {
+
+      if (
+        text.includes('수원대') ||
+        text.includes('학교')
+      ) {
+
+        return {
+          name: '학교',
+          icon: '🎓'
+        };
+
+      }
+
+
+      if (
+        text.includes('운동') ||
+        text.includes('헬스')
+      ) {
+
+        return {
+          name: '운동',
+          icon: '⚽'
+        };
+
+      }
+
+
+      if (
+        text.includes('영화') ||
+        text.includes('게임')
+      ) {
+
+        return {
+          name: '문화',
+          icon: '🎬'
+        };
+
+      }
+
+
+      if (
+        text.includes('알바') ||
+        text.includes('시급')
+      ) {
+
+        return {
+          name: '아르바이트',
+          icon: '💼'
+        };
+
+      }
+
+
+      if (
+        text.includes('일기') ||
+        text.includes('오늘 하루')
+      ) {
+
+        return {
+          name: '일기',
+          icon: '📖'
+        };
+
+      }
+
+
+      return null;
+
+    }
+
+
+    function findCategoryFullName(keyword) {
+
+      const found =
+        categories.find(
+          c =>
+            c.name.includes(keyword) ||
+            c.icon.includes(keyword)
+        );
+
+
+      return found
+        ? `${found.icon} ${found.name}`
+        : null;
+
+    }
+
+
+    function renderLiveCategoryChips(
+      dynamicNewCat = null
+    ) {
+
+      const container =
+        document.getElementById(
+          'categoryChips'
+        );
+
+
+      container.innerHTML = '';
+
+
+      categories.forEach(cat => {
+
+        const fullName =
+          `${cat.icon} ${cat.name}`;
+
+
+        const chip =
+          document.createElement('span');
+
+
+        chip.className = 'cat-chip';
+
+
+        if (
+          currentSelectedCategory ===
+          fullName
+        ) {
+
+          chip.classList.add('active');
+
+        }
+
+
+        chip.textContent = fullName;
+
+
+        chip.onclick = () => {
+
+          currentSelectedCategory =
+            fullName;
+
+
+          isUserManuallySelected =
+            true;
+
+
+          renderLiveCategoryChips();
+
+
+          memoInput.focus();
+
+        };
+
+
+        container.appendChild(chip);
+
+      });
+
+
+      if (dynamicNewCat) {
+
+        const newChip =
+          document.createElement('span');
+
+
+        newChip.className =
+          'cat-chip new-rec';
+
+
+        newChip.textContent =
+          `✨ ${dynamicNewCat} (새로 추가)`;
+
+
+        newChip.onclick = () => {
+
+          const parts =
+            dynamicNewCat.split(' ');
+
+
+          const icon =
+            parts[0];
+
+
+          const name =
+            parts.slice(1).join(' ');
+
+
+          categories.push({
+            name: name,
+            icon: icon
+          });
+
+
+          localStorage.setItem(
+            'notepound_categories',
+            JSON.stringify(categories)
+          );
+
+
+          currentSelectedCategory =
+            dynamicNewCat;
+
+
+          isUserManuallySelected =
+            true;
+
+
+          renderLiveCategoryChips();
+
+
+          memoInput.focus();
+
+        };
+
+
+        container.appendChild(newChip);
+
+      }
+
+    }
+
+
+    /* =========================================
+       시간 표시
+       ========================================= */
+
+    function formatTimestamp(timestamp) {
+
+      const d =
+        new Date(timestamp);
+
+
+      const yy =
+        String(
+          d.getFullYear()
+        ).slice(-2);
+
+
+      const mm =
+        String(
+          d.getMonth() + 1
+        ).padStart(2, '0');
+
+
+      const dd =
+        String(
+          d.getDate()
+        ).padStart(2, '0');
+
+
+      const hh =
+        String(
+          d.getHours()
+        ).padStart(2, '0');
+
+
+      const min =
+        String(
+          d.getMinutes()
+        ).padStart(2, '0');
+
+
+      return `
+        <span class="time-part">
+          ${hh}:${min}
+        </span>
+        /
+        ${yy}.${mm}.${dd}.
+      `;
+
+    }
+
+
+    /* =========================================
+       메모 작성 화면
+       ========================================= */
+
+    function renderWritePage() {
+
+      const recentList =
+        document.getElementById(
+          'recentMemoList'
+        );
+
+
+      recentList.innerHTML = '';
+
+
+      [...savedMemos]
+        .reverse()
+        .slice(0, 4)
+        .forEach(memo => {
+
+          const realIndex =
+            savedMemos.findIndex(
+              m => m.id === memo.id
+            );
+
+
+          const item =
+            document.createElement('div');
+
+
+          item.className =
+            'recent-card';
+
+
+          item.onclick = () => {
+            openMemoModal(realIndex);
+          };
+
+
+          item.innerHTML = `
+
+            <span style="flex:1; word-break:break-word;">
+              ${escapeHtml(memo.text)}
+            </span>
+
+            <span
+              style="
+                font-size:11px;
+                color:#666;
+                white-space:nowrap;
+              "
+            >
+              ${escapeHtml(memo.category || '#미분류')}
+            </span>
+
+          `;
+
+
+          recentList.appendChild(item);
+
+        });
+
+
+      const unclassifiedList =
+        document.getElementById(
+          'unclassifiedMemoList'
+        );
+
+
+      unclassifiedList.innerHTML = '';
+
+
+      const unclassifiedMemos =
+        savedMemos.filter(
+          memo =>
+            memo.category === '#미분류' ||
+            !memo.category
+        );
+
+
+      unclassifiedMemos.forEach(memo => {
+
+        const realIndex =
+          savedMemos.findIndex(
+            m => m.id === memo.id
+          );
+
+
+        const item =
+          document.createElement('div');
+
+
+        item.className =
+          'memo-item';
+
+
+        item.innerHTML = `
+
+          <span
+            class="memo-text-clickable"
+            onclick="openMemoModal(${realIndex})"
+          >
+            ${escapeHtml(memo.text)}
+          </span>
+
+          <div>
+
+            <button
+              class="classify-btn"
+              onclick="assignCategoryDirect(${realIndex})"
+            >
+              📂 분류
+            </button>
+
+            <button
+              class="delete-btn"
+              onclick="deleteMemo(${realIndex})"
+            >
+              ✕
+            </button>
+
+          </div>
+
+        `;
+
+
+        unclassifiedList.prepend(item);
+
+      });
+
+
+      document
+        .getElementById('unclassifiedCount')
+        .textContent =
+        unclassifiedMemos.length;
+
+    }
+
+
+    /* =========================================
+       메모 수정
+       ========================================= */
+
+    function openMemoModal(index) {
+
+      if (
+        !savedMemos[index]
+      ) {
+        return;
+      }
+
+
+      editingMemoIndex = index;
+
+
+      document
+        .getElementById('modalTextarea')
+        .value =
+        savedMemos[index].text;
+
+
+      document
+        .getElementById('memoModalOverlay')
+        .style
+        .display = 'flex';
+
+    }
+
+
+    function closeMemoModal() {
+
+      document
+        .getElementById('memoModalOverlay')
+        .style
+        .display = 'none';
+
+
+      editingMemoIndex = null;
+
+    }
+
+
+    function saveMemoModal() {
+
+      if (
+        editingMemoIndex !== null
+      ) {
+
+        const updatedText =
+          document
+            .getElementById('modalTextarea')
+            .value
+            .trim();
+
+
+        if (updatedText) {
+
+          savedMemos[
+            editingMemoIndex
+          ].text =
+            updatedText;
+
+
+          localStorage.setItem(
+            'notepound_memos',
+            JSON.stringify(savedMemos)
+          );
+
+
+          renderWritePage();
+
+          renderCategoryPage();
+
+
+          if (activeCategoryDetail) {
+            renderDetailMemoList();
+          }
+
+
+          renderAllMemosPage(
+            document
+              .getElementById('searchInput')
+              .value
+          );
+
+
+          if (
+            document
+              .getElementById('pageThought')
+              .classList
+              .contains('active')
+          ) {
+
+            renderThoughtFlow();
+
+          }
+
+        }
+
+      }
+
+
+      closeMemoModal();
+
+    }
+
+
+    /* =========================================
+       미분류 메모 카테고리 지정
+       ========================================= */
+
+    window.assignCategoryDirect =
+      function(index) {
+
+        let optionsStr =
+          categories
+            .map(
+              (c, i) =>
+                `${i + 1}. ${c.icon} ${c.name}`
+            )
+            .join('\n');
+
+
+        const choice =
+          prompt(
+            `이 메모의 카테고리를 선택하세요:\n\n${optionsStr}`
+          );
+
+
+        const choiceNum =
+          parseInt(choice);
+
+
+        if (
+          choiceNum &&
+          choiceNum > 0 &&
+          choiceNum <= categories.length
+        ) {
+
+          const selectedCat =
+            categories[
+              choiceNum - 1
+            ];
+
+
+          savedMemos[index].category =
+            `${selectedCat.icon} ${selectedCat.name}`;
+
+
+          localStorage.setItem(
+            'notepound_memos',
+            JSON.stringify(savedMemos)
+          );
+
+
+          renderWritePage();
+
+          renderCategoryPage();
+
+
+          if (activeCategoryDetail) {
+            renderDetailMemoList();
+          }
+
+        }
+
+      };
+
+
+    /* =========================================
+       카테고리 페이지
+       ========================================= */
+
+    function renderCategoryPage() {
+
+      const grid =
+        document.getElementById(
+          'categoryGrid'
+        );
+
+
+      grid.innerHTML = '';
+
+
+      categories.forEach((cat, idx) => {
+
+        const fullName =
+          `${cat.icon} ${cat.name}`;
+
+
+        const catMemos =
+          savedMemos.filter(
+            memo =>
+              memo.category === fullName
+          );
+
+
+        const card =
+          document.createElement('div');
+
+
+        card.className =
+          'category-folder-card';
+
+
+        const left =
+          document.createElement('div');
+
+
+        left.style.cursor =
+          'pointer';
+
+
+        left.style.flex = '1';
+
+
+        left.innerHTML = `
+
+          <span
+            style="
+              font-weight:bold;
+              font-size:14px;
+            "
+          >
+            ${escapeHtml(fullName)}
+          </span>
+
+          <span
+            style="
+              font-size:12px;
+              color:#888;
+              margin-left:6px;
+            "
+          >
+            (${catMemos.length})
+          </span>
+
+        `;
+
+
+        left.onclick = () => {
+          openCategoryDetail(fullName);
+        };
+
+
+        const right =
+          document.createElement('div');
+
+
+        const editBtn =
+          document.createElement('span');
+
+
+        editBtn.className =
+          'edit-icon-btn';
+
+
+        editBtn.textContent =
+          '✏️';
+
+
+        editBtn.onclick = event => {
+
+          event.stopPropagation();
+
+          editCategoryNamePrompt(idx);
+
+        };
+
+
+        const moveBtn =
+          document.createElement('span');
+
+
+        moveBtn.style.fontSize =
+          '12px';
+
+
+        moveBtn.style.color =
+          '#1a73e8';
+
+
+        moveBtn.style.fontWeight =
+          'bold';
+
+
+        moveBtn.style.cursor =
+          'pointer';
+
+
+        moveBtn.style.marginLeft =
+          '8px';
+
+
+        moveBtn.textContent =
+          '이동 ›';
+
+
+        moveBtn.onclick = () => {
+          openCategoryDetail(fullName);
+        };
+
+
+        right.appendChild(editBtn);
+
+        right.appendChild(moveBtn);
+
+
+        card.appendChild(left);
+
+        card.appendChild(right);
+
+
+        grid.appendChild(card);
+
+      });
+
+    }
+
+
+    /* =========================================
+       카테고리 상세
+       ========================================= */
+
+    function openCategoryDetail(
+      categoryFullName
+    ) {
+
+      activeCategoryDetail =
+        categoryFullName;
+
+
+      document
+        .getElementById(
+          'detailCategoryTitle'
+        )
+        .textContent =
+        `📂 ${categoryFullName} 보관함`;
+
+
+      const catIdx =
+        categories.findIndex(
+          c =>
+            `${c.icon} ${c.name}` ===
+            categoryFullName
+        );
+
+
+      document
+        .getElementById(
+          'editDetailCatBtn'
+        )
+        .onclick = () => {
+
+          if (catIdx !== -1) {
+            editCategoryNamePrompt(catIdx);
+          }
+
+        };
+
+
+      const btn =
+        document.getElementById(
+          'addMemoInDetailBtn'
+        );
+
+
+      btn.onclick = () => {
+        addMemoToCategoryPrompt(
+          categoryFullName
+        );
+      };
+
+
+      renderDetailMemoList();
+
+
+      switchTab('categoryDetail');
+
+    }
+
+
+    function renderDetailMemoList() {
+
+      const list =
+        document.getElementById(
+          'detailMemoList'
+        );
+
+
+      list.innerHTML = '';
+
+
+      const catMemos =
+        savedMemos.filter(
+          memo =>
+            memo.category ===
+            activeCategoryDetail
+        );
+
+
+      catMemos.forEach(memo => {
+
+        const realIndex =
+          savedMemos.findIndex(
+            m => m.id === memo.id
+          );
+
+
+        const tagText =
+          memo.tag
+            ? memo.tag
+            : '+ 태그 추가';
+
+
+        const item =
+          document.createElement('div');
+
+
+        item.className =
+          'memo-item';
+
+
+        item.innerHTML = `
+
+          <div style="flex:1;">
+
+            <span
+              class="memo-text-clickable"
+              onclick="openMemoModal(${realIndex})"
+            >
+              ${escapeHtml(memo.text)}
+            </span>
+
+            <span
+              class="tag-badge"
+              onclick="smartTagMultiSelectPrompt(${realIndex})"
+            >
+              ${escapeHtml(tagText)}
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <button
+              class="classify-btn"
+              onclick="assignCategoryDirect(${realIndex})"
+            >
+              📂 변경
+            </button>
+
+            <button
+              class="delete-btn"
+              onclick="deleteMemo(${realIndex})"
+            >
+              ✕
+            </button>
+
+          </div>
+
+        `;
+
+
+        list.appendChild(item);
+
+      });
+
+
+      if (catMemos.length === 0) {
+
+        list.innerHTML = `
+          <div
+            style="
+              font-size:13px;
+              color:#aaa;
+              padding:20px 0;
+              text-align:center;
+            "
+          >
+            저장된 메모가 없습니다.
+          </div>
+        `;
+
+      }
+
+    }
+
+
+    /* =========================================
+       태그
+       ========================================= */
+
+    window.smartTagMultiSelectPrompt =
+      function(index) {
+
+        const memo =
+          savedMemos[index];
+
+
+        let recs = [
+          '#중요',
+          '#일정'
+        ];
+
+
+        if (
+          memo.text.includes('과제') ||
+          memo.text.includes('공부') ||
+          memo.text.includes('시험')
+        ) {
+
+          recs = [
+            '#공부',
+            '#시험',
+            '#과제',
+            '#중요'
+          ];
+
+        } else if (
+          memo.text.includes('먹') ||
+          memo.text.includes('음식') ||
+          memo.text.includes('카페')
+        ) {
+
+          recs = [
+            '#맛집',
+            '#먹고싶다',
+            '#위시리스트'
+          ];
+
+        } else if (
+          memo.text.includes('약속') ||
+          memo.text.includes('오늘') ||
+          memo.text.includes('내일')
+        ) {
+
+          recs = [
+            '#일정',
+            '#약속',
+            '#주말'
+          ];
+
+        }
+
+
+        const promptMsg =
+          `추천 태그: ${recs.join(', ')}\n\n` +
+          `원하는 태그를 직접 적거나 번호를 적어주세요:\n` +
+          recs
+            .map(
+              (r, i) =>
+                `${i + 1}. ${r}`
+            )
+            .join('\n');
+
+
+        const input =
+          prompt(
+            promptMsg,
+            memo.tag || recs[0]
+          );
+
+
+        if (input !== null) {
+
+          let finalTag =
+            input.trim();
+
+
+          const num =
+            parseInt(finalTag);
+
+
+          if (
+            num &&
+            num > 0 &&
+            num <= recs.length
+          ) {
+
+            finalTag =
+              recs[num - 1];
+
+          } else if (
+            finalTag &&
+            !finalTag.startsWith('#')
+          ) {
+
+            finalTag =
+              '#' + finalTag;
+
+          }
+
+
+          savedMemos[index].tag =
+            finalTag;
+
+
+          localStorage.setItem(
+            'notepound_memos',
+            JSON.stringify(savedMemos)
+          );
+
+
+          if (activeCategoryDetail) {
+            renderDetailMemoList();
+          }
+
+        }
+
+      };
+
+
+    function backToCategoryList() {
+
+      activeCategoryDetail = '';
+
+      switchTab('category');
+
+    }
+
+
+    /* =========================================
+       카테고리에 메모 추가
+       ========================================= */
+
+    function addMemoToCategoryPrompt(
+      categoryFullName
+    ) {
+
+      const text =
+        prompt(
+          `[${categoryFullName}] 카테고리에 추가할 메모를 입력하세요:`
+        );
+
+
+      if (
+        text &&
+        text.trim()
+      ) {
+
+        const newMemo = {
+
+          id: Date.now(),
+
+          text: text.trim(),
+
+          category: categoryFullName,
+
+          tag: ''
+
+        };
+
+
+        savedMemos.push(newMemo);
+
+
+        localStorage.setItem(
+          'notepound_memos',
+          JSON.stringify(savedMemos)
+        );
+
+
         renderWritePage();
+
+        renderCategoryPage();
+
+        openCategoryDetail(
+          categoryFullName
+        );
+
+      }
+
+    }
+
+
+    /* =========================================
+       검색 / 정렬
+       ========================================= */
+
+    function setSortOrder(order) {
+
+      currentSortOrder =
+        order;
+
+
+      document
+        .getElementById('sortNewest')
+        .classList
+        .toggle(
+          'active',
+          order === 'newest'
+        );
+
+
+      document
+        .getElementById('sortOldest')
+        .classList
+        .toggle(
+          'active',
+          order === 'oldest'
+        );
+
+
+      renderAllMemosPage(
+        document
+          .getElementById('searchInput')
+          .value
+      );
+
+    }
+
+
+    function renderAllMemosPage(
+      query = ''
+    ) {
+
+      const list =
+        document.getElementById(
+          'allMemosList'
+        );
+
+
+      list.innerHTML = '';
+
+
+      let filtered =
+        [...savedMemos];
+
+
+      if (
+        currentSortOrder ===
+        'newest'
+      ) {
+
+        filtered.reverse();
+
+      }
+
+
+      if (query.trim()) {
+
+        const cleanQuery =
+          query
+            .trim()
+            .replace(
+              /하는|하고|해|좋아/g,
+              ''
+            );
+
+
+        filtered =
+          filtered.filter(
+            memo =>
+
+              memo.text.includes(
+                query.trim()
+              ) ||
+
+              (
+                cleanQuery.length >= 2 &&
+                memo.text.includes(
+                  cleanQuery
+                )
+              )
+          );
+
+      }
+
+
+      filtered.forEach(memo => {
+
+        const realIndex =
+          savedMemos.findIndex(
+            m => m.id === memo.id
+          );
+
+
+        const item =
+          document.createElement('div');
+
+
+        item.className =
+          'memo-item';
+
+
+        item.innerHTML = `
+
+          <div style="flex:1;">
+
+            <div
+              class="memo-text-clickable"
+              onclick="openMemoModal(${realIndex})"
+            >
+              ${escapeHtml(memo.text)}
+            </div>
+
+
+            <div
+              style="
+                font-size:11px;
+                color:#888;
+                margin-top:4px;
+              "
+            >
+              ${escapeHtml(memo.category || '#미분류')}
+
+              ${
+                memo.tag
+                  ? '| ' + escapeHtml(memo.tag)
+                  : ''
+              }
+
+            </div>
+
+          </div>
+
+
+          <div class="timestamp-box">
+            ${formatTimestamp(memo.id)}
+          </div>
+
+        `;
+
+
+        list.appendChild(item);
+
+      });
+
+    }
+
+
+    /* =========================================
+       검색 기록
+       ========================================= */
+
+    function showHistoryPopup() {
+
+      const popup =
+        document.getElementById(
+          'historyPopup'
+        );
+
+
+      if (
+        searchHistory.length === 0
+      ) {
+
+        return;
+
+      }
+
+
+      popup.innerHTML = '';
+
+
+      searchHistory.forEach(
+        (item, idx) => {
+
+          const row =
+            document.createElement(
+              'div'
+            );
+
+
+          row.className =
+            'history-item';
+
+
+          const text =
+            document.createElement(
+              'span'
+            );
+
+
+          text.style.cursor =
+            'pointer';
+
+
+          text.style.flex =
+            '1';
+
+
+          text.textContent =
+            `🕒 ${item}`;
+
+
+          text.onclick = () => {
+            useSearchHistory(item);
+          };
+
+
+          const deleteButton =
+            document.createElement(
+              'span'
+            );
+
+
+          deleteButton.textContent =
+            '✕';
+
+
+          deleteButton.style.color =
+            '#aaa';
+
+
+          deleteButton.style.cursor =
+            'pointer';
+
+
+          deleteButton.style.padding =
+            '0 4px';
+
+
+          deleteButton.onclick =
+            event => {
+
+              deleteSearchHistory(
+                event,
+                idx
+              );
+
+            };
+
+
+          row.appendChild(text);
+
+          row.appendChild(
+            deleteButton
+          );
+
+
+          popup.appendChild(row);
+
+        }
+      );
+
+
+      popup.style.display =
+        'block';
+
+    }
+
+
+    function hideHistoryPopup() {
+
+      setTimeout(
+        () => {
+
+          document
+            .getElementById(
+              'historyPopup'
+            )
+            .style
+            .display = 'none';
+
+        },
+        200
+      );
+
+    }
+
+
+    function handleSearch() {
+
+      const query =
+        document
+          .getElementById(
+            'searchInput'
+          )
+          .value;
+
+
+      renderAllMemosPage(
+        query
+      );
+
+    }
+
+
+    document
+      .getElementById('searchInput')
+      .addEventListener(
+        'keypress',
+        function(e) {
+
+          if (
+            e.key === 'Enter'
+          ) {
+
+            const q =
+              this.value.trim();
+
+
+            if (
+              q &&
+              !searchHistory.includes(q)
+            ) {
+
+              searchHistory.unshift(q);
+
+
+              if (
+                searchHistory.length > 5
+              ) {
+
+                searchHistory.pop();
+
+              }
+
+
+              localStorage.setItem(
+                'notepound_search_history',
+                JSON.stringify(
+                  searchHistory
+                )
+              );
+
+            }
+
+
+            document
+              .getElementById(
+                'historyPopup'
+              )
+              .style
+              .display = 'none';
+
+          }
+
+        }
+      );
+
+
+    function useSearchHistory(text) {
+
+      document
+        .getElementById(
+          'searchInput'
+        )
+        .value = text;
+
+
+      document
+        .getElementById(
+          'historyPopup'
+        )
+        .style
+        .display = 'none';
+
+
+      renderAllMemosPage(text);
+
+    }
+
+
+    function deleteSearchHistory(
+      e,
+      idx
+    ) {
+
+      e.stopPropagation();
+
+
+      searchHistory.splice(
+        idx,
+        1
+      );
+
+
+      localStorage.setItem(
+        'notepound_search_history',
+        JSON.stringify(
+          searchHistory
+        )
+      );
+
+
+      showHistoryPopup();
+
+    }
+
+
+    /* =========================================
+       메모 삭제
+       ========================================= */
+
+    window.deleteMemo =
+      function(index) {
+
+        savedMemos.splice(
+          index,
+          1
+        );
+
+
+        localStorage.setItem(
+          'notepound_memos',
+          JSON.stringify(
+            savedMemos
+          )
+        );
+
+
+        renderWritePage();
+
+        renderCategoryPage();
+
+
+        if (activeCategoryDetail) {
+          renderDetailMemoList();
+        }
+
+
+        renderAllMemosPage(
+          document
+            .getElementById(
+              'searchInput'
+            )
+            .value
+        );
+
+
+        if (
+          document
+            .getElementById(
+              'pageThought'
+            )
+            .classList
+            .contains('active')
+        ) {
+
+          renderThoughtFlow();
+
+        }
+
+      };
+
+
+    /* =========================================
+       메모 저장
+       ========================================= */
+
+    memoInput.addEventListener(
+      'keypress',
+      function(e) {
+
+        if (
+          e.key === 'Enter' &&
+          !e.shiftKey
+        ) {
+
+          e.preventDefault();
+
+
+          const text =
+            this.value.trim();
+
+
+          if (!text) {
+            return;
+          }
+
+
+          const newMemo = {
+
+            id: Date.now(),
+
+            text: text,
+
+            category:
+              currentSelectedCategory ||
+              '#미분류',
+
+            tag: ''
+
+          };
+
+
+          savedMemos.push(
+            newMemo
+          );
+
+
+          localStorage.setItem(
+            'notepound_memos',
+            JSON.stringify(
+              savedMemos
+            )
+          );
+
+
+          this.value = '';
+
+
+          currentSelectedCategory =
+            '';
+
+
+          isUserManuallySelected =
+            false;
+
+
+          document
+            .getElementById(
+              'categoryHeaderBox'
+            )
+            .style
+            .display = 'none';
+
+
+          document
+            .getElementById(
+              'categoryChips'
+            )
+            .innerHTML = '';
+
+
+          renderWritePage();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================
+       생각의 흐름
+       ========================================= */
+
+    const thoughtStopWords = [
+
+      '오늘',
+      '내일',
+      '그리고',
+      '그냥',
+      '진짜',
+      '너무',
+      '조금',
+      '같다',
+      '같은',
+      '하는',
+      '해서',
+      '하고',
+      '있는',
+      '이번',
+      '생각',
+      '정말',
+      '그때',
+      '이제',
+      '나는',
+      '내가',
+      '그런',
+      '것',
+      '수',
+      '좀',
+      '더',
+      '및'
+
+    ];
+
+
+    /* =========================================
+       메모에서 핵심 단어 추출
+       ========================================= */
+
+    function getThoughtKeywords(text) {
+
+      const matches =
+        text
+          .toLowerCase()
+          .match(
+            /[가-힣]{2,}|[a-zA-Z]{2,}|\d+/g
+          ) || [];
+
+
+      const keywords =
+        matches.filter(
+          word =>
+            !thoughtStopWords.includes(
+              word
+            )
+        );
+
+
+      return [
+        ...new Set(keywords)
+      ];
+
+    }
+
+
+    /* =========================================
+       두 메모의 관련성 계산
+       ========================================= */
+
+    function getThoughtSimilarity(
+      memoA,
+      memoB
+    ) {
+
+      const keywordsA =
+        getThoughtKeywords(
+          memoA.text
+        );
+
+
+      const keywordsB =
+        getThoughtKeywords(
+          memoB.text
+        );
+
+
+      const sharedKeywords =
+        keywordsA.filter(
+          word =>
+            keywordsB.includes(word)
+        );
+
+
+      let score = 0;
+
+
+      /*
+        같은 단어가 여러 개 나오면
+        관련성이 높다고 판단
+      */
+
+      score += Math.min(
+        sharedKeywords.length * 2,
+        6
+      );
+
+
+      /*
+        같은 카테고리
+      */
+
+      if (
+        memoA.category &&
+        memoB.category &&
+        memoA.category ===
+        memoB.category
+      ) {
+
+        score += 2;
+
+      }
+
+
+      /*
+        같은 태그
+      */
+
+      if (
+        memoA.tag &&
+        memoB.tag &&
+        memoA.tag ===
+        memoB.tag
+      ) {
+
+        score += 2;
+
+      }
+
+
+      /*
+        나중에 생각을 직접 연결하는 기능을
+        추가할 경우를 위한 연결 구조
+      */
+
+      if (
+        memoA.replyTo &&
+        String(memoA.replyTo) ===
+        String(memoB.id)
+      ) {
+
+        score += 5;
+
+      }
+
+
+      if (
+        memoB.replyTo &&
+        String(memoB.replyTo) ===
+        String(memoA.id)
+      ) {
+
+        score += 5;
+
+      }
+
+
+      return {
+
+        score: score,
+
+        sharedKeywords:
+          sharedKeywords
+
+      };
+
+    }
+
+
+    /* =========================================
+       특정 메모와 관련된 메모 찾기
+       ========================================= */
+
+    function findThoughtRelatedMemos(
+      targetMemo
+    ) {
+
+      return savedMemos
+
+        .filter(
+          memo =>
+            memo.id !== targetMemo.id
+        )
+
+        .map(memo => {
+
+          const result =
+            getThoughtSimilarity(
+              targetMemo,
+              memo
+            );
+
+
+          return {
+
+            memo: memo,
+
+            score:
+              result.score,
+
+            sharedKeywords:
+              result.sharedKeywords
+
+          };
+
+        })
+
+        .filter(
+          result =>
+            result.score >= 3
+        )
+
+        .sort(
+          (a, b) => {
+
+            if (
+              b.score !== a.score
+            ) {
+
+              return (
+                b.score -
+                a.score
+              );
+
+            }
+
+
+            return (
+              a.memo.id -
+              b.memo.id
+            );
+
+          }
+        );
+
+    }
+
+
+    /* =========================================
+       관련 메모들을 하나의 흐름으로 묶기
+       ========================================= */
+
+    function buildThoughtGroups() {
+
+      const groups = [];
+
+      const visited =
+        new Set();
+
+
+      savedMemos.forEach(
+        startMemo => {
+
+          if (
+            visited.has(
+              startMemo.id
+            )
+          ) {
+
+            return;
+
+          }
+
+
+          const group = [];
+
+          const queue = [
+            startMemo
+          ];
+
+
+          visited.add(
+            startMemo.id
+          );
+
+
+          while (
+            queue.length > 0
+          ) {
+
+            const currentMemo =
+              queue.shift();
+
+
+            group.push(
+              currentMemo
+            );
+
+
+            const related =
+              findThoughtRelatedMemos(
+                currentMemo
+              );
+
+
+            related.forEach(
+              result => {
+
+                const relatedMemo =
+                  result.memo;
+
+
+                if (
+                  !visited.has(
+                    relatedMemo.id
+                  )
+                ) {
+
+                  visited.add(
+                    relatedMemo.id
+                  );
+
+
+                  queue.push(
+                    relatedMemo
+                  );
+
+                }
+
+              }
+            );
+
+          }
+
+
+          /*
+            최소 2개의 메모가 연결되어야
+            생각의 흐름으로 표시
+          */
+
+          if (
+            group.length >= 2
+          ) {
+
+            group.sort(
+              (a, b) =>
+                a.id - b.id
+            );
+
+
+            groups.push(
+              group
+            );
+
+          }
+
+        }
+      );
+
+
+      return groups;
+
+    }
+
+
+    /* =========================================
+       흐름 제목
+       ========================================= */
+
+    function getThoughtGroupTitle(
+      group
+    ) {
+
+      const keywordCount = {};
+
+
+      group.forEach(
+        memo => {
+
+          const keywords =
+            getThoughtKeywords(
+              memo.text
+            );
+
+
+          keywords.forEach(
+            keyword => {
+
+              if (
+                !keywordCount[
+                  keyword
+                ]
+              ) {
+
+                keywordCount[
+                  keyword
+                ] = 0;
+
+              }
+
+
+              keywordCount[
+                keyword
+              ]++;
+
+            }
+          );
+
+        }
+      );
+
+
+      const sortedKeywords =
+        Object.keys(
+          keywordCount
+        ).sort(
+          (a, b) =>
+            keywordCount[b] -
+            keywordCount[a]
+        );
+
+
+      if (
+        sortedKeywords.length > 0
+      ) {
+
+        return `
+          💭
+          ${escapeHtml(
+            sortedKeywords[0]
+          )}
+          에 대한 생각
+        `;
+
+      }
+
+
+      if (
+        group[0].category &&
+        group[0].category !== '#미분류'
+      ) {
+
+        return `
+          💭
+          ${escapeHtml(
+            group[0].category
+          )}
+          관련 생각
+        `;
+
+      }
+
+
+      return '💭 이어지는 생각';
+
+    }
+
+
+    /* =========================================
+       생각의 흐름 날짜
+       ========================================= */
+
+    function formatThoughtDate(
+      timestamp
+    ) {
+
+      const d =
+        new Date(timestamp);
+
+
+      const yy =
+        String(
+          d.getFullYear()
+        ).slice(-2);
+
+
+      const mm =
+        String(
+          d.getMonth() + 1
+        ).padStart(2, '0');
+
+
+      const dd =
+        String(
+          d.getDate()
+        ).padStart(2, '0');
+
+
+      return `${yy}.${mm}.${dd}`;
+
+    }
+
+
+    /* =========================================
+       생각의 흐름 화면
+       ========================================= */
+
+    function renderThoughtFlow() {
+
+      const container =
+        document.getElementById(
+          'thoughtFlowList'
+        );
+
+
+      if (!container) {
+        return;
+      }
+
+
+      container.innerHTML = '';
+
+
+      /*
+        저장된 메모가 아예 없는 경우
+      */
+
+      if (
+        savedMemos.length === 0
+      ) {
+
+        container.innerHTML = `
+
+          <div class="thought-empty">
+
+            아직 저장된 메모가 없어요.
+
+            <br><br>
+
+            메모를 몇 개 작성하면
+
+            <br>
+
+            서로 연결되는 생각의 흐름이 나타납니다.
+
+          </div>
+
+        `;
+
+
+        return;
+
+      }
+
+
+      const groups =
+        buildThoughtGroups();
+
+
+      /*
+        연결된 흐름이 없는 경우
+      */
+
+      if (
+        groups.length === 0
+      ) {
+
+        container.innerHTML = `
+
+          <div class="thought-empty">
+
+            아직 서로 연결되는 생각이 발견되지 않았어요.
+
+            <br><br>
+
+            비슷한 주제의 메모를 조금 더 작성해보세요.
+
+            <br>
+
+            새로운 메모를 작성한 뒤
+
+            <br>
+
+            <b>🔄 흐름 새로고침</b>을 눌러보세요.
+
+          </div>
+
+        `;
+
+
+        return;
+
+      }
+
+
+      /*
+        각각의 생각 흐름 표시
+      */
+
+      groups.forEach(
+        (group, groupIndex) => {
+
+          const groupBox =
+            document.createElement(
+              'div'
+            );
+
+
+          groupBox.className =
+            'thought-group';
+
+
+          groupBox.innerHTML = `
+
+            <div class="thought-group-title">
+
+              ${getThoughtGroupTitle(group)}
+
+            </div>
+
+
+            <div class="thought-group-info">
+
+              ${group.length}개의 기록
+
+              ·
+
+              ${formatThoughtDate(group[0].id)}
+
+              →
+
+              ${formatThoughtDate(
+                group[group.length - 1].id
+              )}
+
+            </div>
+
+
+            <div class="thought-flow"></div>
+
+          `;
+
+
+          const flow =
+            groupBox.querySelector(
+              '.thought-flow'
+            );
+
+
+          group.forEach(
+            (memo, index) => {
+
+              const card =
+                document.createElement(
+                  'div'
+                );
+
+
+              card.className =
+                'thought-card';
+
+
+              const isLatest =
+                index ===
+                group.length - 1;
+
+
+              card.innerHTML = `
+
+                <div class="thought-card-date">
+
+                  ${formatThoughtDate(
+                    memo.id
+                  )}
+
+                  ${
+                    isLatest
+                      ? `
+                        <span class="thought-new-badge">
+                          최근 기록
+                        </span>
+                      `
+                      : ''
+                  }
+
+                </div>
+
+
+                <div class="thought-card-text">
+
+                  ${escapeHtml(
+                    memo.text
+                  )}
+
+                </div>
+
+
+                <div class="thought-card-category">
+
+                  ${escapeHtml(
+                    memo.category ||
+                    '#미분류'
+                  )}
+
+                  ${
+                    memo.tag
+                      ? ' · ' +
+                        escapeHtml(
+                          memo.tag
+                        )
+                      : ''
+                  }
+
+                </div>
+
+              `;
+
+
+              /*
+                흐름 속 메모를 클릭하면
+                기존 메모 수정 창이 열림
+              */
+
+              card.onclick =
+                function() {
+
+                  const realIndex =
+                    savedMemos.findIndex(
+                      item =>
+                        item.id ===
+                        memo.id
+                    );
+
+
+                  if (
+                    realIndex !== -1
+                  ) {
+
+                    openMemoModal(
+                      realIndex
+                    );
+
+                  }
+
+                };
+
+
+              flow.appendChild(
+                card
+              );
+
+
+              /*
+                메모 사이 화살표
+              */
+
+              if (
+                index <
+                group.length - 1
+              ) {
+
+                const arrow =
+                  document.createElement(
+                    'div'
+                  );
+
+
+                arrow.className =
+                  'thought-arrow';
+
+
+                arrow.textContent =
+                  '↓';
+
+
+                flow.appendChild(
+                  arrow
+                );
+
+              }
+
+            }
+          );
+
+
+          container.appendChild(
+            groupBox
+          );
+
+        }
+      );
+
+    }
+
+
+    /* =========================================
+       흐름 새로고침
+       ========================================= */
+
+    function refreshThoughtFlow() {
+
+      /*
+        localStorage에서 최신 메모를
+        다시 읽어온다.
+      */
+
+      try {
+
+        const latestMemos =
+          JSON.parse(
+            localStorage.getItem(
+              'notepound_memos'
+            )
+          );
+
+
+        if (
+          Array.isArray(
+            latestMemos
+          )
+        ) {
+
+          savedMemos =
+            latestMemos;
+
+        }
+
+      } catch (error) {
+
+        console.log(
+          '메모를 다시 불러오는 중 문제가 발생했습니다.'
+        );
+
+      }
+
+
+      /*
+        새 메모까지 포함하여
+        생각의 흐름을 다시 계산한다.
+      */
+
+      renderThoughtFlow();
+
+    }
+
+
+    /* =========================================
+       HTML 안전 처리
+       ========================================= */
+
+    function escapeHtml(text) {
+
+      const div =
+        document.createElement(
+          'div'
+        );
+
+
+      div.textContent =
+        text == null
+          ? ''
+          : String(text);
+
+
+      return div.innerHTML;
+
+    }
+
+
+    /* =========================================
+       초기 화면
+       ========================================= */
+
+    renderWritePage();
+
+  </script>
+
+</body>
+</html>rWritePage();
       }
     });
 
