@@ -6,6 +6,10 @@
   <title>Notepound</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       background-color: #f0f2f5;
       display: flex;
@@ -19,10 +23,10 @@
     .phone-container {
       width: 375px;
       height: 730px;
-      background-color: #ffffff;
+      background-color: #fff;
       border-radius: 36px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-      border: 8px solid #333333;
+      box-shadow: 0 10px 25px rgba(0,0,0,.15);
+      border: 8px solid #333;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -33,23 +37,21 @@
       padding: 18px 20px 10px;
       font-size: 18px;
       font-weight: bold;
-      color: #333333;
+      color: #333;
       border-bottom: 1px solid #f0f0f0;
     }
 
     .tab-nav {
       display: flex;
-      background-color: #f8f9fa;
+      background: #f8f9fa;
       border-bottom: 1px solid #eee;
-      overflow-x: auto;
     }
 
     .tab-btn {
       flex: 1;
-      min-width: 82px;
-      padding: 10px 4px;
+      padding: 10px 2px;
       text-align: center;
-      font-size: 11px;
+      font-size: 9px;
       font-weight: bold;
       color: #888;
       cursor: pointer;
@@ -59,8 +61,8 @@
 
     .tab-btn.active {
       color: #1a73e8;
-      border-bottom: 2px solid #1a73e8;
-      background-color: #ffffff;
+      border-bottom-color: #1a73e8;
+      background: #fff;
     }
 
     .tab-content {
@@ -84,14 +86,13 @@
 
     .memo-input {
       width: 100%;
-      height: 65px;
+      height: 75px;
       border: none;
       outline: none;
       resize: none;
       font-size: 15px;
-      line-height: 1.4;
-      color: #222222;
-      box-sizing: border-box;
+      line-height: 1.5;
+      color: #222;
     }
 
     .section-header-box {
@@ -111,55 +112,54 @@
       gap: 6px;
       overflow-x: auto;
       padding-bottom: 4px;
-      align-items: center;
       min-height: 30px;
     }
 
     .cat-chip {
       font-size: 12px;
-      background-color: #f1f3f4;
+      background: #f1f3f4;
       color: #333;
       padding: 5px 10px;
       border-radius: 16px;
       cursor: pointer;
       white-space: nowrap;
       border: 1px solid #e0e0e0;
-      transition: all 0.2s ease;
     }
 
     .cat-chip.active {
-      background-color: #1a73e8;
-      color: #ffffff;
+      background: #1a73e8;
+      color: #fff;
       border-color: #1a73e8;
       font-weight: bold;
     }
 
     .cat-chip.new-rec {
-      background-color: #e6f4ea;
+      background: #e6f4ea;
       color: #137333;
       border: 1px dashed #34a853;
     }
 
     .add-cat-btn {
       font-size: 11px;
-      background-color: #e8f0fe;
+      background: #e8f0fe;
       color: #1a73e8;
-      padding: 4px 8px;
+      padding: 5px 9px;
       border-radius: 12px;
       cursor: pointer;
       border: 1px dashed #1a73e8;
       font-weight: bold;
     }
 
-    .recent-memos-list {
+    .recent-memos-list,
+    .memo-list {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
     .recent-card {
-      background-color: #f8f9fa;
-      padding: 8px 12px;
+      background: #f8f9fa;
+      padding: 9px 12px;
       border-radius: 8px;
       font-size: 13px;
       display: flex;
@@ -167,15 +167,16 @@
       align-items: center;
       border-left: 3px solid #1a73e8;
       cursor: pointer;
+      gap: 8px;
     }
 
     .recent-card:hover {
-      text-decoration: underline;
+      background: #f1f5fb;
     }
 
     .persistent-dock {
       margin-top: auto;
-      background-color: #fff8f8;
+      background: #fff8f8;
       border-top: 2px dashed #ffcdd2;
       border-radius: 16px 16px 0 0;
       padding: 12px;
@@ -192,26 +193,22 @@
       justify-content: space-between;
     }
 
-    .memo-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
     .memo-item {
-      background-color: #ffffff;
+      background: #fff;
       padding: 10px 12px;
       border-radius: 8px;
       font-size: 13px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      gap: 8px;
     }
 
     .memo-text-clickable {
       cursor: pointer;
       flex: 1;
+      word-break: break-word;
     }
 
     .memo-text-clickable:hover {
@@ -220,13 +217,25 @@
 
     .classify-btn {
       font-size: 11px;
-      background-color: #e8f0fe;
+      background: #e8f0fe;
       color: #1a73e8;
       padding: 3px 6px;
       border-radius: 6px;
       cursor: pointer;
       border: none;
       margin-right: 4px;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #aaa;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .delete-btn:hover {
+      color: #d32f2f;
     }
 
     .category-grid {
@@ -237,14 +246,14 @@
     }
 
     .category-folder-card {
-      background-color: #ffffff;
+      background: #fff;
       border-radius: 12px;
       border: 1px solid #e9ecef;
       padding: 14px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      box-shadow: 0 2px 4px rgba(0,0,0,.03);
     }
 
     .edit-icon-btn {
@@ -254,10 +263,6 @@
       margin-left: 6px;
     }
 
-    .edit-icon-btn:hover {
-      color: #1a73e8;
-    }
-
     .back-btn {
       font-size: 12px;
       color: #1a73e8;
@@ -265,7 +270,6 @@
       border: none;
       cursor: pointer;
       font-weight: bold;
-      padding: 0;
     }
 
     .search-box-container {
@@ -280,7 +284,6 @@
       border: 1px solid #ddd;
       font-size: 13px;
       outline: none;
-      box-sizing: border-box;
     }
 
     .history-popup {
@@ -289,10 +292,10 @@
       top: 48px;
       left: 16px;
       right: 16px;
-      background-color: #ffffff;
+      background: #fff;
       border: 1px solid #e0e0e0;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
       z-index: 100;
       padding: 6px 0;
     }
@@ -303,14 +306,13 @@
       color: #555;
       display: flex;
       justify-content: space-between;
-      align-items: center;
     }
 
     .sort-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 4px 6px;
+      padding-bottom: 6px;
     }
 
     .sort-btn {
@@ -334,14 +336,9 @@
       text-align: right;
     }
 
-    .time-part {
-      font-size: 10px;
-      color: #999;
-    }
-
     .tag-badge {
       font-size: 10px;
-      background-color: #e8f0fe;
+      background: #e8f0fe;
       color: #1a73e8;
       padding: 2px 6px;
       border-radius: 8px;
@@ -349,28 +346,13 @@
       cursor: pointer;
     }
 
-    .delete-btn {
-      background: none;
-      border: none;
-      color: #aaa;
-      cursor: pointer;
-      font-size: 13px;
-    }
-
-    .delete-btn:hover {
-      color: #d32f2f;
-    }
-
-    /* 모달 레이아웃 */
+    /* 모달 */
 
     .memo-modal-overlay {
       display: none;
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.4);
+      inset: 0;
+      background: rgba(0,0,0,.4);
       z-index: 1000;
       justify-content: center;
       align-items: center;
@@ -378,14 +360,11 @@
 
     .memo-sticky-note {
       width: 280px;
-      background-color: #fffde7;
+      background: #fffde7;
       border-radius: 12px;
       padding: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 20px rgba(0,0,0,.2);
       border: 1px solid #fff59d;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
     }
 
     .sticky-header {
@@ -394,25 +373,26 @@
       color: #f57f17;
       display: flex;
       justify-content: space-between;
+      margin-bottom: 10px;
     }
 
     .sticky-textarea {
       width: 100%;
-      height: 90px;
+      height: 100px;
       border: 1px solid #fff59d;
-      background-color: #ffffff;
+      background: #fff;
       border-radius: 8px;
       padding: 8px;
       font-size: 14px;
       outline: none;
       resize: none;
-      box-sizing: border-box;
     }
 
     .sticky-actions {
       display: flex;
       justify-content: flex-end;
       gap: 6px;
+      margin-top: 10px;
     }
 
     .sticky-btn {
@@ -424,33 +404,31 @@
     }
 
     .sticky-btn.save {
-      background-color: #1a73e8;
-      color: #ffffff;
+      background: #1a73e8;
+      color: #fff;
       font-weight: bold;
     }
 
     .sticky-btn.cancel {
-      background-color: #e0e0e0;
+      background: #e0e0e0;
       color: #666;
     }
 
-    /* 카테고리 수정 및 추가 모달 */
-
-    .cat-modal-card {
-      width: 280px;
-      background-color: #ffffff;
+    .cat-modal-card,
+    .link-modal-card {
+      width: 300px;
+      background: #fff;
       border-radius: 16px;
       padding: 18px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.2);
     }
 
-    .cat-modal-title {
+    .cat-modal-title,
+    .link-modal-title {
       font-size: 14px;
       font-weight: bold;
       color: #333;
+      margin-bottom: 12px;
     }
 
     .cat-input-field {
@@ -460,17 +438,14 @@
       border-radius: 8px;
       font-size: 13px;
       outline: none;
-      box-sizing: border-box;
-      margin-top: 4px;
+      margin-top: 5px;
     }
 
     .emoji-rec-box {
       display: flex;
       gap: 8px;
-      align-items: center;
-      margin-top: 6px;
-      min-height: 38px;
       flex-wrap: wrap;
+      margin-top: 8px;
     }
 
     .emoji-btn {
@@ -478,675 +453,356 @@
       padding: 4px 8px;
       border: 1px solid #eee;
       border-radius: 8px;
-      background-color: #f8f9fa;
+      background: #f8f9fa;
       cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .emoji-btn:hover {
-      background-color: #e8f0fe;
     }
 
     .emoji-btn.selected {
-      background-color: #e8f0fe;
+      background: #e8f0fe;
       border-color: #1a73e8;
-      transform: scale(1.15);
-      box-shadow: 0 2px 5px rgba(26,115,232,0.2);
     }
 
-    /* =========================================================
-       🧠 생각의 흐름
-       ========================================================= */
+    /* 생각의 흐름 */
 
-    .thought-page-header {
-      padding: 14px 16px 8px;
-      border-bottom: 1px solid #eee;
+    .thought-refresh-area {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      padding: 12px 16px 4px;
+      gap: 6px;
     }
 
-    .thought-page-title {
-      font-size: 14px;
-      font-weight: bold;
-      color: #333;
+    .thought-toolbar {
+      display: flex;
+      gap: 5px;
     }
 
-    .thought-page-subtitle {
-      font-size: 10px;
-      color: #999;
-      margin-top: 3px;
-    }
-
-    .refresh-thought-btn {
-      border: 1px solid #d9e2f3;
-      background-color: #f3f7ff;
+    .thought-refresh-btn {
+      border: none;
+      background: #e8f0fe;
       color: #1a73e8;
-      border-radius: 14px;
-      padding: 6px 10px;
-      font-size: 11px;
+      border-radius: 16px;
+      padding: 7px 9px;
+      font-size: 10px;
       font-weight: bold;
       cursor: pointer;
       white-space: nowrap;
     }
 
-    .refresh-thought-btn:active {
-      transform: scale(0.96);
+    .thought-description {
+      padding: 4px 16px 10px;
+      font-size: 11px;
+      color: #888;
+      line-height: 1.5;
     }
 
-    .thought-content {
-      padding: 14px 16px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      overflow-y: auto;
+    .thought-summary {
+      margin: 0 16px 8px;
+      padding: 10px 12px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      font-size: 10px;
+      color: #777;
+      line-height: 1.5;
     }
 
-    .thought-empty {
-      text-align: center;
-      padding: 45px 15px;
-      color: #aaa;
-      font-size: 13px;
-      line-height: 1.7;
+    .thought-flow-list {
+      padding: 8px 16px 20px;
     }
 
-    .thought-thread {
-      background-color: #f8f9fa;
-      border-radius: 14px;
-      padding: 12px;
-      border: 1px solid #edf0f2;
+    .thought-group {
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 16px;
+      border: 1px solid #eee;
     }
 
-    .thought-thread-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .thought-thread-title {
-      font-size: 12px;
+    .thought-group-title {
+      font-size: 14px;
       font-weight: bold;
-      color: #555;
+      color: #333;
+      margin-bottom: 4px;
     }
 
-    .thought-thread-count {
+    .thought-group-info {
       font-size: 10px;
       color: #999;
+      margin-bottom: 12px;
     }
 
     .thought-flow {
       display: flex;
       flex-direction: column;
-      gap: 0;
+      align-items: center;
     }
 
     .thought-card {
-      background-color: #ffffff;
-      border: 1px solid #e4e7eb;
-      border-radius: 11px;
-      padding: 11px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      width: 100%;
+      background: #fff;
+      border: 1px solid #e3e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,.05);
       cursor: pointer;
     }
 
     .thought-card:hover {
-      border-color: #b8cdf5;
+      border-color: #1a73e8;
     }
 
     .thought-card-date {
       font-size: 10px;
       color: #999;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
 
     .thought-card-text {
       font-size: 13px;
-      color: #333;
       line-height: 1.5;
+      color: #333;
       word-break: break-word;
     }
 
-    .thought-card-meta {
-      margin-top: 7px;
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
+    .thought-card-category {
+      margin-top: 8px;
+      font-size: 10px;
+      color: #1a73e8;
     }
 
-    .thought-meta-chip {
+    .thought-link-info {
+      margin-top: 7px;
       font-size: 9px;
-      background-color: #f1f3f4;
-      color: #777;
-      padding: 2px 6px;
-      border-radius: 8px;
+      color: #137333;
+    }
+
+    .thought-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .thought-action-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 5px 7px;
+      font-size: 10px;
+      cursor: pointer;
+      background: #f1f3f4;
+      color: #555;
+    }
+
+    .thought-action-btn.primary {
+      background: #e8f0fe;
+      color: #1a73e8;
+    }
+
+    .thought-action-btn.connected {
+      background: #e6f4ea;
+      color: #137333;
     }
 
     .thought-arrow {
-      text-align: center;
+      height: 32px;
+      display: flex;
+      align-items: center;
       color: #1a73e8;
-      font-size: 18px;
-      line-height: 25px;
-      height: 25px;
-    }
-
-    .related-box {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px dashed #e5e5e5;
-    }
-
-    .related-title {
-      font-size: 10px;
-      color: #888;
-      margin-bottom: 5px;
+      font-size: 20px;
       font-weight: bold;
     }
 
-    .related-item {
+    .thought-change-summary {
+      margin-top: 10px;
+      padding: 9px 10px;
+      background: #fff8e1;
+      border-radius: 9px;
+      color: #795548;
       font-size: 10px;
-      color: #666;
-      background-color: #f8f9fa;
-      padding: 5px 7px;
-      border-radius: 6px;
-      margin-top: 3px;
-    }
-
-    .thought-analysis-box {
-      background-color: #fffdf2;
-      border: 1px solid #f5e7a8;
-      border-radius: 11px;
-      padding: 10px;
-      margin-top: 8px;
-    }
-
-    .thought-analysis-title {
-      font-size: 10px;
-      color: #a07800;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .thought-analysis-text {
-      font-size: 11px;
-      color: #665b32;
       line-height: 1.5;
     }
 
-    .collect-thought-btn {
-      border: none;
-      background-color: #e8f0fe;
-      color: #1a73e8;
-      border-radius: 12px;
-      padding: 5px 9px;
-      font-size: 10px;
-      cursor: pointer;
-      margin-top: 7px;
+    .thought-empty {
+      margin: 20px 0;
+      padding: 24px 16px;
+      text-align: center;
+      background: #f8f9fa;
+      border-radius: 14px;
+      color: #999;
+      font-size: 12px;
+      line-height: 1.6;
     }
 
-    .collect-thought-btn:hover {
-      background-color: #dbe8fd;
+    /* 연결 모달 */
+
+    .link-modal-card {
+      max-height: 540px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .link-modal-description {
+      font-size: 10px;
+      color: #888;
+      line-height: 1.5;
+    }
+
+    .link-memo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+      max-height: 330px;
+      padding: 2px;
+    }
+
+    .link-memo-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 9px;
+      border: 1px solid #eee;
+      border-radius: 9px;
+      cursor: pointer;
+      background: #fafafa;
+    }
+
+    .link-memo-option:hover {
+      border-color: #1a73e8;
+      background: #f8fbff;
+    }
+
+    .link-memo-option input {
+      margin-top: 2px;
+      accent-color: #1a73e8;
+    }
+
+    .link-memo-option-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .link-memo-option-main {
+      font-size: 11px;
+      color: #333;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .link-memo-option-meta {
+      margin-top: 3px;
+      font-size: 9px;
+      color: #999;
+    }
+
+    .link-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .link-modal-btn {
+      border: none;
+      border-radius: 14px;
+      padding: 7px 13px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .link-modal-btn.cancel {
+      background: #eee;
+      color: #666;
+    }
+
+    .link-modal-btn.save {
+      background: #1a73e8;
+      color: #fff;
+      font-weight: bold;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="phone-container">
+<div class="phone-container">
 
-    <div class="app-header">Notepound</div>
+  <div class="app-header">Notepound</div>
 
-    <!-- 상단 탭 -->
-    <div class="tab-nav">
-      <div
-        id="tabWrite"
-        class="tab-btn active"
-        onclick="switchTab('write')"
-      >
-        📝 메모 작성
-      </div>
-
-      <div
-        id="tabCategory"
-        class="tab-btn"
-        onclick="switchTab('category')"
-      >
-        🗂️ 카테고리 보관함
-      </div>
-
-      <div
-        id="tabSearch"
-        class="tab-btn"
-        onclick="switchTab('search')"
-      >
-        🔍 전체 메모 & 검색
-      </div>
-
-      <div
-        id="tabThought"
-        class="tab-btn"
-        onclick="switchTab('thought')"
-      >
-        🧠 생각의 흐름
-      </div>
+  <div class="tab-nav">
+    <div id="tabWrite" class="tab-btn active" onclick="switchTab('write')">
+      📝 메모 작성
     </div>
 
-
-    <!-- =====================================================
-         탭 1 : 메모 작성
-         ===================================================== -->
-
-    <div id="pageWrite" class="tab-content active">
-
-      <div class="content-area">
-
-        <textarea
-          id="memoInput"
-          class="memo-input"
-          placeholder="생각을 던져놓으세요... (엔터 누르면 바로 저장)"
-        ></textarea>
-
-
-        <div
-          id="categoryHeaderBox"
-          class="section-header-box"
-          style="display:none;"
-        >
-          <span class="section-title">
-            ✨ 스마트 카테고리 추천
-          </span>
-
-          <span
-            class="add-cat-btn"
-            onclick="openNewCategoryModal()"
-          >
-            + 수동 추가
-          </span>
-        </div>
-
-
-        <div
-          id="categoryChips"
-          class="category-select-container"
-        ></div>
-
-
-        <div class="section-title">
-          ⚡ 최근 작성한 메모 (최근 4개 - 클릭 시 수정)
-        </div>
-
-        <div
-          id="recentMemoList"
-          class="recent-memos-list"
-        ></div>
-
-
-        <div class="persistent-dock">
-
-          <div class="dock-title">
-            <span>
-              📌 채은님의 손길이 필요한 메모가 남아있어요
-            </span>
-
-            <span
-              id="unclassifiedCount"
-              style="color: #d32f2f;"
-            >
-              0
-            </span>
-          </div>
-
-          <div
-            id="unclassifiedMemoList"
-            class="memo-list"
-          ></div>
-
-        </div>
-
-      </div>
+    <div id="tabCategory" class="tab-btn" onclick="switchTab('category')">
+      🗂️ 카테고리
     </div>
 
+    <div id="tabSearch" class="tab-btn" onclick="switchTab('search')">
+      🔍 전체 메모
+    </div>
 
-    <!-- =====================================================
-         탭 2 : 카테고리 보관함
-         ===================================================== -->
+    <div id="tabThought" class="tab-btn" onclick="switchTab('thought')">
+      🧠 생각 흐름
+    </div>
+  </div>
 
-    <div id="pageCategory" class="tab-content">
+  <!-- 메모 작성 -->
 
-      <div style="padding: 12px 16px 0; text-align: right;">
+  <div id="pageWrite" class="tab-content active">
 
-        <button
+    <div class="content-area">
+
+      <textarea
+        id="memoInput"
+        class="memo-input"
+        placeholder="생각을 던져놓으세요... (엔터 누르면 바로 저장)"
+      ></textarea>
+
+      <div
+        id="categoryHeaderBox"
+        class="section-header-box"
+        style="display:none;"
+      >
+        <span class="section-title">
+          ✨ 스마트 카테고리 추천
+        </span>
+
+        <span
           class="add-cat-btn"
           onclick="openNewCategoryModal()"
         >
-          + 새 카테고리 만들기
-        </button>
-
+          + 수동 추가
+        </span>
       </div>
 
       <div
-        id="categoryGrid"
-        class="category-grid"
+        id="categoryChips"
+        class="category-select-container"
       ></div>
 
-    </div>
-
-
-    <!-- =====================================================
-         탭 2-서브 : 카테고리 상세
-         ===================================================== -->
-
-    <div id="pageCategoryDetail" class="tab-content">
+      <div class="section-title">
+        ⚡ 최근 작성한 메모
+      </div>
 
       <div
-        style="
-          padding: 14px 16px 8px;
-          border-bottom: 1px solid #eee;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        "
-      >
-
-        <button
-          class="back-btn"
-          onclick="backToCategoryList()"
-        >
-          ← 카테고리 목록
-        </button>
-
-        <button
-          class="add-cat-btn"
-          id="addMemoInDetailBtn"
-        >
-          + 이 카테고리에 메모 추가
-        </button>
-
-      </div>
-
-
-      <div class="content-area">
-
-        <div class="section-header-box">
-
-          <div
-            class="section-title"
-            id="detailCategoryTitle"
-            style="font-size:14px; color:#333;"
-          ></div>
-
-          <span
-            class="edit-icon-btn"
-            id="editDetailCatBtn"
-          >
-            ✏️ 이름/이모지 수정
-          </span>
-
-        </div>
-
-        <div
-          id="detailMemoList"
-          class="memo-list"
-        ></div>
-
-      </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         탭 3 : 전체 메모 & 검색
-         ===================================================== -->
-
-    <div id="pageSearch" class="tab-content">
-
-      <div class="search-box-container">
-
-        <input
-          type="text"
-          id="searchInput"
-          class="search-input"
-          placeholder="검색어를 입력하세요"
-          onfocus="showHistoryPopup()"
-          oninput="handleSearch()"
-        />
-
-        <div
-          id="historyPopup"
-          class="history-popup"
-        ></div>
-
-      </div>
-
-
-      <div
-        style="padding: 0 16px 16px;"
-        class="content-area"
-      >
-
-        <div class="sort-bar">
-
-          <span class="section-title">
-            🕒 전체 메모 (클릭 시 내용 수정)
-          </span>
-
-          <div>
-
-            <button
-              id="sortNewest"
-              class="sort-btn active"
-              onclick="setSortOrder('newest')"
-            >
-              최신순
-            </button>
-
-            <span style="font-size:10px; color:#ccc;">
-              |
-            </span>
-
-            <button
-              id="sortOldest"
-              class="sort-btn"
-              onclick="setSortOrder('oldest')"
-            >
-              오래된순
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <div
-          id="allMemosList"
-          class="memo-list"
-        ></div>
-
-      </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         탭 4 : 생각의 흐름
-         ===================================================== -->
-
-    <div id="pageThought" class="tab-content">
-
-      <div class="thought-page-header">
-
-        <div>
-
-          <div class="thought-page-title">
-            🧠 생각의 흐름
-          </div>
-
-          <div class="thought-page-subtitle">
-            흩어진 기록에서 이어지는 생각을 찾아보세요
-          </div>
-
-        </div>
-
-
-        <button
-          class="refresh-thought-btn"
-          onclick="refreshThoughtFlow()"
-        >
-          🔄 새로고침
-        </button>
-
-      </div>
-
-
-      <div
-        id="thoughtContent"
-        class="thought-content"
+        id="recentMemoList"
+        class="recent-memos-list"
       ></div>
 
-    </div>
+      <div class="persistent-dock">
 
-
-    <!-- =====================================================
-         메모 수정 모달
-         ===================================================== -->
-
-    <div
-      id="memoModalOverlay"
-      class="memo-modal-overlay"
-    >
-
-      <div class="memo-sticky-note">
-
-        <div class="sticky-header">
-
-          <span>
-            📌 메모 수정하기
-          </span>
-
-          <span
-            style="cursor:pointer;"
-            onclick="closeMemoModal()"
-          >
-            ✕
-          </span>
-
+        <div class="dock-title">
+          <span>📌 분류가 필요한 메모</span>
+          <span id="unclassifiedCount">0</span>
         </div>
-
-
-        <textarea
-          id="modalTextarea"
-          class="sticky-textarea"
-        ></textarea>
-
-
-        <div class="sticky-actions">
-
-          <button
-            class="sticky-btn cancel"
-            onclick="closeMemoModal()"
-          >
-            취소
-          </button>
-
-          <button
-            class="sticky-btn save"
-            style="background-color:#fbc02d; color:#333;"
-            onclick="saveMemoModal()"
-          >
-            저장
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         카테고리 추가 / 수정 모달
-         ===================================================== -->
-
-    <div
-      id="catModalOverlay"
-      class="memo-modal-overlay"
-    >
-
-      <div class="cat-modal-card">
 
         <div
-          class="cat-modal-title"
-          id="catModalHeaderTitle"
-        >
-          📂 카테고리 설정
-        </div>
-
-
-        <div>
-
-          <span
-            style="
-              font-size:11px;
-              color:#666;
-              font-weight:bold;
-            "
-          >
-            카테고리 이름
-          </span>
-
-          <input
-            type="text"
-            id="newCatNameInput"
-            class="cat-input-field"
-            placeholder="예: 일기, 컴활, 운동..."
-            oninput="updateEmojiRecommendations()"
-          />
-
-        </div>
-
-
-        <div>
-
-          <span
-            style="
-              font-size:11px;
-              color:#666;
-              font-weight:bold;
-              display:block;
-            "
-          >
-            추천 이모지 (클릭 시 선택 적용)
-          </span>
-
-          <div
-            id="emojiRecBox"
-            class="emoji-rec-box"
-          ></div>
-
-        </div>
-
-
-        <div
-          class="sticky-actions"
-          style="margin-top:8px;"
-        >
-
-          <button
-            class="sticky-btn cancel"
-            onclick="closeCatModal()"
-          >
-            취소
-          </button>
-
-          <button
-            class="sticky-btn save"
-            onclick="submitCategoryModal()"
-          >
-            완료
-          </button>
-
-        </div>
+          id="unclassifiedMemoList"
+          class="memo-list"
+        ></div>
 
       </div>
 
@@ -1154,3347 +810,3767 @@
 
   </div>
 
+  <!-- 카테고리 -->
 
-  <script>
+  <div id="pageCategory" class="tab-content">
 
-    /* =====================================================
-       기본 데이터
-       ===================================================== */
+    <div style="padding:12px 16px 0;text-align:right;">
+      <button
+        class="add-cat-btn"
+        onclick="openNewCategoryModal()"
+      >
+        + 새 카테고리 만들기
+      </button>
+    </div>
 
-    let savedMemos =
-      JSON.parse(localStorage.getItem('notepound_memos')) || [];
+    <div
+      id="categoryGrid"
+      class="category-grid"
+    ></div>
 
-    let categories =
-      JSON.parse(localStorage.getItem('notepound_categories')) || [
-        { name: '일정', icon: '📅' },
-        { name: '아이디어', icon: '💡' },
-        { name: '좋아하는 음식', icon: '🍕' },
-        { name: '위시리스트', icon: '🛍️' }
-      ];
+  </div>
 
-    let searchHistory =
-      JSON.parse(
-        localStorage.getItem('notepound_search_history')
-      ) || [];
+  <!-- 카테고리 상세 -->
+
+  <div id="pageCategoryDetail" class="tab-content">
+
+    <div
+      style="
+        padding:14px 16px 8px;
+        border-bottom:1px solid #eee;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      "
+    >
+
+      <button
+        class="back-btn"
+        onclick="backToCategoryList()"
+      >
+        ← 카테고리 목록
+      </button>
+
+      <button
+        class="add-cat-btn"
+        id="addMemoInDetailBtn"
+      >
+        + 메모 추가
+      </button>
+
+    </div>
+
+    <div class="content-area">
+
+      <div class="section-header-box">
+
+        <div
+          class="section-title"
+          id="detailCategoryTitle"
+          style="font-size:14px;color:#333;"
+        ></div>
+
+        <span
+          class="edit-icon-btn"
+          id="editDetailCatBtn"
+        >
+          ✏️ 수정
+        </span>
+
+      </div>
+
+      <div
+        id="detailMemoList"
+        class="memo-list"
+      ></div>
+
+    </div>
+
+  </div>
+
+  <!-- 전체 메모 -->
+
+  <div id="pageSearch" class="tab-content">
+
+    <div class="search-box-container">
+
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        placeholder="검색어를 입력하세요"
+        onfocus="showHistoryPopup()"
+        oninput="handleSearch()"
+      >
+
+      <div
+        id="historyPopup"
+        class="history-popup"
+      ></div>
+
+    </div>
+
+    <div
+      class="content-area"
+      style="padding-top:4px;"
+    >
+
+      <div class="sort-bar">
+
+        <span class="section-title">
+          🕒 전체 메모
+        </span>
+
+        <div>
+          <button
+            id="sortNewest"
+            class="sort-btn active"
+            onclick="setSortOrder('newest')"
+          >
+            최신순
+          </button>
+
+          <span style="font-size:10px;color:#ccc;">|</span>
+
+          <button
+            id="sortOldest"
+            class="sort-btn"
+            onclick="setSortOrder('oldest')"
+          >
+            오래된순
+          </button>
+        </div>
+
+      </div>
+
+      <div
+        id="allMemosList"
+        class="memo-list"
+      ></div>
+
+    </div>
+
+  </div>
+
+  <!-- 생각의 흐름 -->
+
+  <div id="pageThought" class="tab-content">
+
+    <div class="thought-refresh-area">
+
+      <div class="section-title">
+        🧠 생각의 흐름
+      </div>
+
+      <div class="thought-toolbar">
+
+        <button
+          class="thought-refresh-btn"
+          onclick="collectThoughtRecords()"
+        >
+          🔗 기록 모으기
+        </button>
+
+        <button
+          class="thought-refresh-btn"
+          onclick="refreshThoughtFlow()"
+        >
+          🔄 새로고침
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="thought-description">
+      비슷한 내용을 자동으로 찾아 연결하고,
+      원하는 메모끼리는 직접 연결할 수 있어요.<br>
+      직접 연결한 기록은 언제든 다시 연결을 풀 수 있습니다.
+    </div>
+
+    <div
+      id="thoughtSummary"
+      class="thought-summary"
+    ></div>
+
+    <div
+      id="thoughtFlowList"
+      class="thought-flow-list"
+    ></div>
+
+  </div>
+
+  <!-- 메모 연결 모달 -->
+
+  <div
+    id="linkMemoModalOverlay"
+    class="memo-modal-overlay"
+  >
+
+    <div class="link-modal-card">
+
+      <div
+        class="link-modal-title"
+        id="linkModalTitle"
+      >
+        🔗 메모 연결하기
+      </div>
+
+      <div class="link-modal-description">
+        이 기록과 함께 묶고 싶은 메모를 여러 개 선택하세요.<br>
+        체크를 해제하면 기존 연결도 풀립니다.
+      </div>
+
+      <div
+        id="linkMemoList"
+        class="link-memo-list"
+      ></div>
+
+      <div class="link-modal-actions">
+
+        <button
+          class="link-modal-btn cancel"
+          onclick="closeLinkMemoModal()"
+        >
+          취소
+        </button>
+
+        <button
+          class="link-modal-btn save"
+          onclick="saveMemoLinks()"
+        >
+          연결 저장
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- 메모 수정 모달 -->
+
+  <div
+    id="memoModalOverlay"
+    class="memo-modal-overlay"
+  >
+
+    <div class="memo-sticky-note">
+
+      <div class="sticky-header">
+
+        <span>📌 메모 수정하기</span>
+
+        <span
+          style="cursor:pointer;"
+          onclick="closeMemoModal()"
+        >
+          ✕
+        </span>
+
+      </div>
+
+      <textarea
+        id="modalTextarea"
+        class="sticky-textarea"
+      ></textarea>
+
+      <div class="sticky-actions">
+
+        <button
+          class="sticky-btn cancel"
+          onclick="closeMemoModal()"
+        >
+          취소
+        </button>
+
+        <button
+          class="sticky-btn save"
+          onclick="saveMemoModal()"
+        >
+          저장
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- 카테고리 모달 -->
+
+  <div
+    id="catModalOverlay"
+    class="memo-modal-overlay"
+  >
+
+    <div class="cat-modal-card">
+
+      <div
+        class="cat-modal-title"
+        id="catModalHeaderTitle"
+      >
+        📂 카테고리 설정
+      </div>
+
+      <div>
+
+        <span
+          style="font-size:11px;color:#666;font-weight:bold;"
+        >
+          카테고리 이름
+        </span>
+
+        <input
+          type="text"
+          id="newCatNameInput"
+          class="cat-input-field"
+          placeholder="예: 일기, 컴활, 운동..."
+          oninput="updateEmojiRecommendations()"
+        >
+
+      </div>
+
+      <div>
+
+        <span
+          style="font-size:11px;color:#666;font-weight:bold;"
+        >
+          추천 이모지
+        </span>
+
+        <div
+          id="emojiRecBox"
+          class="emoji-rec-box"
+        ></div>
+
+      </div>
+
+      <div class="sticky-actions">
+
+        <button
+          class="sticky-btn cancel"
+          onclick="closeCatModal()"
+        >
+          취소
+        </button>
+
+        <button
+          class="sticky-btn save"
+          onclick="submitCategoryModal()"
+        >
+          완료
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+/* =====================================================
+   기본 데이터
+   ===================================================== */
+
+let savedMemos =
+  JSON.parse(localStorage.getItem('notepound_memos')) || [];
+
+let categories =
+  JSON.parse(localStorage.getItem('notepound_categories')) || [
+    { name: '일정', icon: '📅' },
+    { name: '아이디어', icon: '💡' },
+    { name: '좋아하는 음식', icon: '🍕' },
+    { name: '위시리스트', icon: '🛍️' }
+  ];
+
+let searchHistory =
+  JSON.parse(localStorage.getItem('notepound_search_history')) || [];
+
+let currentSelectedCategory = '';
+let isUserManuallySelected = false;
+let activeCategoryDetail = '';
+let currentSortOrder = 'newest';
+let editingMemoIndex = null;
+let selectedEmoji = '📁';
+let editingCategoryIndex = null;
+let linkingMemoId = null;
 
 
-    let currentSelectedCategory = '';
-    let isUserManuallySelected = false;
-    let activeCategoryDetail = '';
-    let currentSortOrder = 'newest';
-    let editingMemoIndex = null;
-    let selectedEmoji = '📁';
-    let editingCategoryIndex = null;
+/* =====================================================
+   데이터 정리 / 저장
+   ===================================================== */
+
+function normalizeMemoData() {
+
+  savedMemos = savedMemos.map(memo => {
+
+    const linked =
+      Array.isArray(memo.linkedMemos)
+        ? memo.linkedMemos
+            .map(Number)
+            .filter(id => !Number.isNaN(id))
+        : [];
+
+    return {
+      ...memo,
+      linkedMemos: [...new Set(linked)]
+    };
+
+  });
+
+  const validIds =
+    new Set(savedMemos.map(memo => memo.id));
+
+  savedMemos.forEach(memo => {
+
+    memo.linkedMemos =
+      memo.linkedMemos.filter(
+        id =>
+          validIds.has(id) &&
+          id !== memo.id
+      );
+
+  });
+
+}
+
+normalizeMemoData();
 
 
-    const memoInput =
-      document.getElementById('memoInput');
+function saveMemos() {
+
+  localStorage.setItem(
+    'notepound_memos',
+    JSON.stringify(savedMemos)
+  );
+
+}
 
 
-    /* =====================================================
-       탭 전환
-       ===================================================== */
+function createMemoId() {
 
-    function switchTab(tabName) {
+  let id = Date.now();
 
-      document
-        .getElementById('tabWrite')
-        .classList
-        .toggle('active', tabName === 'write');
+  while (
+    savedMemos.some(memo => memo.id === id)
+  ) {
+    id++;
+  }
 
+  return id;
 
-      document
-        .getElementById('tabCategory')
-        .classList
-        .toggle(
-          'active',
-          tabName === 'category' ||
-          tabName === 'categoryDetail'
-        );
+}
 
 
-      document
-        .getElementById('tabSearch')
-        .classList
-        .toggle(
-          'active',
-          tabName === 'search'
-        );
+/* =====================================================
+   HTML 안전 처리
+   ===================================================== */
+
+function escapeHtml(text) {
+
+  const div =
+    document.createElement('div');
+
+  div.textContent =
+    text == null ? '' : String(text);
+
+  return div.innerHTML;
+
+}
 
 
-      document
-        .getElementById('tabThought')
-        .classList
-        .toggle(
-          'active',
-          tabName === 'thought'
-        );
+/* =====================================================
+   탭 전환
+   ===================================================== */
+
+function switchTab(tabName) {
+
+  const tabs = {
+    write: 'tabWrite',
+    category: 'tabCategory',
+    categoryDetail: 'tabCategory',
+    search: 'tabSearch',
+    thought: 'tabThought'
+  };
+
+  const pages = {
+    write: 'pageWrite',
+    category: 'pageCategory',
+    categoryDetail: 'pageCategoryDetail',
+    search: 'pageSearch',
+    thought: 'pageThought'
+  };
+
+  Object.values(tabs).forEach(id => {
+    document
+      .getElementById(id)
+      .classList.remove('active');
+  });
+
+  Object.values(pages).forEach(id => {
+    document
+      .getElementById(id)
+      .classList.remove('active');
+  });
+
+  document
+    .getElementById(tabs[tabName])
+    .classList.add('active');
+
+  document
+    .getElementById(pages[tabName])
+    .classList.add('active');
+
+  hideHistoryPopup();
+
+  if (tabName === 'category') {
+    renderCategoryPage();
+  }
+
+  if (tabName === 'search') {
+    renderAllMemosPage();
+  }
+
+  if (tabName === 'thought') {
+    renderThoughtFlow();
+  }
+
+}
 
 
-      document
-        .getElementById('pageWrite')
-        .classList
-        .toggle(
-          'active',
-          tabName === 'write'
-        );
+/* =====================================================
+   카테고리
+   ===================================================== */
+
+function openNewCategoryModal() {
+
+  editingCategoryIndex = null;
+
+  document.getElementById(
+    'catModalHeaderTitle'
+  ).textContent =
+    '📂 새 카테고리 추가';
+
+  document.getElementById(
+    'newCatNameInput'
+  ).value = '';
+
+  selectedEmoji = '📁';
+
+  updateEmojiRecommendations();
+
+  document.getElementById(
+    'catModalOverlay'
+  ).style.display = 'flex';
+
+  setTimeout(() => {
+    document
+      .getElementById('newCatNameInput')
+      .focus();
+  }, 100);
+
+}
 
 
-      document
-        .getElementById('pageCategory')
-        .classList
-        .toggle(
-          'active',
-          tabName === 'category'
-        );
+function editCategoryNamePrompt(index) {
+
+  editingCategoryIndex = index;
+
+  const cat = categories[index];
+
+  if (!cat) return;
+
+  document.getElementById(
+    'catModalHeaderTitle'
+  ).textContent =
+    '✏️ 카테고리 수정';
+
+  document.getElementById(
+    'newCatNameInput'
+  ).value = cat.name;
+
+  selectedEmoji = cat.icon;
+
+  updateEmojiRecommendations();
+
+  document.getElementById(
+    'catModalOverlay'
+  ).style.display = 'flex';
+
+}
 
 
-      document
-        .getElementById('pageCategoryDetail')
-        .classList
-        .toggle(
-          'active',
-          tabName === 'categoryDetail'
-        );
+function closeCatModal() {
+
+  document.getElementById(
+    'catModalOverlay'
+  ).style.display = 'none';
+
+  editingCategoryIndex = null;
+
+}
 
 
-      document
-        .getElementById('pageSearch')
-        .classList
-        .toggle(
-          'active',
-          tabName === 'search'
-        );
+function updateEmojiRecommendations() {
 
+  const input =
+    document.getElementById(
+      'newCatNameInput'
+    );
 
-      document
-        .getElementById('pageThought')
-        .classList
-        .toggle(
-          'active',
-          tabName === 'thought'
-        );
+  const box =
+    document.getElementById(
+      'emojiRecBox'
+    );
 
+  if (!input || !box) return;
 
-      hideHistoryPopup();
+  const name =
+    input.value.trim();
 
+  let emojis = [
+    '📁',
+    '📌',
+    '✨',
+    '🏷️',
+    '📝'
+  ];
 
-      if (tabName === 'category') {
-        renderCategoryPage();
-      }
+  if (
+    name.includes('일기') ||
+    name.includes('일상') ||
+    name.includes('생각') ||
+    name.includes('기록')
+  ) {
 
+    emojis = [
+      '📖',
+      '📔',
+      '✏️',
+      '💭',
+      '📝'
+    ];
 
-      if (tabName === 'search') {
-        renderAllMemosPage();
-      }
+  } else if (
+    name.includes('학교') ||
+    name.includes('과제') ||
+    name.includes('공부') ||
+    name.includes('시험') ||
+    name.includes('컴활')
+  ) {
 
+    emojis = [
+      '🎓',
+      '📚',
+      '💻',
+      '✍️',
+      '🎯'
+    ];
 
-      if (tabName === 'thought') {
-        renderThoughtFlow();
-      }
+  } else if (
+    name.includes('음식') ||
+    name.includes('먹') ||
+    name.includes('맛집') ||
+    name.includes('카페')
+  ) {
 
-    }
+    emojis = [
+      '🍕',
+      '🍰',
+      '☕',
+      '🍧',
+      '🍲'
+    ];
 
+  } else if (
+    name.includes('운동') ||
+    name.includes('헬스') ||
+    name.includes('러닝')
+  ) {
 
-    /* =====================================================
-       카테고리 추가 / 수정
-       ===================================================== */
+    emojis = [
+      '⚽',
+      '🏋️',
+      '🏃',
+      '🥊',
+      '🧘'
+    ];
 
-    function openNewCategoryModal() {
+  } else if (
+    name.includes('쇼핑') ||
+    name.includes('위시') ||
+    name.includes('구매')
+  ) {
 
-      editingCategoryIndex = null;
+    emojis = [
+      '🛍️',
+      '🛒',
+      '💳',
+      '🎁',
+      '👗'
+    ];
 
-      document
-        .getElementById('catModalHeaderTitle')
-        .textContent = '📂 새 카테고리 추가';
+  } else if (
+    name.includes('영화') ||
+    name.includes('드라마') ||
+    name.includes('게임') ||
+    name.includes('아이디어')
+  ) {
 
-      document
-        .getElementById('newCatNameInput')
-        .value = '';
+    emojis = [
+      '💡',
+      '🎬',
+      '🍿',
+      '🎮',
+      '🎧'
+    ];
 
-      selectedEmoji = '📁';
+  } else if (
+    name.includes('알바') ||
+    name.includes('업무') ||
+    name.includes('일정')
+  ) {
+
+    emojis = [
+      '📅',
+      '💼',
+      '⏰',
+      '💰',
+      '🍔'
+    ];
+
+  }
+
+  if (!emojis.includes(selectedEmoji)) {
+    emojis.unshift(selectedEmoji);
+  }
+
+  box.innerHTML = '';
+
+  emojis.forEach(emoji => {
+
+    const button =
+      document.createElement('button');
+
+    button.type = 'button';
+    button.className =
+      'emoji-btn' +
+      (
+        selectedEmoji === emoji
+          ? ' selected'
+          : ''
+      );
+
+    button.textContent = emoji;
+
+    button.onclick = () => {
+
+      selectedEmoji = emoji;
 
       updateEmojiRecommendations();
 
-      document
-        .getElementById('catModalOverlay')
-        .style
-        .display = 'flex';
+    };
 
-      setTimeout(() => {
-        document
-          .getElementById('newCatNameInput')
-          .focus();
-      }, 100);
+    box.appendChild(button);
 
-    }
+  });
+
+}
 
 
-    function editCategoryNamePrompt(catIdx) {
+function submitCategoryModal() {
 
-      editingCategoryIndex = catIdx;
+  const name =
+    document.getElementById(
+      'newCatNameInput'
+    ).value.trim();
 
-      const cat = categories[catIdx];
+  if (!name) {
+    alert('카테고리 이름을 입력해주세요.');
+    return;
+  }
 
-      document
-        .getElementById('catModalHeaderTitle')
-        .textContent = '✏️ 카테고리 수정';
+  const wasEditing =
+    editingCategoryIndex !== null;
 
-      document
-        .getElementById('newCatNameInput')
-        .value = cat.name;
+  if (wasEditing) {
 
-      selectedEmoji = cat.icon;
+    const oldCat =
+      categories[editingCategoryIndex];
 
-      updateEmojiRecommendations();
+    if (!oldCat) return;
 
-      document
-        .getElementById('catModalOverlay')
-        .style
-        .display = 'flex';
+    const oldFullName =
+      `${oldCat.icon} ${oldCat.name}`;
 
-      setTimeout(() => {
-        document
-          .getElementById('newCatNameInput')
-          .focus();
-      }, 100);
+    const newFullName =
+      `${selectedEmoji} ${name}`;
 
-    }
-
-
-    function closeCatModal() {
-
-      document
-        .getElementById('catModalOverlay')
-        .style
-        .display = 'none';
-
-      editingCategoryIndex = null;
-
-    }
-
-
-    /* =====================================================
-       카테고리 이모지 추천
-       ===================================================== */
-
-    function updateEmojiRecommendations() {
-
-      const name =
-        document
-          .getElementById('newCatNameInput')
-          .value
-          .trim();
-
-      const recBox =
-        document.getElementById('emojiRecBox');
-
-      recBox.innerHTML = '';
-
-      let emojis = [
-        '📁',
-        '📌',
-        '✨',
-        '🏷️',
-        '📝'
-      ];
-
+    savedMemos.forEach(memo => {
 
       if (
-        name.includes('일기') ||
-        name.includes('일상') ||
-        name.includes('생각') ||
-        name.includes('기록') ||
-        name.includes('할 일') ||
-        name.includes('할일')
+        memo.category === oldFullName
       ) {
-
-        emojis = [
-          '📖',
-          '📔',
-          '✏️',
-          '🗓️',
-          '💭'
-        ];
-
-      } else if (
-        name.includes('학교') ||
-        name.includes('수원대') ||
-        name.includes('과제') ||
-        name.includes('공부') ||
-        name.includes('시험') ||
-        name.includes('컴활') ||
-        name.includes('토익')
-      ) {
-
-        emojis = [
-          '🎓',
-          '📚',
-          '💻',
-          '✍️',
-          '🎯'
-        ];
-
-      } else if (
-        name.includes('음식') ||
-        name.includes('먹') ||
-        name.includes('맛집') ||
-        name.includes('카페') ||
-        name.includes('디저트') ||
-        name.includes('좋아하는')
-      ) {
-
-        emojis = [
-          '🍕',
-          '🍰',
-          '☕',
-          '🍧',
-          '🍲'
-        ];
-
-      } else if (
-        name.includes('운동') ||
-        name.includes('헬스') ||
-        name.includes('러닝') ||
-        name.includes('건강')
-      ) {
-
-        emojis = [
-          '⚽',
-          '🏋️‍♂️',
-          '🏃‍♀️',
-          '🥊',
-          '🧘‍♀️'
-        ];
-
-      } else if (
-        name.includes('쇼핑') ||
-        name.includes('위시') ||
-        name.includes('구매') ||
-        name.includes('사고')
-      ) {
-
-        emojis = [
-          '🛍️',
-          '🛒',
-          '💳',
-          '🎁',
-          '👗'
-        ];
-
-      } else if (
-        name.includes('영화') ||
-        name.includes('드라마') ||
-        name.includes('게임') ||
-        name.includes('아이디어')
-      ) {
-
-        emojis = [
-          '💡',
-          '🎬',
-          '🍿',
-          '🎮',
-          '🎧'
-        ];
-
-      } else if (
-        name.includes('알바') ||
-        name.includes('업무') ||
-        name.includes('직장') ||
-        name.includes('일정')
-      ) {
-
-        emojis = [
-          '📅',
-          '💼',
-          '⏰',
-          '🍔',
-          '💰'
-        ];
-
+        memo.category = newFullName;
       }
 
+    });
 
-      if (!emojis.includes(selectedEmoji)) {
-        emojis.unshift(selectedEmoji);
-      }
+    categories[editingCategoryIndex] = {
+      name,
+      icon: selectedEmoji
+    };
+
+    if (
+      activeCategoryDetail === oldFullName
+    ) {
+      activeCategoryDetail = newFullName;
+    }
+
+  } else {
+
+    categories.push({
+      name,
+      icon: selectedEmoji
+    });
+
+  }
+
+  localStorage.setItem(
+    'notepound_categories',
+    JSON.stringify(categories)
+  );
+
+  saveMemos();
+
+  const newCategoryFullName =
+    `${selectedEmoji} ${name}`;
+
+  closeCatModal();
+
+  renderCategoryPage();
+  renderWritePage();
+
+  if (
+    memoInput.value.trim() &&
+    !wasEditing
+  ) {
+
+    currentSelectedCategory =
+      newCategoryFullName;
+
+    isUserManuallySelected = true;
+
+    renderLiveCategoryChips();
+
+  }
+
+  if (
+    activeCategoryDetail &&
+    wasEditing
+  ) {
+    openCategoryDetail(
+      activeCategoryDetail
+    );
+  }
+
+}
 
 
-      emojis.forEach(emo => {
+/* =====================================================
+   메모 입력 / 스마트 카테고리
+   ===================================================== */
 
-        const btn =
-          document.createElement('button');
+const memoInput =
+  document.getElementById('memoInput');
 
-        btn.type = 'button';
 
-        btn.className =
-          'emoji-btn' +
-          (
-            selectedEmoji === emo
-              ? ' selected'
-              : ''
-          );
+memoInput.addEventListener(
+  'input',
+  () => {
 
-        btn.textContent = emo;
+    const text =
+      memoInput.value.trim();
 
-        btn.onclick = () => {
+    const header =
+      document.getElementById(
+        'categoryHeaderBox'
+      );
 
-          selectedEmoji = emo;
+    if (!text) {
 
-          updateEmojiRecommendations();
+      header.style.display = 'none';
 
-        };
+      document.getElementById(
+        'categoryChips'
+      ).innerHTML = '';
 
-        recBox.appendChild(btn);
+      currentSelectedCategory = '';
+      isUserManuallySelected = false;
 
-      });
+      return;
 
     }
 
+    header.style.display = 'flex';
 
-    function submitCategoryModal() {
+    let dynamicNewCat = null;
 
-      const name =
-        document
-          .getElementById('newCatNameInput')
-          .value
-          .trim();
+    if (!isUserManuallySelected) {
 
+      if (
+        text.includes('과제') ||
+        text.includes('시험') ||
+        text.includes('약속') ||
+        text.includes('오늘')
+      ) {
 
-      if (!name) {
+        currentSelectedCategory =
+          findCategoryFullName('일정') ||
+          findCategoryFullName('📅');
 
-        alert(
-          '카테고리 이름을 입력해주세요.'
-        );
+      } else if (
+        text.includes('먹') ||
+        text.includes('음식') ||
+        text.includes('맛집')
+      ) {
 
-        return;
-      }
+        currentSelectedCategory =
+          findCategoryFullName('음식') ||
+          findCategoryFullName('🍕');
 
+      } else if (
+        text.includes('사고') ||
+        text.includes('살까') ||
+        text.includes('위시')
+      ) {
 
-      /*
-        수정 여부를 closeCatModal() 전에 기억한다.
-        기존 코드에서 closeCatModal()이
-        editingCategoryIndex를 null로 만들기 때문에
-        수정 후 새 카테고리 로직이 실행될 수 있던 문제를 방지한다.
-      */
+        currentSelectedCategory =
+          findCategoryFullName('위시') ||
+          findCategoryFullName('🛍️');
 
-      const wasEditing =
-        editingCategoryIndex !== null;
+      } else if (
+        text.includes('생각') ||
+        text.includes('아이디어')
+      ) {
 
-
-      if (wasEditing) {
-
-        const oldCat =
-          categories[editingCategoryIndex];
-
-        const oldFullName =
-          `${oldCat.icon} ${oldCat.name}`;
-
-        const newFullName =
-          `${selectedEmoji} ${name}`;
-
-
-        savedMemos.forEach(memo => {
-
-          if (memo.category === oldFullName) {
-            memo.category = newFullName;
-          }
-
-        });
-
-
-        categories[editingCategoryIndex] = {
-          name: name,
-          icon: selectedEmoji
-        };
-
-
-        localStorage.setItem(
-          'notepound_memos',
-          JSON.stringify(savedMemos)
-        );
-
-
-        if (
-          activeCategoryDetail === oldFullName
-        ) {
-
-          activeCategoryDetail = newFullName;
-
-        }
+        currentSelectedCategory =
+          findCategoryFullName('아이디어') ||
+          findCategoryFullName('💡');
 
       } else {
 
-        categories.push({
-          name: name,
-          icon: selectedEmoji
-        });
+        const newCategory =
+          extractNewCategoryKeyword(text);
+
+        if (newCategory) {
+
+          const exists =
+            categories.some(
+              c =>
+                c.name === newCategory.name
+            );
+
+          if (!exists) {
+            dynamicNewCat =
+              `${newCategory.icon} ${newCategory.name}`;
+          }
+
+        }
 
       }
 
+    }
+
+    renderLiveCategoryChips(
+      dynamicNewCat
+    );
+
+  }
+);
+
+
+function extractNewCategoryKeyword(text) {
+
+  if (
+    text.includes('수원대') ||
+    text.includes('학교')
+  ) {
+    return {
+      name: '학교',
+      icon: '🎓'
+    };
+  }
+
+  if (
+    text.includes('운동') ||
+    text.includes('헬스')
+  ) {
+    return {
+      name: '운동',
+      icon: '⚽'
+    };
+  }
+
+  if (
+    text.includes('영화') ||
+    text.includes('게임')
+  ) {
+    return {
+      name: '문화',
+      icon: '🎬'
+    };
+  }
+
+  if (
+    text.includes('알바') ||
+    text.includes('시급')
+  ) {
+    return {
+      name: '아르바이트',
+      icon: '💼'
+    };
+  }
+
+  if (
+    text.includes('일기') ||
+    text.includes('오늘 하루')
+  ) {
+    return {
+      name: '일기',
+      icon: '📖'
+    };
+  }
+
+  return null;
+
+}
+
+
+function findCategoryFullName(keyword) {
+
+  const found =
+    categories.find(
+      category =>
+        category.name.includes(keyword) ||
+        category.icon.includes(keyword)
+    );
+
+  return found
+    ? `${found.icon} ${found.name}`
+    : null;
+
+}
+
+
+function renderLiveCategoryChips(
+  dynamicNewCat = null
+) {
+
+  const container =
+    document.getElementById(
+      'categoryChips'
+    );
+
+  container.innerHTML = '';
+
+  categories.forEach(category => {
+
+    const fullName =
+      `${category.icon} ${category.name}`;
+
+    const chip =
+      document.createElement('span');
+
+    chip.className = 'cat-chip';
+
+    if (
+      currentSelectedCategory ===
+      fullName
+    ) {
+      chip.classList.add('active');
+    }
+
+    chip.textContent = fullName;
+
+    chip.onclick = () => {
+
+      currentSelectedCategory =
+        fullName;
+
+      isUserManuallySelected = true;
+
+      renderLiveCategoryChips();
+
+      memoInput.focus();
+
+    };
+
+    container.appendChild(chip);
+
+  });
+
+  if (dynamicNewCat) {
+
+    const chip =
+      document.createElement('span');
+
+    chip.className =
+      'cat-chip new-rec';
+
+    chip.textContent =
+      `✨ ${dynamicNewCat} (새로 추가)`;
+
+    chip.onclick = () => {
+
+      const parts =
+        dynamicNewCat.split(' ');
+
+      categories.push({
+        name: parts.slice(1).join(' '),
+        icon: parts[0]
+      });
 
       localStorage.setItem(
         'notepound_categories',
         JSON.stringify(categories)
       );
 
+      currentSelectedCategory =
+        dynamicNewCat;
 
-      const newCategoryFullName =
-        `${selectedEmoji} ${name}`;
+      isUserManuallySelected = true;
+
+      renderLiveCategoryChips();
+
+      memoInput.focus();
+
+    };
+
+    container.appendChild(chip);
+
+  }
+
+}
 
 
-      closeCatModal();
+/* =====================================================
+   시간
+   ===================================================== */
 
-      renderCategoryPage();
-      renderWritePage();
+function formatTimestamp(timestamp) {
 
+  const d = new Date(timestamp);
+
+  const yy =
+    String(d.getFullYear()).slice(-2);
+
+  const mm =
+    String(d.getMonth() + 1).padStart(2, '0');
+
+  const dd =
+    String(d.getDate()).padStart(2, '0');
+
+  const hh =
+    String(d.getHours()).padStart(2, '0');
+
+  const min =
+    String(d.getMinutes()).padStart(2, '0');
+
+  return `${yy}.${mm}.${dd}. ${hh}:${min}`;
+
+}
+
+
+/* =====================================================
+   메모 저장
+   ===================================================== */
+
+function saveCurrentMemo() {
+
+  const text =
+    memoInput.value.trim();
+
+  if (!text) return;
+
+  const memo = {
+    id: createMemoId(),
+    text,
+    category:
+      currentSelectedCategory || '#미분류',
+    tag: '',
+    linkedMemos: []
+  };
+
+  savedMemos.push(memo);
+
+  saveMemos();
+
+  memoInput.value = '';
+
+  currentSelectedCategory = '';
+  isUserManuallySelected = false;
+
+  document.getElementById(
+    'categoryHeaderBox'
+  ).style.display = 'none';
+
+  document.getElementById(
+    'categoryChips'
+  ).innerHTML = '';
+
+  renderWritePage();
+  renderCategoryPage();
+  renderAllMemosPage();
+
+  if (
+    document
+      .getElementById('pageThought')
+      .classList.contains('active')
+  ) {
+    renderThoughtFlow();
+  }
+
+}
+
+
+/* 엔터 저장 */
+
+memoInput.addEventListener(
+  'keydown',
+  event => {
+
+    if (
+      event.key === 'Enter' &&
+      !event.shiftKey
+    ) {
+
+      event.preventDefault();
+
+      saveCurrentMemo();
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   메모 작성 화면
+   ===================================================== */
+
+function renderWritePage() {
+
+  const recent =
+    document.getElementById(
+      'recentMemoList'
+    );
+
+  recent.innerHTML = '';
+
+  [...savedMemos]
+    .sort((a,b) => b.id - a.id)
+    .slice(0,4)
+    .forEach(memo => {
+
+      const index =
+        savedMemos.findIndex(
+          m => m.id === memo.id
+        );
+
+      const item =
+        document.createElement('div');
+
+      item.className =
+        'recent-card';
+
+      item.onclick = () => {
+        openMemoModal(index);
+      };
+
+      item.innerHTML = `
+        <span style="flex:1;word-break:break-word;">
+          ${escapeHtml(memo.text)}
+        </span>
+        <span style="font-size:10px;color:#777;white-space:nowrap;">
+          ${escapeHtml(memo.category || '#미분류')}
+        </span>
+      `;
+
+      recent.appendChild(item);
+
+    });
+
+
+  const unclassified =
+    savedMemos.filter(
+      memo =>
+        !memo.category ||
+        memo.category === '#미분류'
+    );
+
+  const list =
+    document.getElementById(
+      'unclassifiedMemoList'
+    );
+
+  list.innerHTML = '';
+
+  unclassified.forEach(memo => {
+
+    const index =
+      savedMemos.findIndex(
+        m => m.id === memo.id
+      );
+
+    const item =
+      document.createElement('div');
+
+    item.className =
+      'memo-item';
+
+    item.innerHTML = `
+      <span
+        class="memo-text-clickable"
+        onclick="openMemoModal(${index})"
+      >
+        ${escapeHtml(memo.text)}
+      </span>
+
+      <div>
+        <button
+          class="classify-btn"
+          onclick="assignCategoryDirect(${index})"
+        >
+          📂 분류
+        </button>
+
+        <button
+          class="delete-btn"
+          onclick="deleteMemo(${index})"
+        >
+          ✕
+        </button>
+      </div>
+    `;
+
+    list.prepend(item);
+
+  });
+
+  document.getElementById(
+    'unclassifiedCount'
+  ).textContent =
+    unclassified.length;
+
+}
+
+
+/* =====================================================
+   메모 수정
+   ===================================================== */
+
+function openMemoModal(index) {
+
+  if (!savedMemos[index]) return;
+
+  editingMemoIndex = index;
+
+  document.getElementById(
+    'modalTextarea'
+  ).value =
+    savedMemos[index].text;
+
+  document.getElementById(
+    'memoModalOverlay'
+  ).style.display = 'flex';
+
+}
+
+
+function closeMemoModal() {
+
+  document.getElementById(
+    'memoModalOverlay'
+  ).style.display = 'none';
+
+  editingMemoIndex = null;
+
+}
+
+
+function saveMemoModal() {
+
+  if (
+    editingMemoIndex === null
+  ) {
+    closeMemoModal();
+    return;
+  }
+
+  const text =
+    document.getElementById(
+      'modalTextarea'
+    ).value.trim();
+
+  if (!text) {
+    alert('내용을 입력해주세요.');
+    return;
+  }
+
+  savedMemos[
+    editingMemoIndex
+  ].text = text;
+
+  saveMemos();
+
+  closeMemoModal();
+
+  renderWritePage();
+  renderCategoryPage();
+  renderDetailMemoList();
+  renderAllMemosPage();
+
+  if (
+    document
+      .getElementById('pageThought')
+      .classList.contains('active')
+  ) {
+    renderThoughtFlow();
+  }
+
+}
+
+
+/* =====================================================
+   카테고리 직접 지정
+   ===================================================== */
+
+function assignCategoryDirect(index) {
+
+  const options =
+    categories
+      .map(
+        (cat,i) =>
+          `${i+1}. ${cat.icon} ${cat.name}`
+      )
+      .join('\n');
+
+  const choice =
+    parseInt(
+      prompt(
+        `이 메모의 카테고리를 선택하세요.\n\n${options}`
+      )
+    );
+
+  if (
+    !choice ||
+    choice < 1 ||
+    choice > categories.length
+  ) {
+    return;
+  }
+
+  const cat =
+    categories[choice - 1];
+
+  savedMemos[index].category =
+    `${cat.icon} ${cat.name}`;
+
+  saveMemos();
+
+  renderWritePage();
+  renderCategoryPage();
+  renderDetailMemoList();
+
+}
+
+
+/* =====================================================
+   카테고리 화면
+   ===================================================== */
+
+function renderCategoryPage() {
+
+  const grid =
+    document.getElementById(
+      'categoryGrid'
+    );
+
+  grid.innerHTML = '';
+
+  categories.forEach(
+    (cat,index) => {
+
+      const fullName =
+        `${cat.icon} ${cat.name}`;
+
+      const count =
+        savedMemos.filter(
+          memo =>
+            memo.category === fullName
+        ).length;
+
+      const card =
+        document.createElement('div');
+
+      card.className =
+        'category-folder-card';
+
+      card.innerHTML = `
+        <div style="flex:1;cursor:pointer;">
+          <span style="font-weight:bold;font-size:14px;">
+            ${escapeHtml(fullName)}
+          </span>
+
+          <span style="font-size:12px;color:#888;margin-left:6px;">
+            (${count})
+          </span>
+        </div>
+
+        <div>
+          <span
+            class="edit-icon-btn"
+            data-edit
+          >
+            ✏️
+          </span>
+
+          <span
+            style="font-size:12px;color:#1a73e8;font-weight:bold;cursor:pointer;margin-left:8px;"
+            data-open
+          >
+            이동 ›
+          </span>
+        </div>
+      `;
+
+      card
+        .querySelector('[data-edit]')
+        .onclick = event => {
+          event.stopPropagation();
+          editCategoryNamePrompt(index);
+        };
+
+      card
+        .querySelector('[data-open]')
+        .onclick = () => {
+          openCategoryDetail(fullName);
+        };
+
+      card
+        .querySelector('div')
+        .onclick = () => {
+          openCategoryDetail(fullName);
+        };
+
+      grid.appendChild(card);
+
+    }
+  );
+
+}
+
+
+function openCategoryDetail(
+  categoryFullName
+) {
+
+  activeCategoryDetail =
+    categoryFullName;
+
+  document.getElementById(
+    'detailCategoryTitle'
+  ).textContent =
+    `📂 ${categoryFullName}`;
+
+  const index =
+    categories.findIndex(
+      cat =>
+        `${cat.icon} ${cat.name}` ===
+        categoryFullName
+    );
+
+  document.getElementById(
+    'editDetailCatBtn'
+  ).onclick = () => {
+
+    if (index !== -1) {
+      editCategoryNamePrompt(index);
+    }
+
+  };
+
+  document.getElementById(
+    'addMemoInDetailBtn'
+  ).onclick = () => {
+
+    addMemoToCategoryPrompt(
+      categoryFullName
+    );
+
+  };
+
+  renderDetailMemoList();
+
+  switchTab('categoryDetail');
+
+}
+
+
+function renderDetailMemoList() {
+
+  const list =
+    document.getElementById(
+      'detailMemoList'
+    );
+
+  if (!list) return;
+
+  list.innerHTML = '';
+
+  if (!activeCategoryDetail) {
+    return;
+  }
+
+  const memos =
+    savedMemos.filter(
+      memo =>
+        memo.category ===
+        activeCategoryDetail
+    );
+
+  memos.forEach(memo => {
+
+    const index =
+      savedMemos.findIndex(
+        m => m.id === memo.id
+      );
+
+    const item =
+      document.createElement('div');
+
+    item.className =
+      'memo-item';
+
+    item.innerHTML = `
+      <div style="flex:1;">
+
+        <div
+          class="memo-text-clickable"
+          onclick="openMemoModal(${index})"
+        >
+          ${escapeHtml(memo.text)}
+        </div>
+
+        <span
+          class="tag-badge"
+          onclick="smartTagMultiSelectPrompt(${index})"
+        >
+          ${escapeHtml(memo.tag || '+ 태그 추가')}
+        </span>
+
+      </div>
+
+      <div>
+
+        <button
+          class="classify-btn"
+          onclick="assignCategoryDirect(${index})"
+        >
+          📂 변경
+        </button>
+
+        <button
+          class="delete-btn"
+          onclick="deleteMemo(${index})"
+        >
+          ✕
+        </button>
+
+      </div>
+    `;
+
+    list.appendChild(item);
+
+  });
+
+  if (!memos.length) {
+
+    list.innerHTML = `
+      <div style="font-size:13px;color:#aaa;padding:20px;text-align:center;">
+        저장된 메모가 없습니다.
+      </div>
+    `;
+
+  }
+
+}
+
+
+function backToCategoryList() {
+
+  activeCategoryDetail = '';
+
+  switchTab('category');
+
+}
+
+
+function addMemoToCategoryPrompt(
+  categoryFullName
+) {
+
+  const text =
+    prompt(
+      `[${categoryFullName}]에 추가할 메모를 입력하세요.`
+    );
+
+  if (
+    !text ||
+    !text.trim()
+  ) {
+    return;
+  }
+
+  savedMemos.push({
+    id: createMemoId(),
+    text: text.trim(),
+    category: categoryFullName,
+    tag: '',
+    linkedMemos: []
+  });
+
+  saveMemos();
+
+  renderWritePage();
+  renderCategoryPage();
+  openCategoryDetail(
+    categoryFullName
+  );
+
+}
+
+
+/* =====================================================
+   태그
+   ===================================================== */
+
+function smartTagMultiSelectPrompt(index) {
+
+  const memo =
+    savedMemos[index];
+
+  if (!memo) return;
+
+  let recommendations = [
+    '#중요',
+    '#일정'
+  ];
+
+  if (
+    memo.text.includes('과제') ||
+    memo.text.includes('공부') ||
+    memo.text.includes('시험')
+  ) {
+
+    recommendations = [
+      '#공부',
+      '#시험',
+      '#과제',
+      '#중요'
+    ];
+
+  } else if (
+    memo.text.includes('먹') ||
+    memo.text.includes('음식') ||
+    memo.text.includes('카페')
+  ) {
+
+    recommendations = [
+      '#맛집',
+      '#먹고싶다',
+      '#위시리스트'
+    ];
+
+  } else if (
+    memo.text.includes('약속') ||
+    memo.text.includes('오늘') ||
+    memo.text.includes('내일')
+  ) {
+
+    recommendations = [
+      '#일정',
+      '#약속',
+      '#주말'
+    ];
+
+  }
+
+  const message =
+    `추천 태그\n${recommendations.join(', ')}\n\n` +
+    recommendations
+      .map((tag,i) => `${i+1}. ${tag}`)
+      .join('\n') +
+    '\n\n원하는 태그를 입력하세요.';
+
+  let input =
+    prompt(
+      message,
+      memo.tag || ''
+    );
+
+  if (input === null) {
+    return;
+  }
+
+  input = input.trim();
+
+  const number =
+    parseInt(input);
+
+  if (
+    number >= 1 &&
+    number <= recommendations.length
+  ) {
+    input =
+      recommendations[number - 1];
+  }
+
+  if (
+    input &&
+    !input.startsWith('#')
+  ) {
+    input = '#' + input;
+  }
+
+  memo.tag = input;
+
+  saveMemos();
+
+  renderDetailMemoList();
+
+}
+
+
+/* =====================================================
+   검색
+   ===================================================== */
+
+function setSortOrder(order) {
+
+  currentSortOrder = order;
+
+  document.getElementById(
+    'sortNewest'
+  ).classList.toggle(
+    'active',
+    order === 'newest'
+  );
+
+  document.getElementById(
+    'sortOldest'
+  ).classList.toggle(
+    'active',
+    order === 'oldest'
+  );
+
+  renderAllMemosPage(
+    document.getElementById(
+      'searchInput'
+    ).value
+  );
+
+}
+
+
+function renderAllMemosPage(
+  query = ''
+) {
+
+  const list =
+    document.getElementById(
+      'allMemosList'
+    );
+
+  list.innerHTML = '';
+
+  let memos =
+    [...savedMemos];
+
+  if (
+    currentSortOrder === 'newest'
+  ) {
+    memos.sort((a,b) => b.id - a.id);
+  } else {
+    memos.sort((a,b) => a.id - b.id);
+  }
+
+  const search =
+    query.trim();
+
+  if (search) {
+
+    memos =
+      memos.filter(
+        memo =>
+          memo.text.includes(search) ||
+          (memo.category || '')
+            .includes(search) ||
+          (memo.tag || '')
+            .includes(search)
+      );
+
+  }
+
+  memos.forEach(memo => {
+
+    const index =
+      savedMemos.findIndex(
+        m => m.id === memo.id
+      );
+
+    const item =
+      document.createElement('div');
+
+    item.className =
+      'memo-item';
+
+    item.innerHTML = `
+      <div style="flex:1;">
+
+        <div
+          class="memo-text-clickable"
+          onclick="openMemoModal(${index})"
+        >
+          ${escapeHtml(memo.text)}
+        </div>
+
+        <div style="font-size:10px;color:#888;margin-top:4px;">
+          ${escapeHtml(memo.category || '#미분류')}
+          ${memo.tag ? ' · ' + escapeHtml(memo.tag) : ''}
+        </div>
+
+      </div>
+
+      <div class="timestamp-box">
+        ${formatTimestamp(memo.id)}
+      </div>
+    `;
+
+    list.appendChild(item);
+
+  });
+
+  if (!memos.length) {
+
+    list.innerHTML = `
+      <div style="padding:30px;text-align:center;color:#aaa;font-size:12px;">
+        검색 결과가 없습니다.
+      </div>
+    `;
+
+  }
+
+}
+
+
+function showHistoryPopup() {
+
+  const popup =
+    document.getElementById(
+      'historyPopup'
+    );
+
+  if (!searchHistory.length) {
+    return;
+  }
+
+  popup.innerHTML = '';
+
+  searchHistory.forEach(
+    (item,index) => {
+
+      const row =
+        document.createElement('div');
+
+      row.className =
+        'history-item';
+
+      const text =
+        document.createElement('span');
+
+      text.textContent =
+        `🕒 ${item}`;
+
+      text.style.cursor =
+        'pointer';
+
+      text.style.flex =
+        '1';
+
+      text.onclick = () => {
+        useSearchHistory(item);
+      };
+
+      const remove =
+        document.createElement('span');
+
+      remove.textContent =
+        '✕';
+
+      remove.style.color =
+        '#aaa';
+
+      remove.style.cursor =
+        'pointer';
+
+      remove.onclick =
+        event => {
+          event.stopPropagation();
+          deleteSearchHistory(
+            event,
+            index
+          );
+        };
+
+      row.appendChild(text);
+      row.appendChild(remove);
+
+      popup.appendChild(row);
+
+    }
+  );
+
+  popup.style.display =
+    'block';
+
+}
+
+
+function hideHistoryPopup() {
+
+  setTimeout(() => {
+
+    const popup =
+      document.getElementById(
+        'historyPopup'
+      );
+
+    if (popup) {
+      popup.style.display =
+        'none';
+    }
+
+  }, 150);
+
+}
+
+
+function handleSearch() {
+
+  const query =
+    document.getElementById(
+      'searchInput'
+    ).value;
+
+  renderAllMemosPage(query);
+
+}
+
+
+document.getElementById(
+  'searchInput'
+).addEventListener(
+  'keydown',
+  event => {
+
+    if (
+      event.key === 'Enter'
+    ) {
+
+      const query =
+        event.target.value.trim();
 
       if (
-        memoInput.value.trim() &&
-        !wasEditing
+        query &&
+        !searchHistory.includes(query)
       ) {
 
-        currentSelectedCategory =
-          newCategoryFullName;
+        searchHistory.unshift(query);
 
-        isUserManuallySelected = true;
+        if (
+          searchHistory.length > 5
+        ) {
+          searchHistory.pop();
+        }
 
-        renderLiveCategoryChips();
+        localStorage.setItem(
+          'notepound_search_history',
+          JSON.stringify(searchHistory)
+        );
 
       }
 
+      document.getElementById(
+        'historyPopup'
+      ).style.display = 'none';
 
-      if (activeCategoryDetail) {
-        renderDetailMemoList();
+    }
+
+  }
+);
+
+
+function useSearchHistory(text) {
+
+  document.getElementById(
+    'searchInput'
+  ).value = text;
+
+  document.getElementById(
+    'historyPopup'
+  ).style.display = 'none';
+
+  renderAllMemosPage(text);
+
+}
+
+
+function deleteSearchHistory(
+  event,
+  index
+) {
+
+  event.stopPropagation();
+
+  searchHistory.splice(
+    index,
+    1
+  );
+
+  localStorage.setItem(
+    'notepound_search_history',
+    JSON.stringify(searchHistory)
+  );
+
+  showHistoryPopup();
+
+}
+
+
+/* =====================================================
+   메모 삭제
+   ===================================================== */
+
+function deleteMemo(index) {
+
+  const memo =
+    savedMemos[index];
+
+  if (!memo) return;
+
+  const confirmed =
+    confirm(
+      '이 메모를 삭제할까요?'
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const deletedId =
+    memo.id;
+
+  savedMemos.forEach(
+    other => {
+
+      if (
+        Array.isArray(
+          other.linkedMemos
+        )
+      ) {
+
+        other.linkedMemos =
+          other.linkedMemos.filter(
+            id =>
+              String(id) !==
+              String(deletedId)
+          );
+
+      }
+
+      if (
+        String(other.replyTo) ===
+        String(deletedId)
+      ) {
+
+        delete other.replyTo;
+
+      }
+
+    }
+  );
+
+  savedMemos.splice(
+    index,
+    1
+  );
+
+  saveMemos();
+
+  renderWritePage();
+  renderCategoryPage();
+  renderAllMemosPage();
+
+  if (activeCategoryDetail) {
+    renderDetailMemoList();
+  }
+
+  renderThoughtFlow();
+
+}
+
+
+/* =====================================================
+   생각의 흐름 - 자동 유사도 분석
+   ===================================================== */
+
+function normalizeThoughtText(text) {
+
+  return String(text || '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}#]+/gu, ' ')
+    .trim();
+
+}
+
+
+function tokenizeThoughtText(text) {
+
+  const normalized =
+    normalizeThoughtText(text);
+
+  if (!normalized) {
+    return [];
+  }
+
+  const raw =
+    normalized.split(/\s+/);
+
+  const tokens = [];
+
+  raw.forEach(token => {
+
+    if (token.length >= 2) {
+      tokens.push(token);
+    }
+
+    /*
+      한국어는 띄어쓰기가 일정하지 않기 때문에
+      2글자 단위도 일부 추출
+    */
+
+    if (
+      /^[가-힣]+$/.test(token) &&
+      token.length >= 3
+    ) {
+
+      for (
+        let i = 0;
+        i < token.length - 1;
+        i++
+      ) {
+
+        tokens.push(
+          token.slice(i,i+2)
+        );
+
       }
 
     }
 
+  });
 
-    /* =====================================================
-       메모 입력 중 스마트 카테고리 추천
-       ===================================================== */
+  return [
+    ...new Set(tokens)
+  ];
 
-    memoInput.addEventListener(
-      'input',
-      function() {
+}
 
-        const text =
-          memoInput.value.trim();
 
-        const headerBox =
-          document.getElementById(
-            'categoryHeaderBox'
+function getMeaningfulTokens(text) {
+
+  const stopWords = new Set([
+    '그리고',
+    '근데',
+    '그래서',
+    '진짜',
+    '너무',
+    '정말',
+    '그냥',
+    '오늘',
+    '내일',
+    '같은',
+    '대한',
+    '하는',
+    '했다',
+    '있는',
+    '있다',
+    '싶다',
+    '것',
+    '거',
+    '나',
+    '내',
+    '저',
+    '이',
+    '그',
+    '좀',
+    '더'
+  ]);
+
+  return tokenizeThoughtText(text)
+    .filter(
+      token =>
+        !stopWords.has(token) &&
+        token.length >= 2
+    );
+
+}
+
+
+function getManualLinkedIds(memo) {
+
+  if (
+    !memo ||
+    !Array.isArray(
+      memo.linkedMemos
+    )
+  ) {
+    return [];
+  }
+
+  return memo.linkedMemos
+    .map(Number)
+    .filter(
+      id =>
+        !Number.isNaN(id)
+    );
+
+}
+
+
+function areManuallyLinked(
+  a,
+  b
+) {
+
+  return (
+    getManualLinkedIds(a)
+      .includes(b.id) ||
+    getManualLinkedIds(b)
+      .includes(a.id)
+  );
+
+}
+
+
+function calculateThoughtSimilarity(
+  a,
+  b
+) {
+
+  const aTokens =
+    new Set(
+      getMeaningfulTokens(a.text)
+    );
+
+  const bTokens =
+    new Set(
+      getMeaningfulTokens(b.text)
+    );
+
+  const shared = [];
+
+  aTokens.forEach(token => {
+
+    if (
+      bTokens.has(token)
+    ) {
+      shared.push(token);
+    }
+
+  });
+
+  let score = 0;
+
+  /*
+    직접 연결은 가장 강한 관계
+  */
+
+  if (
+    areManuallyLinked(a,b)
+  ) {
+    score += 100;
+  }
+
+  /*
+    이어쓰기 관계
+  */
+
+  if (
+    String(a.replyTo) ===
+    String(b.id)
+  ) {
+    score += 80;
+  }
+
+  if (
+    String(b.replyTo) ===
+    String(a.id)
+  ) {
+    score += 80;
+  }
+
+  /*
+    같은 카테고리
+  */
+
+  if (
+    a.category &&
+    b.category &&
+    a.category === b.category &&
+    a.category !== '#미분류'
+  ) {
+    score += 4;
+  }
+
+  /*
+    같은 태그
+  */
+
+  if (
+    a.tag &&
+    b.tag &&
+    a.tag === b.tag
+  ) {
+    score += 5;
+  }
+
+  /*
+    공통 단어
+  */
+
+  score +=
+    Math.min(
+      shared.length * 3,
+      18
+    );
+
+  return {
+    score,
+    shared
+  };
+
+}
+
+
+function isThoughtRelated(
+  a,
+  b
+) {
+
+  const result =
+    calculateThoughtSimilarity(
+      a,
+      b
+    );
+
+  if (
+    areManuallyLinked(a,b)
+  ) {
+    return true;
+  }
+
+  if (
+    String(a.replyTo) ===
+    String(b.id) ||
+    String(b.replyTo) ===
+    String(a.id)
+  ) {
+    return true;
+  }
+
+  /*
+    공통 핵심 단어가 2개 이상이면
+    자동 연결
+  */
+
+  if (
+    result.shared.length >= 2
+  ) {
+    return true;
+  }
+
+  /*
+    같은 카테고리 + 공통 단어 1개
+  */
+
+  if (
+    result.shared.length >= 1 &&
+    a.category &&
+    b.category &&
+    a.category === b.category &&
+    a.category !== '#미분류'
+  ) {
+    return true;
+  }
+
+  return false;
+
+}
+
+
+function findThoughtRelatedMemos(
+  targetMemo,
+  limit = 6
+) {
+
+  return savedMemos
+    .filter(
+      memo =>
+        memo.id !== targetMemo.id
+    )
+    .map(
+      memo => {
+
+        const result =
+          calculateThoughtSimilarity(
+            targetMemo,
+            memo
           );
 
-        const container =
-          document.getElementById(
-            'categoryChips'
-          );
+        return {
+          memo,
+          score: result.score,
+          shared: result.shared
+        };
+
+      }
+    )
+    .filter(
+      item =>
+        isThoughtRelated(
+          targetMemo,
+          item.memo
+        )
+    )
+    .sort(
+      (a,b) =>
+        b.score - a.score ||
+        b.memo.id - a.memo.id
+    )
+    .slice(0,limit);
+
+}
 
 
-        if (!text) {
+/* =====================================================
+   생각의 흐름 그룹 만들기
+   ===================================================== */
 
-          headerBox.style.display = 'none';
+function buildThoughtGroups() {
 
-          container.innerHTML = '';
+  const groups = [];
 
-          currentSelectedCategory = '';
+  const visited =
+    new Set();
 
-          isUserManuallySelected = false;
+  savedMemos.forEach(startMemo => {
 
+    if (
+      visited.has(startMemo.id)
+    ) {
+      return;
+    }
+
+    const group = [];
+    const queue = [startMemo];
+
+    visited.add(
+      startMemo.id
+    );
+
+    while (
+      queue.length
+    ) {
+
+      const current =
+        queue.shift();
+
+      group.push(current);
+
+      savedMemos.forEach(candidate => {
+
+        if (
+          visited.has(candidate.id) ||
+          candidate.id === current.id
+        ) {
           return;
         }
 
+        if (
+          isThoughtRelated(
+            current,
+            candidate
+          )
+        ) {
 
-        headerBox.style.display = 'flex';
+          visited.add(
+            candidate.id
+          );
 
-
-        let dynamicNewCat = null;
-
-
-        if (!isUserManuallySelected) {
-
-          if (
-            text.includes('과제') ||
-            text.includes('시험') ||
-            text.includes('약속') ||
-            text.includes('오늘')
-          ) {
-
-            currentSelectedCategory =
-              findCategoryFullName('일정') ||
-              findCategoryFullName('📅');
-
-          } else if (
-            text.includes('먹') ||
-            text.includes('음식') ||
-            text.includes('맛집')
-          ) {
-
-            currentSelectedCategory =
-              findCategoryFullName('음식') ||
-              findCategoryFullName('🍕');
-
-          } else if (
-            text.includes('사고') ||
-            text.includes('살까') ||
-            text.includes('위시')
-          ) {
-
-            currentSelectedCategory =
-              findCategoryFullName('위시') ||
-              findCategoryFullName('🛍️');
-
-          } else if (
-            text.includes('생각') ||
-            text.includes('아이디어')
-          ) {
-
-            currentSelectedCategory =
-              findCategoryFullName('아이디어') ||
-              findCategoryFullName('💡');
-
-          } else {
-
-            const newKey =
-              extractNewCategoryKeyword(text);
-
-
-            if (newKey) {
-
-              const exists =
-                categories.some(
-                  c => c.name === newKey.name
-                );
-
-
-              if (!exists) {
-
-                dynamicNewCat =
-                  `${newKey.icon} ${newKey.name}`;
-
-              }
-
-            }
-
-          }
+          queue.push(
+            candidate
+          );
 
         }
 
-
-        renderLiveCategoryChips(
-          dynamicNewCat
-        );
-
-      }
-    );
-
-
-    function extractNewCategoryKeyword(text) {
-
-      if (
-        text.includes('수원대') ||
-        text.includes('학교')
-      ) {
-        return {
-          name: '학교',
-          icon: '🎓'
-        };
-      }
-
-
-      if (
-        text.includes('운동') ||
-        text.includes('헬스')
-      ) {
-        return {
-          name: '운동',
-          icon: '⚽'
-        };
-      }
-
-
-      if (
-        text.includes('영화') ||
-        text.includes('게임')
-      ) {
-        return {
-          name: '문화',
-          icon: '🎬'
-        };
-      }
-
-
-      if (
-        text.includes('알바') ||
-        text.includes('시급')
-      ) {
-        return {
-          name: '아르바이트',
-          icon: '💼'
-        };
-      }
-
-
-      if (
-        text.includes('일기') ||
-        text.includes('오늘 하루')
-      ) {
-        return {
-          name: '일기',
-          icon: '📖'
-        };
-      }
-
-
-      return null;
+      });
 
     }
 
-
-    function findCategoryFullName(keyword) {
-
-      const found =
-        categories.find(
-          c =>
-            c.name.includes(keyword) ||
-            c.icon.includes(keyword)
-        );
-
-
-      return found
-        ? `${found.icon} ${found.name}`
-        : null;
-
-    }
-
-
-    function renderLiveCategoryChips(
-      dynamicNewCat = null
+    if (
+      group.length >= 2
     ) {
 
-      const container =
-        document.getElementById(
-          'categoryChips'
-        );
+      group.sort(
+        (a,b) =>
+          a.id - b.id
+      );
 
-      container.innerHTML = '';
+      groups.push(group);
 
+    }
 
-      categories.forEach(cat => {
+  });
 
-        const fullName =
-          `${cat.icon} ${cat.name}`;
+  groups.sort(
+    (a,b) =>
+      a[0].id - b[0].id
+  );
 
-        const chip =
-          document.createElement('span');
+  return groups;
 
-        chip.className = 'cat-chip';
-
-
-        if (
-          currentSelectedCategory ===
-          fullName
-        ) {
-
-          chip.classList.add('active');
-
-        }
+}
 
 
-        chip.textContent = fullName;
+/* =====================================================
+   생각 흐름 제목
+   ===================================================== */
+
+function getThoughtKeywords(text) {
+
+  return getMeaningfulTokens(text)
+    .filter(
+      token =>
+        token.length >= 2
+    );
+
+}
 
 
-        chip.onclick = () => {
+function getThoughtGroupTitle(
+  group
+) {
 
-          currentSelectedCategory =
-            fullName;
+  const count = {};
 
-          isUserManuallySelected = true;
+  group.forEach(memo => {
 
-          renderLiveCategoryChips();
+    getThoughtKeywords(
+      memo.text
+    ).forEach(keyword => {
 
-          memoInput.focus();
+      count[keyword] =
+        (count[keyword] || 0) + 1;
 
-        };
+    });
 
+  });
 
-        container.appendChild(chip);
+  const keywords =
+    Object.keys(count)
+      .sort(
+        (a,b) =>
+          count[b] - count[a]
+      );
 
-      });
+  if (
+    keywords.length
+  ) {
 
+    return `
+      💭 ${escapeHtml(keywords[0])}에 대한 생각
+    `;
 
-      if (dynamicNewCat) {
+  }
 
-        const newChip =
-          document.createElement('span');
+  if (
+    group[0].category &&
+    group[0].category !== '#미분류'
+  ) {
 
-        newChip.className =
-          'cat-chip new-rec';
+    return `
+      💭 ${escapeHtml(group[0].category)} 관련 생각
+    `;
 
-        newChip.textContent =
-          `✨ ${dynamicNewCat} (새로 추가)`;
+  }
 
+  return '💭 이어지는 생각';
 
-        newChip.onclick = () => {
-
-          const parts =
-            dynamicNewCat.split(' ');
-
-          const icon = parts[0];
-
-          const name =
-            parts.slice(1).join(' ');
-
-
-          categories.push({
-            name: name,
-            icon: icon
-          });
-
-
-          localStorage.setItem(
-            'notepound_categories',
-            JSON.stringify(categories)
-          );
+}
 
 
-          currentSelectedCategory =
-            dynamicNewCat;
+function formatThoughtDate(
+  timestamp
+) {
 
-          isUserManuallySelected = true;
+  const d =
+    new Date(timestamp);
 
-          renderLiveCategoryChips();
+  return `
+    ${String(d.getFullYear()).slice(-2)}.
+    ${String(d.getMonth()+1).padStart(2,'0')}.
+    ${String(d.getDate()).padStart(2,'0')}
+  `;
 
-          memoInput.focus();
-
-        };
+}
 
 
-        container.appendChild(newChip);
+/* =====================================================
+   생각 변화 요약
+   ===================================================== */
+
+function detectThoughtMarkers(
+  text
+) {
+
+  const groups = {
+
+    '고민·불확실': [
+      '고민',
+      '모르',
+      '헷갈',
+      '걱정',
+      '아직',
+      '일까',
+      '궁금'
+    ],
+
+    '긍정·관심': [
+      '좋',
+      '재밌',
+      '괜찮',
+      '하고 싶',
+      '가고 싶',
+      '마음에'
+    ],
+
+    '부담·부정': [
+      '싫',
+      '별로',
+      '힘들',
+      '어렵',
+      '후회',
+      '그만'
+    ],
+
+    '결정·행동': [
+      '결정',
+      '정했',
+      '하기로',
+      '할 거',
+      '해야',
+      '시작'
+    ]
+
+  };
+
+  const found = [];
+
+  const value =
+    String(text || '');
+
+  Object.entries(
+    groups
+  ).forEach(
+    ([label, words]) => {
+
+      if (
+        words.some(
+          word =>
+            value.includes(word)
+        )
+      ) {
+
+        found.push(label);
 
       }
 
     }
+  );
+
+  return found;
+
+}
 
 
-    /* =====================================================
-       시간 표시
-       ===================================================== */
+function summarizeThoughtChange(
+  group
+) {
 
-    function formatTimestamp(timestamp) {
+  if (
+    group.length < 2
+  ) {
+    return '';
+  }
 
-      const d =
-        new Date(timestamp);
+  const first =
+    detectThoughtMarkers(
+      group[0].text
+    );
 
-      const yy =
-        String(
-          d.getFullYear()
-        ).slice(-2);
+  const last =
+    detectThoughtMarkers(
+      group[group.length - 1].text
+    );
 
-      const mm =
-        String(
-          d.getMonth() + 1
-        ).padStart(2, '0');
+  const parts = [];
 
-      const dd =
-        String(
-          d.getDate()
-        ).padStart(2, '0');
+  if (first.length) {
 
-      const hh =
-        String(
-          d.getHours()
-        ).padStart(2, '0');
+    parts.push(
+      `처음 기록에는 ${first.join(', ')} 표현이 나타납니다.`
+    );
 
-      const min =
-        String(
-          d.getMinutes()
-        ).padStart(2, '0');
+  }
+
+  if (last.length) {
+
+    parts.push(
+      `최근 기록에는 ${last.join(', ')} 표현이 나타납니다.`
+    );
+
+  }
+
+  if (!parts.length) {
+
+    parts.push(
+      '시간이 지나면서 같은 주제에 대한 기록이 이어지고 있습니다.'
+    );
+
+  }
+
+  return parts.join(' ');
+
+}
 
 
-      return `
-        <span class="time-part">
-          ${hh}:${min}
-        </span>
-        /
-        ${yy}.${mm}.${dd}.
+/* =====================================================
+   연결 관계 설명
+   ===================================================== */
+
+function getConnectionTypeLabel(
+  memo,
+  group
+) {
+
+  const directCount =
+    getManualLinkedIds(memo)
+      .filter(
+        id =>
+          group.some(
+            item =>
+              item.id === id
+          )
+      )
+      .length;
+
+  if (
+    directCount
+  ) {
+
+    return `🔗 직접 연결 ${directCount}개`;
+
+  }
+
+  if (
+    memo.replyTo &&
+    group.some(
+      item =>
+        String(item.id) ===
+        String(memo.replyTo)
+    )
+  ) {
+
+    return '↩️ 이어서 작성한 기록';
+
+  }
+
+  return '✨ 자동으로 관련된 기록';
+
+}
+
+
+/* =====================================================
+   생각의 흐름 렌더링
+   ===================================================== */
+
+function renderThoughtFlow() {
+
+  const container =
+    document.getElementById(
+      'thoughtFlowList'
+    );
+
+  const summary =
+    document.getElementById(
+      'thoughtSummary'
+    );
+
+  if (!container) {
+    return;
+  }
+
+  container.innerHTML = '';
+
+  const manualRelations =
+    savedMemos.reduce(
+      (total,memo) =>
+        total +
+        getManualLinkedIds(memo).length,
+      0
+    ) / 2;
+
+  if (summary) {
+
+    summary.innerHTML = `
+      현재 ${savedMemos.length}개의 기록을 살펴보고 있어요.
+      자동으로 관련된 기록과 직접 연결한 기록을 함께 보여줍니다.
+      ${
+        manualRelations
+          ? `직접 연결된 관계는 ${manualRelations}개예요.`
+          : '원하는 기록은 각 카드의 🔗 연결하기로 직접 연결할 수 있어요.'
+      }
+    `;
+
+  }
+
+  if (
+    !savedMemos.length
+  ) {
+
+    container.innerHTML = `
+      <div class="thought-empty">
+        아직 저장된 메모가 없어요.<br><br>
+        메모를 작성하면 관련 기록을 찾아<br>
+        생각의 흐름으로 보여드릴게요.
+      </div>
+    `;
+
+    return;
+
+  }
+
+  const groups =
+    buildThoughtGroups();
+
+  groups.forEach(
+    group => {
+
+      const box =
+        document.createElement('div');
+
+      box.className =
+        'thought-group';
+
+      box.innerHTML = `
+        <div class="thought-group-title">
+          ${getThoughtGroupTitle(group)}
+        </div>
+
+        <div class="thought-group-info">
+          ${group.length}개의 기록 ·
+          ${formatThoughtDate(group[0].id)}
+          →
+          ${formatThoughtDate(group[group.length-1].id)}
+        </div>
+
+        <div class="thought-flow"></div>
+
+        <div class="thought-change-summary">
+          🧩 ${escapeHtml(
+            summarizeThoughtChange(group)
+          )}
+        </div>
       `;
 
-    }
-
-
-    /* =====================================================
-       메모 작성 페이지
-       ===================================================== */
-
-    function renderWritePage() {
-
-      const recentList =
-        document.getElementById(
-          'recentMemoList'
+      const flow =
+        box.querySelector(
+          '.thought-flow'
         );
 
-      recentList.innerHTML = '';
-
-
-      [...savedMemos]
-        .reverse()
-        .slice(0, 4)
-        .forEach(memo => {
-
-          const realIndex =
-            savedMemos.findIndex(
-              m => m.id === memo.id
-            );
-
-
-          const item =
-            document.createElement('div');
-
-          item.className =
-            'recent-card';
-
-
-          item.onclick = () =>
-            openMemoModal(realIndex);
-
-
-          item.innerHTML = `
-            <span>
-              ${escapeHTML(memo.text)}
-            </span>
-
-            <span
-              style="
-                font-size:11px;
-                color:#666;
-              "
-            >
-              ${escapeHTML(memo.category || '#미분류')}
-            </span>
-          `;
-
-
-          recentList.appendChild(item);
-
-        });
-
-
-      const unclassifiedList =
-        document.getElementById(
-          'unclassifiedMemoList'
-        );
-
-      unclassifiedList.innerHTML = '';
-
-
-      const unclassifiedMemos =
-        savedMemos.filter(
-          memo =>
-            memo.category === '#미분류' ||
-            !memo.category
-        );
-
-
-      unclassifiedMemos.forEach(memo => {
-
-        const realIndex =
-          savedMemos.findIndex(
-            m => m.id === memo.id
-          );
-
-
-        const item =
-          document.createElement('div');
-
-        item.className =
-          'memo-item';
-
-
-        item.innerHTML = `
-          <span
-            class="memo-text-clickable"
-            onclick="openMemoModal(${realIndex})"
-          >
-            ${escapeHTML(memo.text)}
-          </span>
-
-          <div>
-
-            <button
-              class="classify-btn"
-              onclick="assignCategoryDirect(${realIndex})"
-            >
-              📂 분류
-            </button>
-
-            <button
-              class="delete-btn"
-              onclick="deleteMemo(${realIndex})"
-            >
-              ✕
-            </button>
-
-          </div>
-        `;
-
-
-        unclassifiedList.prepend(item);
-
-      });
-
-
-      document
-        .getElementById('unclassifiedCount')
-        .textContent =
-        unclassifiedMemos.length;
-
-    }
-
-
-    /* =====================================================
-       메모 수정
-       ===================================================== */
-
-    function openMemoModal(index) {
-
-      if (
-        index === null ||
-        index === undefined ||
-        !savedMemos[index]
-      ) {
-        return;
-      }
-
-
-      editingMemoIndex = index;
-
-
-      document
-        .getElementById('modalTextarea')
-        .value =
-        savedMemos[index].text;
-
-
-      document
-        .getElementById('memoModalOverlay')
-        .style
-        .display = 'flex';
-
-    }
-
-
-    function closeMemoModal() {
-
-      document
-        .getElementById('memoModalOverlay')
-        .style
-        .display = 'none';
-
-
-      editingMemoIndex = null;
-
-    }
-
-
-    function saveMemoModal() {
-
-      if (
-        editingMemoIndex !== null
-      ) {
-
-        const updatedText =
-          document
-            .getElementById('modalTextarea')
-            .value
-            .trim();
-
-
-        if (updatedText) {
-
-          savedMemos[
-            editingMemoIndex
-          ].text =
-            updatedText;
-
-
-          localStorage.setItem(
-            'notepound_memos',
-            JSON.stringify(savedMemos)
-          );
-
-
-          renderWritePage();
-          renderCategoryPage();
-
-
-          if (activeCategoryDetail) {
-            renderDetailMemoList();
-          }
-
-
-          renderAllMemosPage(
-            document
-              .getElementById('searchInput')
-              .value
-          );
-
-
-          /*
-            수정한 메모도 생각의 흐름에
-            즉시 반영한다.
-          */
-          renderThoughtFlow();
-
-        }
-
-      }
-
-
-      closeMemoModal();
-
-    }
-
-
-    /* =====================================================
-       미분류 메모 직접 분류
-       ===================================================== */
-
-    window.assignCategoryDirect =
-      function(index) {
-
-        let optionsStr =
-          categories
-            .map(
-              (c, i) =>
-                `${i + 1}. ${c.icon} ${c.name}`
-            )
-            .join('\n');
-
-
-        const choice =
-          prompt(
-            `이 메모의 카테고리를 선택하세요:\n\n${optionsStr}`
-          );
-
-
-        const choiceNum =
-          parseInt(choice);
-
-
-        if (
-          choiceNum &&
-          choiceNum > 0 &&
-          choiceNum <= categories.length
-        ) {
-
-          const selectedCat =
-            categories[
-              choiceNum - 1
-            ];
-
-
-          savedMemos[index].category =
-            `${selectedCat.icon} ${selectedCat.name}`;
-
-
-          localStorage.setItem(
-            'notepound_memos',
-            JSON.stringify(savedMemos)
-          );
-
-
-          renderWritePage();
-          renderCategoryPage();
-
-
-          if (activeCategoryDetail) {
-            renderDetailMemoList();
-          }
-
-
-          renderThoughtFlow();
-
-        }
-
-      };
-
-
-    /* =====================================================
-       카테고리 페이지
-       ===================================================== */
-
-    function renderCategoryPage() {
-
-      const grid =
-        document.getElementById(
-          'categoryGrid'
-        );
-
-      grid.innerHTML = '';
-
-
-      categories.forEach(
-        (cat, idx) => {
-
-          const fullName =
-            `${cat.icon} ${cat.name}`;
-
-
-          const catMemos =
-            savedMemos.filter(
-              memo =>
-                memo.category ===
-                fullName
-            );
-
+      group.forEach(
+        (memo,index) => {
 
           const card =
             document.createElement('div');
 
           card.className =
-            'category-folder-card';
-
-
-          /*
-            inline onclick 대신
-            dataset을 사용해 따옴표가 들어간
-            카테고리 이름도 안전하게 처리한다.
-          */
-
-          const info =
-            document.createElement('div');
-
-          info.style.cursor = 'pointer';
-          info.style.flex = '1';
-
-
-          info.innerHTML = `
-            <span
-              style="
-                font-weight:bold;
-                font-size:14px;
-              "
-            >
-              ${escapeHTML(fullName)}
-            </span>
-
-            <span
-              style="
-                font-size:12px;
-                color:#888;
-                margin-left:6px;
-              "
-            >
-              (${catMemos.length})
-            </span>
-          `;
-
-
-          info.onclick = () =>
-            openCategoryDetail(fullName);
-
-
-          const actions =
-            document.createElement('div');
-
-
-          const editBtn =
-            document.createElement('span');
-
-          editBtn.className =
-            'edit-icon-btn';
-
-          editBtn.textContent = '✏️';
-
-          editBtn.onclick = e => {
-
-            e.stopPropagation();
-
-            editCategoryNamePrompt(idx);
-
-          };
-
-
-          const moveBtn =
-            document.createElement('span');
-
-          moveBtn.style.fontSize = '12px';
-          moveBtn.style.color = '#1a73e8';
-          moveBtn.style.fontWeight = 'bold';
-          moveBtn.style.cursor = 'pointer';
-          moveBtn.style.marginLeft = '8px';
-
-          moveBtn.textContent = '이동 ›';
-
-
-          moveBtn.onclick = () =>
-            openCategoryDetail(fullName);
-
-
-          actions.appendChild(editBtn);
-          actions.appendChild(moveBtn);
-
-
-          card.appendChild(info);
-          card.appendChild(actions);
-
-
-          grid.appendChild(card);
-
-        }
-      );
-
-    }
-
-
-    /* =====================================================
-       카테고리 상세
-       ===================================================== */
-
-    function openCategoryDetail(
-      categoryFullName
-    ) {
-
-      activeCategoryDetail =
-        categoryFullName;
-
-
-      document
-        .getElementById(
-          'detailCategoryTitle'
-        )
-        .textContent =
-        `📂 ${categoryFullName} 보관함`;
-
-
-      const catIdx =
-        categories.findIndex(
-          c =>
-            `${c.icon} ${c.name}` ===
-            categoryFullName
-        );
-
-
-      document
-        .getElementById(
-          'editDetailCatBtn'
-        )
-        .onclick = () =>
-          editCategoryNamePrompt(catIdx);
-
-
-      const btn =
-        document.getElementById(
-          'addMemoInDetailBtn'
-        );
-
-
-      btn.onclick = () =>
-        addMemoToCategoryPrompt(
-          categoryFullName
-        );
-
-
-      renderDetailMemoList();
-
-      switchTab('categoryDetail');
-
-    }
-
-
-    function renderDetailMemoList() {
-
-      const list =
-        document.getElementById(
-          'detailMemoList'
-        );
-
-      list.innerHTML = '';
-
-
-      const catMemos =
-        savedMemos.filter(
-          memo =>
-            memo.category ===
-            activeCategoryDetail
-        );
-
-
-      catMemos.forEach(memo => {
-
-        const realIndex =
-          savedMemos.findIndex(
-            m => m.id === memo.id
-          );
-
-
-        const tagText =
-          memo.tag
-            ? memo.tag
-            : '+ 태그 추가';
-
-
-        const item =
-          document.createElement('div');
-
-        item.className =
-          'memo-item';
-
-
-        item.innerHTML = `
-          <div style="flex:1;">
-
-            <span
-              class="memo-text-clickable"
-              onclick="openMemoModal(${realIndex})"
-            >
-              ${escapeHTML(memo.text)}
-            </span>
-
-            <span
-              class="tag-badge"
-              onclick="smartTagMultiSelectPrompt(${realIndex})"
-            >
-              ${escapeHTML(tagText)}
-            </span>
-
-          </div>
-
-          <div>
-
-            <button
-              class="classify-btn"
-              onclick="assignCategoryDirect(${realIndex})"
-            >
-              📂 변경
-            </button>
-
-            <button
-              class="delete-btn"
-              onclick="deleteMemo(${realIndex})"
-            >
-              ✕
-            </button>
-
-          </div>
-        `;
-
-
-        list.appendChild(item);
-
-      });
-
-
-      if (catMemos.length === 0) {
-
-        list.innerHTML = `
-          <div
-            style="
-              font-size:13px;
-              color:#aaa;
-              padding:20px 0;
-              text-align:center;
-            "
-          >
-            저장된 메모가 없습니다.
-          </div>
-        `;
-
-      }
-
-    }
-
-
-    /* =====================================================
-       태그
-       ===================================================== */
-
-    window.smartTagMultiSelectPrompt =
-      function(index) {
-
-        const memo =
-          savedMemos[index];
-
-
-        let recs = [
-          '#중요',
-          '#일정'
-        ];
-
-
-        if (
-          memo.text.includes('과제') ||
-          memo.text.includes('공부') ||
-          memo.text.includes('시험')
-        ) {
-
-          recs = [
-            '#공부',
-            '#시험',
-            '#과제',
-            '#중요'
-          ];
-
-        } else if (
-          memo.text.includes('먹') ||
-          memo.text.includes('음식') ||
-          memo.text.includes('카페')
-        ) {
-
-          recs = [
-            '#맛집',
-            '#먹고싶다',
-            '#위시리스트'
-          ];
-
-        } else if (
-          memo.text.includes('약속') ||
-          memo.text.includes('오늘') ||
-          memo.text.includes('내일')
-        ) {
-
-          recs = [
-            '#일정',
-            '#약속',
-            '#주말'
-          ];
-
-        }
-
-
-        const promptMsg =
-          `추천 태그: ${recs.join(', ')}\n\n` +
-          `원하는 태그를 직접 적거나 번호를 적어주세요:\n` +
-          recs
-            .map(
-              (r, i) =>
-                `${i + 1}. ${r}`
-            )
-            .join('\n');
-
-
-        const input =
-          prompt(
-            promptMsg,
-            memo.tag || recs[0]
-          );
-
-
-        if (input !== null) {
-
-          let finalTag =
-            input.trim();
-
-
-          const num =
-            parseInt(finalTag);
-
-
-          if (
-            num &&
-            num > 0 &&
-            num <= recs.length
-          ) {
-
-            finalTag =
-              recs[num - 1];
-
-          } else if (
-            finalTag &&
-            !finalTag.startsWith('#')
-          ) {
-
-            finalTag =
-              '#' + finalTag;
-
-          }
-
-
-          savedMemos[index].tag =
-            finalTag;
-
-
-          localStorage.setItem(
-            'notepound_memos',
-            JSON.stringify(savedMemos)
-          );
-
-
-          if (activeCategoryDetail) {
-            renderDetailMemoList();
-          }
-
-
-          renderThoughtFlow();
-
-        }
-
-      };
-
-
-    function backToCategoryList() {
-
-      activeCategoryDetail = '';
-
-      switchTab('category');
-
-    }
-
-
-    function addMemoToCategoryPrompt(
-      categoryFullName
-    ) {
-
-      const text =
-        prompt(
-          `[${categoryFullName}] 카테고리에 추가할 메모를 입력하세요:`
-        );
-
-
-      if (
-        text &&
-        text.trim()
-      ) {
-
-        const newMemo = {
-          id: Date.now(),
-          text: text.trim(),
-          category: categoryFullName,
-          tag: ''
-        };
-
-
-        savedMemos.push(newMemo);
-
-
-        localStorage.setItem(
-          'notepound_memos',
-          JSON.stringify(savedMemos)
-        );
-
-
-        renderWritePage();
-        renderCategoryPage();
-        renderThoughtFlow();
-
-
-        openCategoryDetail(
-          categoryFullName
-        );
-
-      }
-
-    }
-
-
-    /* =====================================================
-       검색
-       ===================================================== */
-
-    function setSortOrder(order) {
-
-      currentSortOrder =
-        order;
-
-
-      document
-        .getElementById('sortNewest')
-        .classList
-        .toggle(
-          'active',
-          order === 'newest'
-        );
-
-
-      document
-        .getElementById('sortOldest')
-        .classList
-        .toggle(
-          'active',
-          order === 'oldest'
-        );
-
-
-      renderAllMemosPage(
-        document
-          .getElementById('searchInput')
-          .value
-      );
-
-    }
-
-
-    function renderAllMemosPage(
-      query = ''
-    ) {
-
-      const list =
-        document.getElementById(
-          'allMemosList'
-        );
-
-
-      list.innerHTML = '';
-
-
-      let filtered =
-        [...savedMemos];
-
-
-      if (
-        currentSortOrder ===
-        'newest'
-      ) {
-
-        filtered.reverse();
-
-      }
-
-
-      if (query.trim()) {
-
-        const cleanQuery =
-          query
-            .trim()
-            .replace(
-              /하는|하고|해|좋아/g,
-              ''
-            );
-
-
-        filtered =
-          filtered.filter(
-            memo =>
-              memo.text.includes(
-                query.trim()
-              ) ||
-              (
-                cleanQuery.length >= 2 &&
-                memo.text.includes(
-                  cleanQuery
-                )
+            'thought-card';
+
+          const directCount =
+            getManualLinkedIds(memo)
+              .filter(
+                id =>
+                  savedMemos.some(
+                    item =>
+                      item.id === id
+                  )
               )
-          );
+              .length;
 
-      }
+          card.innerHTML = `
+            <div class="thought-card-date">
+              ${formatThoughtDate(memo.id)}
 
-
-      filtered.forEach(memo => {
-
-        const realIndex =
-          savedMemos.findIndex(
-            m => m.id === memo.id
-          );
-
-
-        const item =
-          document.createElement('div');
-
-        item.className =
-          'memo-item';
-
-
-        item.innerHTML = `
-          <div style="flex:1;">
-
-            <div
-              class="memo-text-clickable"
-              onclick="openMemoModal(${realIndex})"
-            >
-              ${escapeHTML(memo.text)}
-            </div>
-
-            <div
-              style="
-                font-size:11px;
-                color:#888;
-                margin-top:4px;
-              "
-            >
-              ${escapeHTML(memo.category || '#미분류')}
               ${
-                memo.tag
-                  ? '| ' + escapeHTML(memo.tag)
+                index === group.length - 1
+                  ? '<span style="color:#137333;margin-left:5px;">● 최근 기록</span>'
                   : ''
               }
             </div>
 
-          </div>
+            <div class="thought-card-text">
+              ${escapeHtml(memo.text)}
+            </div>
 
-          <div class="timestamp-box">
-            ${formatTimestamp(memo.id)}
-          </div>
-        `;
+            <div class="thought-card-category">
+              ${escapeHtml(
+                memo.category || '#미분류'
+              )}
 
-
-        list.appendChild(item);
-
-      });
-
-    }
-
-
-    function showHistoryPopup() {
-
-      const popup =
-        document.getElementById(
-          'historyPopup'
-        );
-
-
-      if (
-        searchHistory.length === 0
-      ) {
-        return;
-      }
-
-
-      popup.innerHTML = '';
-
-
-      searchHistory.forEach(
-        (item, idx) => {
-
-          const row =
-            document.createElement(
-              'div'
-            );
-
-          row.className =
-            'history-item';
-
-
-          const textSpan =
-            document.createElement(
-              'span'
-            );
-
-          textSpan.style.cursor =
-            'pointer';
-
-          textSpan.style.flex = '1';
-
-          textSpan.textContent =
-            `🕒 ${item}`;
-
-
-          textSpan.onclick = () =>
-            useSearchHistory(item);
-
-
-          const deleteSpan =
-            document.createElement(
-              'span'
-            );
-
-          deleteSpan.textContent =
-            '✕';
-
-          deleteSpan.style.color =
-            '#aaa';
-
-          deleteSpan.style.cursor =
-            'pointer';
-
-          deleteSpan.style.padding =
-            '0 4px';
-
-
-          deleteSpan.onclick =
-            e =>
-              deleteSearchHistory(
-                e,
-                idx
-              );
-
-
-          row.appendChild(textSpan);
-          row.appendChild(deleteSpan);
-
-          popup.appendChild(row);
-
-        }
-      );
-
-
-      popup.style.display =
-        'block';
-
-    }
-
-
-    function hideHistoryPopup() {
-
-      setTimeout(() => {
-
-        document
-          .getElementById(
-            'historyPopup'
-          )
-          .style
-          .display = 'none';
-
-      }, 200);
-
-    }
-
-
-    function handleSearch() {
-
-      const query =
-        document
-          .getElementById(
-            'searchInput'
-          )
-          .value;
-
-
-      renderAllMemosPage(query);
-
-    }
-
-
-    document
-      .getElementById('searchInput')
-      .addEventListener(
-        'keypress',
-        function(e) {
-
-          if (
-            e.key === 'Enter'
-          ) {
-
-            const q =
-              this.value.trim();
-
-
-            if (
-              q &&
-              !searchHistory.includes(q)
-            ) {
-
-              searchHistory.unshift(q);
-
-
-              if (
-                searchHistory.length > 5
-              ) {
-
-                searchHistory.pop();
-
+              ${
+                memo.tag
+                  ? ' · ' + escapeHtml(memo.tag)
+                  : ''
               }
+            </div>
 
-
-              localStorage.setItem(
-                'notepound_search_history',
-                JSON.stringify(
-                  searchHistory
+            <div class="thought-link-info">
+              ${escapeHtml(
+                getConnectionTypeLabel(
+                  memo,
+                  group
                 )
-              );
-
-            }
-
-
-            document
-              .getElementById(
-                'historyPopup'
-              )
-              .style
-              .display = 'none';
-
-          }
-
-        }
-      );
-
-
-    function useSearchHistory(text) {
-
-      document
-        .getElementById(
-          'searchInput'
-        )
-        .value = text;
-
-
-      document
-        .getElementById(
-          'historyPopup'
-        )
-        .style
-        .display = 'none';
-
-
-      renderAllMemosPage(text);
-
-    }
-
-
-    function deleteSearchHistory(
-      e,
-      idx
-    ) {
-
-      e.stopPropagation();
-
-
-      searchHistory.splice(
-        idx,
-        1
-      );
-
-
-      localStorage.setItem(
-        'notepound_search_history',
-        JSON.stringify(
-          searchHistory
-        )
-      );
-
-
-      showHistoryPopup();
-
-    }
-
-
-    /* =====================================================
-       메모 삭제
-       ===================================================== */
-
-    window.deleteMemo =
-      function(index) {
-
-        savedMemos.splice(
-          index,
-          1
-        );
-
-
-        localStorage.setItem(
-          'notepound_memos',
-          JSON.stringify(savedMemos)
-        );
-
-
-        renderWritePage();
-        renderCategoryPage();
-
-
-        if (activeCategoryDetail) {
-          renderDetailMemoList();
-        }
-
-
-        renderAllMemosPage(
-          document
-            .getElementById(
-              'searchInput'
-            )
-            .value
-        );
-
-
-        renderThoughtFlow();
-
-      };
-
-
-    /* =====================================================
-       메모 저장
-       ===================================================== */
-
-    memoInput.addEventListener(
-      'keypress',
-      function(e) {
-
-        if (
-          e.key === 'Enter' &&
-          !e.shiftKey
-        ) {
-
-          e.preventDefault();
-
-
-          const text =
-            this.value.trim();
-
-
-          if (!text) {
-            return;
-          }
-
-
-          const newMemo = {
-
-            id: Date.now(),
-
-            text: text,
-
-            category:
-              currentSelectedCategory ||
-              '#미분류',
-
-            tag: ''
-
-          };
-
-
-          savedMemos.push(
-            newMemo
-          );
-
-
-          localStorage.setItem(
-            'notepound_memos',
-            JSON.stringify(
-              savedMemos
-            )
-          );
-
-
-          /*
-            새 기록이 추가됐으므로
-            생각의 흐름도 다시 계산한다.
-          */
-          renderThoughtFlow();
-
-
-          this.value = '';
-
-          currentSelectedCategory =
-            '';
-
-          isUserManuallySelected =
-            false;
-
-
-          document
-            .getElementById(
-              'categoryHeaderBox'
-            )
-            .style
-            .display = 'none';
-
-
-          document
-            .getElementById(
-              'categoryChips'
-            )
-            .innerHTML = '';
-
-
-          renderWritePage();
-
-        }
-
-      }
-    );
-
-
-    /* =====================================================
-       🧠 생각의 흐름 기능
-       ===================================================== */
-
-
-    /*
-      HTML 특수문자 처리
-    */
-
-    function escapeHTML(text) {
-
-      if (!text) {
-        return '';
-      }
-
-
-      return String(text)
-        .replace(
-          /&/g,
-          '&amp;'
-        )
-        .replace(
-          /</g,
-          '&lt;'
-        )
-        .replace(
-          />/g,
-          '&gt;'
-        )
-        .replace(
-          /"/g,
-          '&quot;'
-        )
-        .replace(
-          /'/g,
-          '&#039;'
-        )
-        .replace(
-          /\n/g,
-          '<br>'
-        );
-
-    }
-
-
-    /*
-      메모에서 생각의 흐름을 찾기 위한
-      핵심 단어를 추출한다.
-    */
-
-    function getThoughtKeywords(
-      text
-    ) {
-
-      if (!text) {
-        return [];
-      }
-
-
-      const cleaned =
-        text
-          .toLowerCase()
-          .replace(
-            /[.,!?()[\]{}"'“”‘’~:;/%+#@]/g,
-            ' '
-          );
-
-
-      const words =
-        cleaned
-          .split(/\s+/)
-          .map(
-            word => word.trim()
-          )
-          .filter(
-            word =>
-              word.length >= 2
-          );
-
-
-      const stopWords = [
-
-        '그리고',
-        '그래서',
-        '그냥',
-        '진짜',
-        '너무',
-        '정말',
-        '오늘',
-        '내일',
-        '어제',
-        '이번',
-        '저번',
-        '나는',
-        '내가',
-        '이거',
-        '그거',
-        '것',
-        '같다',
-        '같은',
-        '있는',
-        '하는',
-        '하고',
-        '해야',
-        '하면',
-        '했다',
-        '하게',
-        '으로',
-        '에서',
-        '에게',
-        '까지',
-        '때문'
-
-      ];
-
-
-      return [
-        ...new Set(
-          words.filter(
-            word =>
-              !stopWords.includes(word)
-          )
-        )
-      ];
-
-    }
-
-
-    /*
-      두 메모가 얼마나 관련되어 있는지 계산한다.
-    */
-
-    function calculateThoughtSimilarity(
-      memoA,
-      memoB
-    ) {
-
-      if (
-        !memoA ||
-        !memoB ||
-        memoA.id === memoB.id
-      ) {
-        return 0;
-      }
-
-
-      const keywordsA =
-        getThoughtKeywords(
-          memoA.text
-        );
-
-
-      const keywordsB =
-        getThoughtKeywords(
-          memoB.text
-        );
-
-
-      if (
-        keywordsA.length === 0 ||
-        keywordsB.length === 0
-      ) {
-        return 0;
-      }
-
-
-      let score = 0;
-
-
-      /*
-        같은 단어가 있으면
-        관련 가능성을 높인다.
-      */
-
-      const commonWords =
-        keywordsA.filter(
-          word =>
-            keywordsB.includes(word)
-        );
-
-
-      score +=
-        commonWords.length * 2;
-
-
-      /*
-        같은 카테고리라면
-        관련 가능성을 높인다.
-      */
-
-      if (
-        memoA.category &&
-        memoB.category &&
-        memoA.category !== '#미분류' &&
-        memoA.category === memoB.category
-      ) {
-
-        score += 2;
-
-      }
-
-
-      /*
-        같은 태그라면
-        관련 가능성을 높인다.
-      */
-
-      if (
-        memoA.tag &&
-        memoB.tag &&
-        memoA.tag === memoB.tag
-      ) {
-
-        score += 2;
-
-      }
-
-
-      /*
-        공통 단어의 비율도 조금 반영한다.
-      */
-
-      const smallerLength =
-        Math.min(
-          keywordsA.length,
-          keywordsB.length
-        );
-
-
-      if (
-        smallerLength > 0
-      ) {
-
-        score +=
-          commonWords.length /
-          smallerLength;
-
-      }
-
-
-      return score;
-
-    }
-
-
-    /*
-      특정 메모와 관련된 기록을 찾는다.
-    */
-
-    function findRelatedThoughts(
-      targetMemo,
-      limit = 5
-    ) {
-
-      if (!targetMemo) {
-        return [];
-      }
-
-
-      return savedMemos
-
-        .filter(
-          memo =>
-            memo.id !==
-            targetMemo.id
-        )
-
-        .map(
-          memo => ({
-            memo: memo,
-            score:
-              calculateThoughtSimilarity(
-                targetMemo,
-                memo
-              )
-          })
-        )
-
-        .filter(
-          item =>
-            item.score >= 2
-        )
-
-        .sort(
-          (a, b) => {
-
-            if (
-              b.score !==
-              a.score
-            ) {
-
-              return (
-                b.score -
-                a.score
-              );
-
-            }
-
-
-            return (
-              a.memo.id -
-              b.memo.id
-            );
-
-          }
-        )
-
-        .slice(
-          0,
-          limit
-        );
-
-    }
-
-
-    /*
-      서로 관련된 메모들을 하나의
-      생각 묶음(thread)으로 만든다.
-
-      A-B가 연결되고
-      B-C가 연결되면
-
-      A → B → C
-
-      하나의 흐름으로 묶는다.
-    */
-
-    function buildThoughtThreads() {
-
-      const memos =
-        [...savedMemos]
-          .sort(
-            (a, b) =>
-              a.id - b.id
-          );
-
-
-      if (
-        memos.length === 0
-      ) {
-
-        return [];
-
-      }
-
-
-      const visited =
-        new Set();
-
-
-      const threads = [];
-
-
-      memos.forEach(
-        startMemo => {
-
-          if (
-            visited.has(
-              startMemo.id
-            )
-          ) {
-
-            return;
-
-          }
-
-
-          const queue = [
-            startMemo
-          ];
-
-
-          const thread = [];
-
-
-          visited.add(
-            startMemo.id
-          );
-
-
-          while (
-            queue.length > 0
-          ) {
-
-            const current =
-              queue.shift();
-
-
-            thread.push(
-              current
-            );
-
-
-            memos.forEach(
-              candidate => {
-
-                if (
-                  visited.has(
-                    candidate.id
-                  )
-                ) {
-
-                  return;
-
-                }
-
-
-                const similarity =
-                  calculateThoughtSimilarity(
-                    current,
-                    candidate
-                  );
-
-
-                if (
-                  similarity >= 2
-                ) {
-
-                  visited.add(
-                    candidate.id
-                  );
-
-
-                  queue.push(
-                    candidate
-                  );
-
-                }
-
+              )}
+
+              ${
+                directCount
+                  ? ` · 직접 연결 ${directCount}개`
+                  : ''
               }
-            );
+            </div>
 
-          }
+            <div class="thought-card-actions">
 
-
-          /*
-            하나뿐인 메모리는
-            '생각의 흐름'이라고 보기 어려우므로
-            흐름에서 제외한다.
-          */
-
-          if (
-            thread.length >= 2
-          ) {
-
-            thread.sort(
-              (a, b) =>
-                a.id - b.id
-            );
-
-
-            threads.push(
-              thread
-            );
-
-          }
-
-        }
-      );
-
-
-      return threads;
-
-    }
-
-
-    /*
-      생각의 흐름에서 사용할 날짜
-    */
-
-    function formatThoughtDate(
-      timestamp
-    ) {
-
-      const d =
-        new Date(timestamp);
-
-
-      const yy =
-        String(
-          d.getFullYear()
-        ).slice(-2);
-
-
-      const mm =
-        String(
-          d.getMonth() + 1
-        ).padStart(2, '0');
-
-
-      const dd =
-        String(
-          d.getDate()
-        ).padStart(2, '0');
-
-
-      const hh =
-        String(
-          d.getHours()
-        ).padStart(2, '0');
-
-
-      const min =
-        String(
-          d.getMinutes()
-        ).padStart(2, '0');
-
-
-      return `
-        ${yy}.${mm}.${dd}
-        ${hh}:${min}
-      `;
-
-    }
-
-
-    /*
-      생각이 어떻게 변화했는지
-      문장에 실제 등장하는 표현을 바탕으로
-      간단하게 분석한다.
-    */
-
-    function analyzeThoughtChange(
-      thread
-    ) {
-
-      if (
-        !thread ||
-        thread.length < 2
-      ) {
-
-        return '';
-
-      }
-
-
-      const firstText =
-        thread[0].text;
-
-
-      const lastText =
-        thread[
-          thread.length - 1
-        ].text;
-
-
-      const uncertaintyWords = [
-
-        '고민',
-        '모르',
-        '헷갈',
-        '걱정',
-        '일까',
-        '아직',
-        '어떻게'
-
-      ];
-
-
-      const positiveWords = [
-
-        '좋',
-        '재밌',
-        '괜찮',
-        '하고 싶',
-        '가고 싶',
-        '마음에'
-
-      ];
-
-
-      const decisionWords = [
-
-        '결정',
-        '정했',
-        '하기로',
-        '할 거',
-        '해야',
-        '시작'
-
-      ];
-
-
-      const firstUncertainty =
-        uncertaintyWords.some(
-          word =>
-            firstText.includes(word)
-        );
-
-
-      const lastDecision =
-        decisionWords.some(
-          word =>
-            lastText.includes(word)
-        );
-
-
-      const lastPositive =
-        positiveWords.some(
-          word =>
-            lastText.includes(word)
-        );
-
-
-      if (
-        firstUncertainty &&
-        lastDecision
-      ) {
-
-        return `
-          처음 기록에서는 고민이나 불확실성을 나타내는 표현이 보이고,
-          최근 기록에서는 결정이나 실행과 관련된 표현이 나타납니다.
-        `;
-
-      }
-
-
-      if (
-        firstUncertainty &&
-        lastPositive
-      ) {
-
-        return `
-          처음 기록에서는 고민과 관련된 표현이 보이고,
-          최근 기록에서는 긍정적인 표현이 나타납니다.
-        `;
-
-      }
-
-
-      if (
-        thread.length >= 3
-      ) {
-
-        return `
-          총 ${thread.length}개의 관련 기록이 시간순으로 연결되어 있습니다.
-          이전 기록과 최근 기록을 비교해 생각의 변화를 직접 확인해보세요.
-        `;
-
-      }
-
-
-      return `
-        관련된 기록이 시간순으로 연결되어 있습니다.
-        이전 기록과 최근 기록을 비교해보세요.
-      `;
-
-    }
-
-
-    /*
-      생각의 흐름 전체 화면
-    */
-
-    function renderThoughtFlow() {
-
-      const container =
-        document.getElementById(
-          'thoughtContent'
-        );
-
-
-      if (!container) {
-        return;
-      }
-
-
-      container.innerHTML = '';
-
-
-      /*
-        메모가 두 개보다 적으면
-        연결할 기록이 없다는 안내를 보여준다.
-      */
-
-      if (
-        savedMemos.length < 2
-      ) {
-
-        container.innerHTML = `
-          <div class="thought-empty">
-
-            아직 연결할 기록이 충분하지 않아요.<br>
-
-            메모를 조금 더 작성하면<br>
-
-            서로 관련된 기록을 찾아
-            연결해드릴게요.
-
-          </div>
-        `;
-
-        return;
-
-      }
-
-
-      const threads =
-        buildThoughtThreads();
-
-
-      /*
-        관련된 메모가 없는 경우
-      */
-
-      if (
-        threads.length === 0
-      ) {
-
-        container.innerHTML = `
-          <div class="thought-empty">
-
-            아직 서로 연결되는 기록을
-            찾지 못했어요.<br><br>
-
-            비슷한 주제의 생각을
-            여러 번 기록해보세요.<br>
-
-            새로고침하면 관련 기록을
-            다시 찾아볼 수 있어요.
-
-          </div>
-        `;
-
-        return;
-
-      }
-
-
-      /*
-        각 생각의 흐름 출력
-      */
-
-      threads.forEach(
-        (thread, threadIndex) => {
-
-          const threadBox =
-            document.createElement(
-              'div'
-            );
-
-
-          threadBox.className =
-            'thought-thread';
-
-
-          threadBox.innerHTML = `
-            <div
-              class="thought-thread-header"
-            >
-
-              <div
-                class="thought-thread-title"
+              <button
+                class="thought-action-btn primary"
+                data-action="link"
               >
-                🧠 생각의 흐름
-                ${threadIndex + 1}
-              </div>
+                🔗 연결하기
+              </button>
 
-              <div
-                class="thought-thread-count"
+              ${
+                directCount
+                  ? `
+                    <button
+                      class="thought-action-btn connected"
+                      data-action="unlink"
+                    >
+                      🔓 연결 관리
+                    </button>
+                  `
+                  : ''
+              }
+
+              <button
+                class="thought-action-btn"
+                data-action="reply"
               >
-                ${thread.length}개의 기록
-              </div>
+                💭 이 생각은 어떻게 달라졌나요?
+              </button>
 
             </div>
           `;
 
-
-          const flow =
-            document.createElement(
-              'div'
-            );
-
-
-          flow.className =
-            'thought-flow';
-
-
-          /*
-            시간순으로 기록을 하나씩 표시한다.
-          */
-
-          thread.forEach(
-            (memo, index) => {
-
-              const card =
-                document.createElement(
-                  'div'
-                );
-
-
-              card.className =
-                'thought-card';
-
-
-              /*
-                현재 생각과 연결되는
-                다른 기록들을 찾는다.
-              */
-
-              const related =
-                findRelatedThoughts(
-                  memo,
-                  3
-                )
-                .filter(
-                  item =>
-                    thread.some(
-                      t =>
-                        t.id ===
-                        item.memo.id
-                    )
-                );
-
-
-              let relatedHTML =
-                '';
-
+          card.addEventListener(
+            'click',
+            event => {
 
               if (
-                related.length > 0
+                event.target.closest('button')
               ) {
-
-                relatedHTML = `
-                  <div class="related-box">
-
-                    <div class="related-title">
-                      🔗 함께 연결된 기록
-                    </div>
-
-                    ${related
-                      .map(
-                        item => `
-                          <div class="related-item">
-                            ${escapeHTML(
-                              item.memo.text
-                            )}
-                          </div>
-                        `
-                      )
-                      .join('')
-                    }
-
-                  </div>
-                `;
-
+                return;
               }
 
-
-              card.innerHTML = `
-
-                <div
-                  class="thought-card-date"
-                >
-                  ${formatThoughtDate(
-                    memo.id
-                  )}
-                </div>
-
-
-                <div
-                  class="thought-card-text"
-                >
-                  ${escapeHTML(
-                    memo.text
-                  )}
-                </div>
-
-
-                <div
-                  class="thought-card-meta"
-                >
-
-                  ${
-                    memo.category
-                      ? `
-                        <span
-                          class="thought-meta-chip"
-                        >
-                          ${escapeHTML(
-                            memo.category
-                          )}
-                        </span>
-                      `
-                      : ''
-                  }
-
-
-                  ${
-                    memo.tag
-                      ? `
-                        <span
-                          class="thought-meta-chip"
-                        >
-                          ${escapeHTML(
-                            memo.tag
-                          )}
-                        </span>
-                      `
-                      : ''
-                  }
-
-                </div>
-
-
-                ${relatedHTML}
-
-
-                <button
-                  class="collect-thought-btn"
-                >
-                  🔗 이 기록과 연결된 기록 보기
-                </button>
-
-              `;
-
-
-              /*
-                카드 자체를 클릭하면
-                해당 메모 수정창을 연다.
-
-                버튼을 클릭하면
-                관련 기록을 보여준다.
-              */
-
-              card.addEventListener(
-                'click',
-                function(e) {
-
-                  if (
-                    e.target.classList.contains(
-                      'collect-thought-btn'
-                    )
-                  ) {
-
-                    e.stopPropagation();
-
-                    showRelatedThoughts(
-                      memo
-                    );
-
-                    return;
-
-                  }
-
-
-                  const realIndex =
-                    savedMemos.findIndex(
-                      m =>
-                        m.id ===
-                        memo.id
-                    );
-
-
-                  if (
-                    realIndex !== -1
-                  ) {
-
-                    openMemoModal(
-                      realIndex
-                    );
-
-                  }
-
-                }
-              );
-
-
-              flow.appendChild(
-                card
-              );
-
-
-              /*
-                기록 사이에
-                아래 방향 화살표를 넣는다.
-              */
-
-              if (
-                index <
-                thread.length - 1
-              ) {
-
-                const arrow =
-                  document.createElement(
-                    'div'
-                  );
-
-
-                arrow.className =
-                  'thought-arrow';
-
-
-                arrow.textContent =
-                  '↓';
-
-
-                flow.appendChild(
-                  arrow
+              const index =
+                savedMemos.findIndex(
+                  item =>
+                    item.id === memo.id
                 );
 
+              if (index !== -1) {
+                openMemoModal(index);
               }
 
             }
           );
 
+          card
+            .querySelector(
+              '[data-action="link"]'
+            )
+            .onclick =
+            event => {
 
-          /*
-            생각의 변화 분석
-          */
+              event.stopPropagation();
 
-          const analysis =
-            analyzeThoughtChange(
-              thread
+              openLinkMemoModal(
+                memo.id
+              );
+
+            };
+
+          const unlinkButton =
+            card.querySelector(
+              '[data-action="unlink"]'
             );
 
+          if (unlinkButton) {
 
-          if (analysis) {
+            unlinkButton.onclick =
+              event => {
 
-            const analysisBox =
+                event.stopPropagation();
+
+                openLinkMemoModal(
+                  memo.id
+                );
+
+              };
+
+          }
+
+          card
+            .querySelector(
+              '[data-action="reply"]'
+            )
+            .onclick =
+            event => {
+
+              event.stopPropagation();
+
+              openThoughtReplyPrompt(
+                memo.id
+              );
+
+            };
+
+          flow.appendChild(card);
+
+          if (
+            index <
+            group.length - 1
+          ) {
+
+            const arrow =
               document.createElement(
                 'div'
               );
 
+            arrow.className =
+              'thought-arrow';
 
-            analysisBox.className =
-              'thought-analysis-box';
-
-
-            analysisBox.innerHTML = `
-
-              <div
-                class="thought-analysis-title"
-              >
-                💭 기록의 변화
-              </div>
-
-              <div
-                class="thought-analysis-text"
-              >
-                ${analysis}
-              </div>
-
-            `;
-
+            arrow.textContent =
+              '↓';
 
             flow.appendChild(
-              analysisBox
+              arrow
             );
 
           }
 
-
-          threadBox.appendChild(
-            flow
-          );
-
-
-          container.appendChild(
-            threadBox
-          );
-
         }
       );
 
+      container.appendChild(box);
+
     }
+  );
 
+  /*
+    자동으로 연결되지 않은 메모도
+    생각의 흐름 화면에서 확인 가능
+  */
 
-    /*
-      특정 기록과 연결된 기록을
-      한꺼번에 모아서 보여준다.
-    */
+  const groupedIds =
+    new Set(
+      groups
+        .flat()
+        .map(memo => memo.id)
+    );
 
-    function showRelatedThoughts(
-      targetMemo
-    ) {
-
-      const related =
-        findRelatedThoughts(
-          targetMemo,
-          10
-        );
-
-
-      if (
-        related.length === 0
-      ) {
-
-        alert(
-          '아직 이 기록과 연결할 수 있는 관련 기록을 찾지 못했어요.\n\n' +
-          '비슷한 생각을 조금 더 기록한 뒤 새로고침해보세요.'
-        );
-
-
-        return;
-
-      }
-
-
-      const relatedText =
-        related
-          .map(
-            (item, index) => {
-
-              return (
-                `${index + 1}. ` +
-                `${formatThoughtDate(
-                  item.memo.id
-                )}\n` +
-                `   ${item.memo.text}`
-              );
-
-            }
-          )
-          .join('\n\n');
-
-
-      alert(
-        `🔗 "${targetMemo.text}"\n\n` +
-        `관련 기록 ${related.length}개를 찾았어요.\n\n` +
-        relatedText
+  const ungrouped =
+    savedMemos
+      .filter(
+        memo =>
+          !groupedIds.has(memo.id)
+      )
+      .sort(
+        (a,b) =>
+          b.id - a.id
       );
 
-    }
+  if (
+    ungrouped.length
+  ) {
 
+    const section =
+      document.createElement('div');
 
-    /*
-      🔄 새로고침
+    section.className =
+      'thought-group';
 
-      저장된 메모를 다시 읽고
-      관련 기록을 새롭게 계산한다.
-    */
+    section.innerHTML = `
+      <div class="thought-group-title">
+        🗒️ 아직 흐름에 들어가지 않은 기록
+      </div>
 
-    function refreshThoughtFlow() {
+      <div class="thought-group-info">
+        자동으로 연결되지 않았거나 아직 직접 연결하지 않은 메모예요.
+      </div>
 
-      /*
-        localStorage에 저장된 최신 데이터를
-        다시 불러온다.
-      */
+      <div class="thought-flow"></div>
+    `;
 
-      const latestMemos =
-        JSON.parse(
-          localStorage.getItem(
-            'notepound_memos'
-          )
+    const flow =
+      section.querySelector(
+        '.thought-flow'
+      );
+
+    ungrouped.forEach(
+      memo => {
+
+        const card =
+          document.createElement('div');
+
+        card.className =
+          'thought-card';
+
+        card.innerHTML = `
+          <div class="thought-card-date">
+            ${formatThoughtDate(memo.id)}
+          </div>
+
+          <div class="thought-card-text">
+            ${escapeHtml(memo.text)}
+          </div>
+
+          <div class="thought-card-category">
+            ${escapeHtml(
+              memo.category || '#미분류'
+            )}
+          </div>
+
+          <div class="thought-card-actions">
+
+            <button
+              class="thought-action-btn primary"
+              data-action="link"
+            >
+              🔗 이 기록 연결하기
+            </button>
+
+            <button
+              class="thought-action-btn"
+              data-action="reply"
+            >
+              💭 이어서 생각하기
+            </button>
+
+          </div>
+        `;
+
+        card.addEventListener(
+          'click',
+          event => {
+
+            if (
+              event.target.closest('button')
+            ) {
+              return;
+            }
+
+            const index =
+              savedMemos.findIndex(
+                item =>
+                  item.id === memo.id
+              );
+
+            if (index !== -1) {
+              openMemoModal(index);
+            }
+
+          }
         );
 
+        card
+          .querySelector(
+            '[data-action="link"]'
+          )
+          .onclick =
+          event => {
+
+            event.stopPropagation();
+
+            openLinkMemoModal(
+              memo.id
+            );
+
+          };
+
+        card
+          .querySelector(
+            '[data-action="reply"]'
+          )
+          .onclick =
+          event => {
+
+            event.stopPropagation();
+
+            openThoughtReplyPrompt(
+              memo.id
+            );
+
+          };
+
+        flow.appendChild(card);
+
+      }
+    );
+
+    container.appendChild(
+      section
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   직접 메모 연결
+   ===================================================== */
+
+function openLinkMemoModal(
+  memoId
+) {
+
+  const target =
+    savedMemos.find(
+      memo =>
+        memo.id === memoId
+    );
+
+  if (!target) {
+    return;
+  }
+
+  linkingMemoId =
+    memoId;
+
+  const title =
+    String(target.text);
+
+  document.getElementById(
+    'linkModalTitle'
+  ).textContent =
+    `🔗 「${
+      title.length > 18
+        ? title.slice(0,18) + '…'
+        : title
+    }」 연결하기`;
+
+  const list =
+    document.getElementById(
+      'linkMemoList'
+    );
+
+  list.innerHTML = '';
+
+  const others =
+    [...savedMemos]
+      .filter(
+        memo =>
+          memo.id !== memoId
+      )
+      .sort(
+        (a,b) =>
+          b.id - a.id
+      );
+
+  if (!others.length) {
+
+    list.innerHTML = `
+      <div class="thought-empty" style="margin:0;">
+        연결할 다른 메모가 아직 없어요.
+      </div>
+    `;
+
+  } else {
+
+    others.forEach(
+      memo => {
+
+        const label =
+          document.createElement(
+            'label'
+          );
+
+        label.className =
+          'link-memo-option';
+
+        const checkbox =
+          document.createElement(
+            'input'
+          );
+
+        checkbox.type =
+          'checkbox';
+
+        checkbox.value =
+          memo.id;
+
+        checkbox.checked =
+          getManualLinkedIds(
+            target
+          ).includes(
+            memo.id
+          );
+
+        const text =
+          document.createElement(
+            'div'
+          );
+
+        text.className =
+          'link-memo-option-text';
+
+        text.innerHTML = `
+          <div class="link-memo-option-main">
+            ${escapeHtml(memo.text)}
+          </div>
+
+          <div class="link-memo-option-meta">
+            ${formatThoughtDate(memo.id)}
+            ·
+            ${escapeHtml(
+              memo.category || '#미분류'
+            )}
+          </div>
+        `;
+
+        label.appendChild(
+          checkbox
+        );
+
+        label.appendChild(
+          text
+        );
+
+        list.appendChild(
+          label
+        );
+
+      }
+    );
+
+  }
+
+  document.getElementById(
+    'linkMemoModalOverlay'
+  ).style.display = 'flex';
+
+}
+
+
+function closeLinkMemoModal() {
+
+  document.getElementById(
+    'linkMemoModalOverlay'
+  ).style.display = 'none';
+
+  linkingMemoId = null;
+
+}
+
+
+function saveMemoLinks() {
+
+  if (
+    linkingMemoId === null
+  ) {
+    return;
+  }
+
+  const target =
+    savedMemos.find(
+      memo =>
+        memo.id ===
+        linkingMemoId
+    );
+
+  if (!target) {
+    closeLinkMemoModal();
+    return;
+  }
+
+  const checked =
+    [
+      ...document.querySelectorAll(
+        '#linkMemoList input[type="checkbox"]:checked'
+      )
+    ]
+      .map(
+        checkbox =>
+          Number(checkbox.value)
+      );
+
+  /*
+    양방향 연결로 저장
+  */
+
+  savedMemos.forEach(
+    memo => {
 
       if (
-        Array.isArray(latestMemos)
+        !Array.isArray(
+          memo.linkedMemos
+        )
       ) {
-
-        savedMemos =
-          latestMemos;
-
+        memo.linkedMemos = [];
       }
 
+      if (
+        memo.id === linkingMemoId
+      ) {
 
-      renderThoughtFlow();
+        memo.linkedMemos =
+          checked.filter(
+            id =>
+              id !== memo.id
+          );
 
+      } else {
 
-      const btn =
-        document.querySelector(
-          '.refresh-thought-btn'
-        );
+        memo.linkedMemos =
+          memo.linkedMemos.filter(
+            id =>
+              id !== linkingMemoId
+          );
 
+        if (
+          checked.includes(
+            memo.id
+          )
+        ) {
 
-      if (btn) {
+          memo.linkedMemos.push(
+            linkingMemoId
+          );
 
-        const originalText =
-          btn.textContent;
+        }
 
-
-        btn.textContent =
-          '✓ 업데이트됨';
-
-
-        setTimeout(
-          () => {
-
-            btn.textContent =
-              originalText;
-
-          },
-          1000
-        );
+        memo.linkedMemos =
+          [
+            ...new Set(
+              memo.linkedMemos
+            )
+          ];
 
       }
 
     }
+  );
+
+  saveMemos();
+
+  closeLinkMemoModal();
+
+  renderThoughtFlow();
+
+}
 
 
-    /* =====================================================
-       초기 실행
-       ===================================================== */
+/* =====================================================
+   기록 모으기
+   ===================================================== */
 
-    renderWritePage();
+function collectThoughtRecords() {
 
-    renderThoughtFlow();
+  normalizeMemoData();
 
-  </script>
+  saveMemos();
+
+  renderThoughtFlow();
+
+}
+
+
+/* =====================================================
+   생각의 변화 이어쓰기
+   ===================================================== */
+
+function openThoughtReplyPrompt(
+  parentId
+) {
+
+  const parent =
+    savedMemos.find(
+      memo =>
+        memo.id === parentId
+    );
+
+  if (!parent) {
+    return;
+  }
+
+  const text =
+    prompt(
+      `「${parent.text}」\n\n` +
+      `이 생각은 어떻게 달라졌나요?\n` +
+      `새롭게 생각한 내용을 적어주세요.`
+    );
+
+  if (
+    !text ||
+    !text.trim()
+  ) {
+    return;
+  }
+
+  const newMemo = {
+    id: createMemoId(),
+    text: text.trim(),
+    category:
+      parent.category || '#미분류',
+    tag:
+      parent.tag || '',
+    linkedMemos: [
+      parent.id
+    ],
+    replyTo:
+      parent.id
+  };
+
+  savedMemos.push(
+    newMemo
+  );
+
+  if (
+    !Array.isArray(
+      parent.linkedMemos
+    )
+  ) {
+    parent.linkedMemos = [];
+  }
+
+  if (
+    !parent.linkedMemos.includes(
+      newMemo.id
+    )
+  ) {
+
+    parent.linkedMemos.push(
+      newMemo.id
+    );
+
+  }
+
+  saveMemos();
+
+  renderWritePage();
+  renderCategoryPage();
+  renderAllMemosPage();
+
+  renderThoughtFlow();
+
+}
+
+
+/* =====================================================
+   생각 흐름 새로고침
+   ===================================================== */
+
+function refreshThoughtFlow() {
+
+  try {
+
+    const latest =
+      JSON.parse(
+        localStorage.getItem(
+          'notepound_memos'
+        )
+      );
+
+    if (
+      Array.isArray(latest)
+    ) {
+
+      savedMemos =
+        latest;
+
+      normalizeMemoData();
+
+    }
+
+  } catch (error) {
+
+    console.log(
+      '메모를 다시 불러오는 중 문제가 발생했습니다.'
+    );
+
+  }
+
+  renderThoughtFlow();
+
+}
+
+
+/* =====================================================
+   초기 실행
+   ===================================================== */
+
+renderWritePage();
+renderCategoryPage();
+renderAllMemosPage();
+
+</script>
 
 </body>
 </html>
