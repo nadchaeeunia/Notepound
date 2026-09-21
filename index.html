@@ -3466,22 +3466,3 @@ function refreshThoughtFlow(){
 
 </body>
 </html>
-'''
-
-BASE_DIR = Path(__file__).resolve().parent
-OUTPUT_HTML = BASE_DIR / "Notepound_실행용.html"
-
-
-def create_html():
-    OUTPUT_HTML.write_text(HTML, encoding="utf-8")
-    return OUTPUT_HTML
-
-
-def main():
-    path = create_html()
-    print(f"Notepound 실행 파일 생성: {path}")
-    webbrowser.open(path.as_uri())
-
-
-if __name__ == "__main__":
-    main()
