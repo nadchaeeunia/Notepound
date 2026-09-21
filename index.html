@@ -490,6 +490,8 @@
     .thought-title-edit{border:1px solid #e5e7eb;background:#fff;border-radius:8px;padding:3px 6px;font-size:11px;cursor:pointer;line-height:1}
     .thought-title-edit:hover{background:#f5f7fb}
     .thought-title-edit.detail{margin-left:6px}
+    .thought-topic-delete{border:1px solid #f0d5d5;background:#fff7f7;color:#d93025;border-radius:8px;padding:3px 6px;font-size:11px;cursor:pointer;line-height:1}.thought-topic-delete:hover{background:#fff0f0}
+    .unlinked-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:20;overflow:visible}.unlinked-temp-edge{fill:none;stroke:#1a73e8;stroke-width:2.8;stroke-linecap:round;opacity:.9;stroke-dasharray:7 5}
     #thoughtDetailTitle{display:flex;align-items:center;gap:4px}
 
     .thought-group-sub{font-size:9px;color:#999;line-height:1.5;margin-bottom:10px}
@@ -3252,10 +3254,30 @@ function buildThoughtNode(memo,isCenter=false,index=0){
   node.addEventListener('dblclick',e=>{e.stopPropagation();const idx=savedMemos.findIndex(m=>m.id===memo.id);if(idx!==-1)openMemoModal(idx);});
   node.addEventListener('contextmenu',e=>{e.preventDefault();openLinkMemoModal(memo.id);});return node;
 }
+function deleteThoughtGroup(group){
+  if(!group||!group.length)return;
+  const title=getThoughtGroupTitle(group,0);
+  if(!confirm(`「${title}」 주제를 삭제할까요?\n\n주제와 메모 연결만 삭제되고, 원래 메모는 전체 메모에 그대로 남아요.`))return;
+  const ids=new Set(group.map(m=>Number(m.id)));
+  savedMemos.forEach(memo=>{
+    if(Array.isArray(memo.linkedMemos)) memo.linkedMemos=memo.linkedMemos.filter(id=>!ids.has(Number(id)));
+    if(Array.isArray(memo.autoLinkedMemos)) memo.autoLinkedMemos=memo.autoLinkedMemos.filter(id=>!ids.has(Number(id)));
+    if(ids.has(Number(memo.id))) delete memo.parentThoughtId;
+  });
+  const key=thoughtGroupKey(group);
+  delete thoughtGroupTitles[key];
+  delete thoughtGroupCenters[key];
+  if(activeThoughtGroupKey===key) activeThoughtGroupKey=null;
+  if(group.some(m=>Number(m.id)===Number(thoughtCenterId))) thoughtCenterId=null;
+  saveMemos();saveThoughtGroupTitles();saveThoughtGroupCenters();saveThoughtCenter();
+  selectedThoughtIds=[];
+  renderThoughtFlow();renderThoughtUnconnected();
+}
+
 function renderGroupOverview(){
   const box=document.getElementById('thoughtGroupList');if(!box)return;const groups=getConnectedComponents();box.innerHTML='';
   if(!groups.length){box.innerHTML='<div class="thought-empty" style="grid-column:1/-1;"><div class="thought-empty-graphic">🔗</div>아직 연결된 생각 묶음이 없어요.<br>메모를 서로 연결하면 주제별 흐름이 여기에 생겨요.</div>';return;}
-  groups.forEach((group,index)=>{const card=document.createElement('div');card.className='thought-group-card';const title=getThoughtGroupTitle(group,index);const chips=group.slice(0,4).map(m=>`<span class="thought-group-chip">${escapeHtml(m.text)}</span>`).join('');card.innerHTML=`<div class="thought-group-kicker">THOUGHT FLOW ${String(index+1).padStart(2,'0')}</div><div class="thought-group-title-row"><div class="thought-group-title">${escapeHtml(title)}</div><button class="thought-title-edit" type="button" title="주제 이름 수정">✏️</button></div><div class="thought-group-sub">${getThoughtGroupSummary(group)}<br>이 주제의 메모를 마인드맵으로 보기</div><div class="thought-group-preview">${chips}</div><div class="thought-group-dots"><span class="thought-group-dot"></span><span class="thought-group-dot"></span><span class="thought-group-dot"></span></div>`;card.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(group);});card.addEventListener('click',()=>enterThoughtGroup(thoughtGroupKey(group)));box.appendChild(card);});
+  groups.forEach((group,index)=>{const card=document.createElement('div');card.className='thought-group-card';const title=getThoughtGroupTitle(group,index);const chips=group.slice(0,4).map(m=>`<span class="thought-group-chip">${escapeHtml(m.text)}</span>`).join('');card.innerHTML=`<div class="thought-group-kicker">THOUGHT FLOW ${String(index+1).padStart(2,'0')}</div><div class="thought-group-title-row"><div class="thought-group-title">${escapeHtml(title)}</div><button class="thought-title-edit" type="button" title="주제 이름 수정">✏️</button><button class="thought-topic-delete" type="button" title="이 생각 주제 삭제">🗑️</button></div><div class="thought-group-sub">${getThoughtGroupSummary(group)}<br>이 주제의 메모를 마인드맵으로 보기</div><div class="thought-group-preview">${chips}</div><div class="thought-group-dots"><span class="thought-group-dot"></span><span class="thought-group-dot"></span><span class="thought-group-dot"></span></div>`;card.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(group);});card.querySelector('.thought-topic-delete').addEventListener('click',e=>{e.stopPropagation();deleteThoughtGroup(group);});card.addEventListener('click',()=>enterThoughtGroup(thoughtGroupKey(group)));box.appendChild(card);});
 }
 
 function renderThoughtChangePanel(group){
@@ -3270,7 +3292,7 @@ function renderThoughtFlow(){
   const centerBadge=document.getElementById('thoughtCenterBadge');const active=getActiveGroup();
   if(activeThoughtGroupKey&&active){
     groupOverview.style.display='none';detail.style.display='block';
-    const title=getThoughtGroupTitle(active,0);const detailTitle=document.getElementById('thoughtDetailTitle');detailTitle.innerHTML=`<span>${escapeHtml(title)} · ${active.length}개 기록</span><button class="thought-title-edit detail" type="button" title="주제 이름 수정">✏️</button>`;detailTitle.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(active);});
+    const title=getThoughtGroupTitle(active,0);const detailTitle=document.getElementById('thoughtDetailTitle');detailTitle.innerHTML=`<span>${escapeHtml(title)} · ${active.length}개 기록</span><button class="thought-title-edit detail" type="button" title="주제 이름 수정">✏️</button><button class="thought-topic-delete" type="button" title="이 생각 주제 삭제">🗑️</button>`;detailTitle.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(active);});detailTitle.querySelector('.thought-topic-delete').addEventListener('click',e=>{e.stopPropagation();deleteThoughtGroup(active);});
     const centerId=Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null;thoughtCenterId=centerId;const center=active.find(m=>Number(m.id)===centerId);
     if(centerBadge)centerBadge.innerHTML=center?`◎ 중심 메모: 「${escapeHtml(String(center.text).slice(0,28))}${String(center.text).length>28?'…':''}」`:'◎ 이 주제의 중심 메모를 하나 선택해 주세요';
     const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#1a73e8"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#7b61ff"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>`;
@@ -3303,7 +3325,7 @@ function getUnconnectedPosition(memo,index,total){
 }
 function saveUnconnectedPosition(id,pos){let d={};try{d=JSON.parse(localStorage.getItem(THOUGHT_UNCONNECTED_POSITION_KEY)||'{}');}catch(e){}d[String(id)]=pos;localStorage.setItem(THOUGHT_UNCONNECTED_POSITION_KEY,JSON.stringify(d));}
 function renderThoughtUnconnected(){
-  const box=document.getElementById('thoughtUnconnectedList');if(!box)return;box.innerHTML='';
+  const box=document.getElementById('thoughtUnconnectedList');if(!box)return;box.innerHTML=`<svg id="unlinkedTempSvg" class="unlinked-svg" aria-hidden="true"><defs><marker id="unlinkedArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1a73e8"></path></marker></defs><path id="unlinkedTempEdge" class="unlinked-temp-edge" style="display:none" marker-end="url(#unlinkedArrow)"></path></svg>`;
   const unconnected=savedMemos.filter(m=>getManualLinkedIds(m).length===0).sort((a,b)=>b.id-a.id);
   if(!unconnected.length){box.innerHTML='<div class="thought-empty" style="position:absolute;left:12%;right:12%;top:260px;"><div class="thought-empty-graphic">✨</div>연결되지 않은 메모가 없어요.<br>모든 생각이 다른 기록과 연결되어 있어요.</div>';return;}
   unconnected.forEach((memo,index)=>{
@@ -3323,13 +3345,29 @@ function startUnconnectedLink(event,id){
   linkingFromId=Number(id);
   const box=document.getElementById('thoughtUnconnectedList');
   if(!box)return;
-  let moved=false;
+  const temp=document.getElementById('unlinkedTempEdge');
   const sourceCard=[...box.querySelectorAll('.unlinked-card')].find(card=>Number(card.dataset.id)===Number(id));
   if(sourceCard)sourceCard.classList.add('linking');
-  const move=()=>{moved=true;};
+  let moved=false;
+  const getSourcePoint=()=>{
+    if(!sourceCard)return null;
+    const br=box.getBoundingClientRect(),r=sourceCard.getBoundingClientRect();
+    return {x:r.left-br.left+r.width/2,y:r.top-br.top+r.height/2};
+  };
+  const move=e=>{
+    moved=true;
+    if(!temp)return;
+    const br=box.getBoundingClientRect(),start=getSourcePoint();
+    if(!start)return;
+    const x=Math.max(0,Math.min(box.clientWidth,e.clientX-br.left));
+    const y=Math.max(0,Math.min(box.clientHeight,e.clientY-br.top));
+    const curve=`M ${start.x} ${start.y} C ${(start.x+x)/2} ${start.y}, ${(start.x+x)/2} ${y}, ${x} ${y}`;
+    temp.setAttribute('d',curve);temp.style.display='block';
+  };
   const up=e=>{
     document.removeEventListener('pointermove',move);
     document.removeEventListener('pointerup',up);
+    if(temp)temp.style.display='none';
     if(sourceCard)sourceCard.classList.remove('linking');
     const el=document.elementFromPoint(e.clientX,e.clientY);
     const targetCard=el?.closest?.('.unlinked-card');
@@ -3345,7 +3383,7 @@ function startUnconnectedLink(event,id){
     linkingFromId=null;
   };
   document.addEventListener('pointermove',move);
-  document.addEventListener('pointerup',up);
+  document.addEventListener('pointerup',up,{once:true});
 }
 
 function switchThoughtView(view){const connected=view==='connected';document.getElementById('thoughtConnectedView')?.classList.toggle('active',connected);document.getElementById('thoughtUnconnectedView')?.classList.toggle('active',!connected);document.getElementById('thoughtConnectedBtn')?.classList.toggle('active',connected);document.getElementById('thoughtUnconnectedBtn')?.classList.toggle('active',!connected);if(!connected)renderThoughtUnconnected();else renderThoughtFlow();}
