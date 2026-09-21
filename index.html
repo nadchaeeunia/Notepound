@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Notepound</title>
-
   <style>
     body {
       background-color: #f0f2f5;
@@ -13,7 +12,7 @@
       align-items: center;
       min-height: 100vh;
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     .phone-container {
@@ -67,9 +66,7 @@
       overflow-y: auto;
     }
 
-    .tab-content.active {
-      display: flex;
-    }
+    .tab-content.active { display: flex; }
 
     .content-area {
       padding: 16px;
@@ -164,12 +161,9 @@
       align-items: center;
       border-left: 3px solid #1a73e8;
       cursor: pointer;
-      gap: 8px;
     }
 
-    .recent-card:hover {
-      text-decoration: underline;
-    }
+    .recent-card:hover { text-decoration: underline; }
 
     .persistent-dock {
       margin-top: auto;
@@ -201,21 +195,17 @@
       padding: 10px 12px;
       border-radius: 8px;
       font-size: 13px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 8px;
     }
 
     .memo-text-clickable {
       cursor: pointer;
       flex: 1;
     }
-
-    .memo-text-clickable:hover {
-      text-decoration: underline;
-    }
+    .memo-text-clickable:hover { text-decoration: underline; }
 
     .classify-btn {
       font-size: 11px;
@@ -243,7 +233,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
 
     .edit-icon-btn {
@@ -252,10 +242,7 @@
       color: #888;
       margin-left: 6px;
     }
-
-    .edit-icon-btn:hover {
-      color: #1a73e8;
-    }
+    .edit-icon-btn:hover { color: #1a73e8; }
 
     .back-btn {
       font-size: 12px;
@@ -286,12 +273,11 @@
       display: none;
       position: absolute;
       top: 48px;
-      left: 16px;
-      right: 16px;
+      left: 16px; right: 16px;
       background-color: #ffffff;
       border: 1px solid #e0e0e0;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
       z-index: 100;
       padding: 6px 0;
     }
@@ -321,10 +307,7 @@
       padding: 2px 4px;
     }
 
-    .sort-btn.active {
-      color: #1a73e8;
-      font-weight: bold;
-    }
+    .sort-btn.active { color: #1a73e8; font-weight: bold; }
 
     .timestamp-box {
       font-size: 11px;
@@ -333,10 +316,7 @@
       text-align: right;
     }
 
-    .time-part {
-      font-size: 10px;
-      color: #999;
-    }
+    .time-part { font-size: 10px; color: #999; }
 
     .tag-badge {
       font-size: 10px;
@@ -355,20 +335,13 @@
       cursor: pointer;
       font-size: 13px;
     }
+    .delete-btn:hover { color: #d32f2f; }
 
-    .delete-btn:hover {
-      color: #d32f2f;
-    }
-
-    /* 모달 */
-
+    /* 모달 레이아웃 */
     .memo-modal-overlay {
       display: none;
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background-color: rgba(0, 0, 0, 0.4);
       z-index: 1000;
       justify-content: center;
@@ -380,7 +353,7 @@
       background-color: #fffde7;
       border-radius: 12px;
       padding: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
       border: 1px solid #fff59d;
       display: flex;
       flex-direction: column;
@@ -422,23 +395,16 @@
       cursor: pointer;
     }
 
-    .sticky-btn.save {
-      background-color: #1a73e8;
-      color: #ffffff;
-      font-weight: bold;
-    }
+    .sticky-btn.save { background-color: #1a73e8; color: #ffffff; font-weight: bold; }
+    .sticky-btn.cancel { background-color: #e0e0e0; color: #666; }
 
-    .sticky-btn.cancel {
-      background-color: #e0e0e0;
-      color: #666;
-    }
-
+    /* 카테고리 수정 및 추가 모달 */
     .cat-modal-card {
       width: 280px;
       background-color: #ffffff;
       border-radius: 16px;
       padding: 18px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -488,3783 +454,710 @@
       background-color: #e8f0fe;
       border-color: #1a73e8;
       transform: scale(1.15);
-      box-shadow: 0 2px 5px rgba(26, 115, 232, 0.2);
-    }
-
-    /* 생각의 흐름 */
-
-    .thought-section {
-      margin-top: 4px;
-      padding: 12px;
-      background-color: #f7f9fc;
-      border-radius: 12px;
-      border: 1px solid #e7ebf0;
-    }
-
-    .thought-section-title {
-      font-size: 12px;
-      font-weight: bold;
-      color: #555;
-      margin-bottom: 8px;
-    }
-
-    .related-memo-card {
-      background-color: #ffffff;
-      border-radius: 9px;
-      padding: 9px 10px;
-      margin-top: 6px;
-      border-left: 3px solid #9aa7b8;
-      cursor: pointer;
-    }
-
-    .related-memo-card:hover {
-      background-color: #f8faff;
-    }
-
-    .related-date {
-      font-size: 10px;
-      color: #999;
-      margin-bottom: 3px;
-    }
-
-    .related-text {
-      font-size: 12px;
-      color: #333;
-      line-height: 1.45;
-    }
-
-    .related-score {
-      font-size: 10px;
-      color: #1a73e8;
-      margin-top: 4px;
-    }
-
-    .thought-timeline {
-      position: relative;
-      margin: 8px 0 4px 8px;
-      padding-left: 17px;
-      border-left: 2px solid #dbe3ee;
-    }
-
-    .timeline-item {
-      position: relative;
-      margin-bottom: 14px;
-    }
-
-    .timeline-item::before {
-      content: "";
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: #1a73e8;
-      left: -22px;
-      top: 4px;
-      border: 2px solid #ffffff;
-      box-shadow: 0 0 0 1px #b9c8da;
-    }
-
-    .timeline-date {
-      font-size: 10px;
-      color: #999;
-      margin-bottom: 3px;
-    }
-
-    .timeline-text {
-      font-size: 12px;
-      line-height: 1.45;
-      color: #333;
-    }
-
-    .thought-summary {
-      background-color: #ffffff;
-      padding: 10px;
-      border-radius: 9px;
-      border: 1px solid #e5e9ef;
-      font-size: 12px;
-      line-height: 1.55;
-      color: #555;
-    }
-
-    .thought-question {
-      margin-top: 8px;
-      background-color: #fff8e1;
-      border: 1px solid #ffe082;
-      border-radius: 9px;
-      padding: 10px;
-      font-size: 12px;
-      color: #795548;
-      line-height: 1.5;
-    }
-
-    .thought-button {
-      margin-top: 7px;
-      border: none;
-      border-radius: 12px;
-      padding: 6px 10px;
-      font-size: 11px;
-      cursor: pointer;
-      background-color: #1a73e8;
-      color: white;
-    }
-
-    .empty-state {
-      padding: 20px;
-      text-align: center;
-      color: #aaa;
-      font-size: 12px;
+      box-shadow: 0 2px 5px rgba(26,115,232,0.2);
     }
   </style>
 </head>
-
 <body>
 
-<div class="phone-container">
+  <div class="phone-container">
+    <div class="app-header">Notepound</div>
 
-  <div class="app-header">
-    Notepound
-  </div>
-
-  <div class="tab-nav">
-    <div id="tabWrite"
-         class="tab-btn active"
-         onclick="switchTab('write')">
-      📝 메모 작성
+    <div class="tab-nav">
+      <div id="tabWrite" class="tab-btn active" onclick="switchTab('write')">📝 메모 작성</div>
+      <div id="tabCategory" class="tab-btn" onclick="switchTab('category')">🗂️ 카테고리 보관함</div>
+      <div id="tabSearch" class="tab-btn" onclick="switchTab('search')">🔍 전체 메모 & 검색</div>
     </div>
 
-    <div id="tabCategory"
-         class="tab-btn"
-         onclick="switchTab('category')">
-      🗂️ 카테고리 보관함
-    </div>
+    <!-- 탭 1: 메모 작성 페이지 -->
+    <div id="pageWrite" class="tab-content active">
+      <div class="content-area">
+        <textarea 
+          id="memoInput"
+          class="memo-input" 
+          placeholder="생각을 던져놓으세요... (엔터 누르면 바로 저장)"
+        ></textarea>
 
-    <div id="tabSearch"
-         class="tab-btn"
-         onclick="switchTab('search')">
-      🔍 전체 메모 & 검색
-    </div>
-  </div>
-
-
-  <!-- =========================
-       메모 작성
-  ========================== -->
-
-  <div id="pageWrite" class="tab-content active">
-
-    <div class="content-area">
-
-      <textarea
-        id="memoInput"
-        class="memo-input"
-        placeholder="생각을 던져놓으세요... (엔터 누르면 바로 저장)"
-      ></textarea>
-
-
-      <div id="categoryHeaderBox"
-           class="section-header-box"
-           style="display:none;">
-
-        <span class="section-title">
-          ✨ 스마트 카테고리 추천
-        </span>
-
-        <span class="add-cat-btn"
-              onclick="openNewCategoryModal()">
-          + 수동 추가
-        </span>
-
-      </div>
-
-
-      <div id="categoryChips"
-           class="category-select-container">
-      </div>
-
-
-      <div class="section-title">
-        ⚡ 최근 작성한 메모
-        (최근 4개 - 클릭 시 수정)
-      </div>
-
-
-      <div id="recentMemoList"
-           class="recent-memos-list">
-      </div>
-
-
-      <div class="persistent-dock">
-
-        <div class="dock-title">
-
-          <span>
-            📌 채은님의 손길이 필요한 메모가 남아있어요
-          </span>
-
-          <span id="unclassifiedCount"
-                style="color:#d32f2f;">
-            0
-          </span>
-
+        <div id="categoryHeaderBox" class="section-header-box" style="display:none;">
+          <span class="section-title">✨ 스마트 카테고리 추천</span>
+          <span class="add-cat-btn" onclick="openNewCategoryModal()">+ 수동 추가</span>
         </div>
+        <div id="categoryChips" class="category-select-container"></div>
 
+        <div class="section-title">⚡ 최근 작성한 메모 (최근 4개 - 클릭 시 수정)</div>
+        <div id="recentMemoList" class="recent-memos-list"></div>
 
-        <div id="unclassifiedMemoList"
-             class="memo-list">
+        <div class="persistent-dock">
+          <div class="dock-title">
+            <span>📌 채은님의 손길이 필요한 메모가 남아있어요</span>
+            <span id="unclassifiedCount" style="color: #d32f2f;">0</span>
+          </div>
+          <div id="unclassifiedMemoList" class="memo-list"></div>
         </div>
-
       </div>
-
     </div>
 
-  </div>
-
-
-  <!-- =========================
-       카테고리
-  ========================== -->
-
-  <div id="pageCategory"
-       class="tab-content">
-
-    <div style="padding:12px 16px 0; text-align:right;">
-
-      <button class="add-cat-btn"
-              onclick="openNewCategoryModal()">
-        + 새 카테고리 만들기
-      </button>
-
+    <!-- 탭 2: 카테고리 보관함 페이지 -->
+    <div id="pageCategory" class="tab-content">
+      <div style="padding: 12px 16px 0; text-align: right;">
+        <button class="add-cat-btn" onclick="openNewCategoryModal()">+ 새 카테고리 만들기</button>
+      </div>
+      <div id="categoryGrid" class="category-grid"></div>
     </div>
 
-    <div id="categoryGrid"
-         class="category-grid">
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       카테고리 상세
-  ========================== -->
-
-  <div id="pageCategoryDetail"
-       class="tab-content">
-
-    <div style="
-      padding:14px 16px 8px;
-      border-bottom:1px solid #eee;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    ">
-
-      <button class="back-btn"
-              onclick="backToCategoryList()">
-        ← 카테고리 목록
-      </button>
-
-      <button class="add-cat-btn"
-              id="addMemoInDetailBtn">
-        + 이 카테고리에 메모 추가
-      </button>
-
-    </div>
-
-
-    <div class="content-area">
-
-      <div class="section-header-box">
-
-        <div class="section-title"
-             id="detailCategoryTitle"
-             style="font-size:14px;color:#333;">
+    <!-- 탭 2-서브: 카테고리 메모 상세 전용 페이지 -->
+    <div id="pageCategoryDetail" class="tab-content">
+      <div style="padding: 14px 16px 8px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+        <button class="back-btn" onclick="backToCategoryList()">← 카테고리 목록</button>
+        <button class="add-cat-btn" id="addMemoInDetailBtn">+ 이 카테고리에 메모 추가</button>
+      </div>
+      <div class="content-area">
+        <div class="section-header-box">
+          <div class="section-title" id="detailCategoryTitle" style="font-size:14px; color:#333;"></div>
+          <span class="edit-icon-btn" id="editDetailCatBtn">✏️ 이름/이모지 수정</span>
         </div>
-
-        <span class="edit-icon-btn"
-              id="editDetailCatBtn">
-          ✏️ 이름/이모지 수정
-        </span>
-
+        <div id="detailMemoList" class="memo-list"></div>
       </div>
-
-
-      <div id="detailMemoList"
-           class="memo-list">
-      </div>
-
     </div>
 
-  </div>
-
-
-  <!-- =========================
-       전체 메모 / 검색
-  ========================== -->
-
-  <div id="pageSearch"
-       class="tab-content">
-
-    <div class="search-box-container">
-
-      <input
-        type="text"
-        id="searchInput"
-        class="search-input"
-        placeholder="검색어를 입력하세요"
-        onfocus="showHistoryPopup()"
-        oninput="handleSearch()"
-      />
-
-      <div id="historyPopup"
-           class="history-popup">
-      </div>
-
-    </div>
-
-
-    <div style="padding:0 16px 16px;"
-         class="content-area">
-
-      <div class="sort-bar">
-
-        <span class="section-title">
-          🕒 전체 메모
-        </span>
-
-        <div>
-
-          <button id="sortNewest"
-                  class="sort-btn active"
-                  onclick="setSortOrder('newest')">
-            최신순
-          </button>
-
-          <span style="font-size:10px;color:#ccc;">
-            |
-          </span>
-
-          <button id="sortOldest"
-                  class="sort-btn"
-                  onclick="setSortOrder('oldest')">
-            오래된순
-          </button>
-
-        </div>
-
-      </div>
-
-
-      <div id="allMemosList"
-           class="memo-list">
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       생각의 흐름 상세 페이지
-  ========================== -->
-
-  <div id="pageThought"
-       class="tab-content">
-
-    <div style="
-      padding:14px 16px 8px;
-      border-bottom:1px solid #eee;
-    ">
-
-      <button class="back-btn"
-              onclick="backFromThought()">
-        ← 메모로 돌아가기
-      </button>
-
-    </div>
-
-
-    <div class="content-area">
-
-      <div class="section-title"
-           style="font-size:14px;color:#333;">
-        🧠 생각의 흐름
-      </div>
-
-
-      <div id="thoughtTitle"
-           style="
-             font-size:17px;
-             font-weight:bold;
-             color:#222;
-           ">
-      </div>
-
-
-      <div id="thoughtTimeline"
-           class="thought-timeline">
-      </div>
-
-
-      <div id="thoughtSummary"
-           class="thought-summary">
-      </div>
-
-
-      <div id="thoughtQuestion"
-           class="thought-question">
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       메모 수정 모달
-  ========================== -->
-
-  <div id="memoModalOverlay"
-       class="memo-modal-overlay">
-
-    <div class="memo-sticky-note">
-
-      <div class="sticky-header">
-
-        <span>
-          📌 메모 수정하기
-        </span>
-
-        <span style="cursor:pointer;"
-              onclick="closeMemoModal()">
-          ✕
-        </span>
-
-      </div>
-
-
-      <textarea id="modalTextarea"
-                class="sticky-textarea">
-      </textarea>
-
-
-      <div class="sticky-actions">
-
-        <button class="sticky-btn cancel"
-                onclick="closeMemoModal()">
-          취소
-        </button>
-
-        <button class="sticky-btn save"
-                style="background-color:#fbc02d;color:#333;"
-                onclick="saveMemoModal()">
-          저장
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       카테고리 모달
-  ========================== -->
-
-  <div id="catModalOverlay"
-       class="memo-modal-overlay">
-
-    <div class="cat-modal-card">
-
-      <div class="cat-modal-title"
-           id="catModalHeaderTitle">
-        📂 카테고리 설정
-      </div>
-
-
-      <div>
-
-        <span style="
-          font-size:11px;
-          color:#666;
-          font-weight:bold;
-        ">
-          카테고리 이름
-        </span>
-
-        <input
-          type="text"
-          id="newCatNameInput"
-          class="cat-input-field"
-          placeholder="예: 일기, 컴활, 운동..."
-          oninput="updateEmojiRecommendations()"
+    <!-- 탭 3: 전체 메모 & 검색 페이지 -->
+    <div id="pageSearch" class="tab-content">
+      <div class="search-box-container">
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="검색어를 입력하세요"
+          onfocus="showHistoryPopup()"
+          oninput="handleSearch()"
         />
-
+        <div id="historyPopup" class="history-popup"></div>
       </div>
 
-
-      <div>
-
-        <span style="
-          font-size:11px;
-          color:#666;
-          font-weight:bold;
-          display:block;
-        ">
-          추천 이모지
-        </span>
-
-        <div id="emojiRecBox"
-             class="emoji-rec-box">
+      <div style="padding: 0 16px 16px;" class="content-area">
+        <div class="sort-bar">
+          <span class="section-title">🕒 전체 메모 (클릭 시 내용 수정)</span>
+          <div>
+            <button id="sortNewest" class="sort-btn active" onclick="setSortOrder('newest')">최신순</button>
+            <span style="font-size:10px; color:#ccc;">|</span>
+            <button id="sortOldest" class="sort-btn" onclick="setSortOrder('oldest')">오래된순</button>
+          </div>
         </div>
-
+        <div id="allMemosList" class="memo-list"></div>
       </div>
+    </div>
 
-
-      <div class="sticky-actions"
-           style="margin-top:8px;">
-
-        <button class="sticky-btn cancel"
-                onclick="closeCatModal()">
-          취소
-        </button>
-
-        <button class="sticky-btn save"
-                onclick="submitCategoryModal()">
-          완료
-        </button>
-
+    <!-- 메모 수정 모달 -->
+    <div id="memoModalOverlay" class="memo-modal-overlay">
+      <div class="memo-sticky-note">
+        <div class="sticky-header">
+          <span>📌 메모 수정하기</span>
+          <span style="cursor:pointer;" onclick="closeMemoModal()">✕</span>
+        </div>
+        <textarea id="modalTextarea" class="sticky-textarea"></textarea>
+        <div class="sticky-actions">
+          <button class="sticky-btn cancel" onclick="closeMemoModal()">취소</button>
+          <button class="sticky-btn save" style="background-color:#fbc02d; color:#333;" onclick="saveMemoModal()">저장</button>
+        </div>
       </div>
+    </div>
 
+    <!-- 카테고리 추가/수정 공통 모달 UI -->
+    <div id="catModalOverlay" class="memo-modal-overlay">
+      <div class="cat-modal-card">
+        <div class="cat-modal-title" id="catModalHeaderTitle">📂 카테고리 설정</div>
+        <div>
+          <span style="font-size:11px; color:#666; font-weight:bold;">카테고리 이름</span>
+          <input type="text" id="newCatNameInput" class="cat-input-field" placeholder="예: 일기, 컴활, 운동..." oninput="updateEmojiRecommendations()" />
+        </div>
+        <div>
+          <span style="font-size:11px; color:#666; font-weight:bold; display:block;">추천 이모지 (클릭 시 선택 적용)</span>
+          <div id="emojiRecBox" class="emoji-rec-box"></div>
+        </div>
+        <div class="sticky-actions" style="margin-top:8px;">
+          <button class="sticky-btn cancel" onclick="closeCatModal()">취소</button>
+          <button class="sticky-btn save" onclick="submitCategoryModal()">완료</button>
+        </div>
+      </div>
     </div>
 
   </div>
 
-</div>
-
-
-<script>
-
-/* =====================================================
-   기본 데이터
-===================================================== */
-
-let savedMemos =
-  JSON.parse(localStorage.getItem('notepound_memos')) || [];
-
-
-let categories =
-  JSON.parse(localStorage.getItem('notepound_categories')) || [
-
-    { name: '일정', icon: '📅' },
-
-    { name: '아이디어', icon: '💡' },
-
-    { name: '좋아하는 음식', icon: '🍕' },
-
-    { name: '위시리스트', icon: '🛍️' }
-
-  ];
-
-
-let searchHistory =
-  JSON.parse(localStorage.getItem('notepound_search_history')) || [];
-
-
-let currentSelectedCategory = '';
-
-let isUserManuallySelected = false;
-
-let activeCategoryDetail = '';
-
-let currentSortOrder = 'newest';
-
-let editingMemoIndex = null;
-
-let selectedEmoji = '📁';
-
-let editingCategoryIndex = null;
-
-let currentThoughtMemoId = null;
-
-
-const memoInput =
-  document.getElementById('memoInput');
-
-
-/* =====================================================
-   탭 이동
-===================================================== */
-
-function switchTab(tabName) {
-
-  document.getElementById('tabWrite')
-    .classList.toggle(
-      'active',
-      tabName === 'write'
-    );
-
-  document.getElementById('tabCategory')
-    .classList.toggle(
-      'active',
-      tabName === 'category' ||
-      tabName === 'categoryDetail'
-    );
-
-  document.getElementById('tabSearch')
-    .classList.toggle(
-      'active',
-      tabName === 'search'
-    );
-
-
-  document.getElementById('pageWrite')
-    .classList.toggle(
-      'active',
-      tabName === 'write'
-    );
-
-  document.getElementById('pageCategory')
-    .classList.toggle(
-      'active',
-      tabName === 'category'
-    );
-
-  document.getElementById('pageCategoryDetail')
-    .classList.toggle(
-      'active',
-      tabName === 'categoryDetail'
-    );
-
-  document.getElementById('pageSearch')
-    .classList.toggle(
-      'active',
-      tabName === 'search'
-    );
-
-  document.getElementById('pageThought')
-    .classList.toggle(
-      'active',
-      tabName === 'thought'
-    );
-
-
-  hideHistoryPopup();
-
-
-  if (tabName === 'category') {
-    renderCategoryPage();
-  }
-
-
-  if (tabName === 'search') {
-    renderAllMemosPage();
-  }
-
-}
-
-
-/* =====================================================
-   생각의 흐름 페이지 이동
-===================================================== */
-
-function openThoughtPage(memoId) {
-
-  const memo =
-    savedMemos.find(
-      m => m.id === memoId
-    );
-
-  if (!memo) {
-    return;
-  }
-
-
-  currentThoughtMemoId = memoId;
-
-
-  const related =
-    findRelatedMemos(memo, savedMemos);
-
-
-  const thread =
-    [memo, ...related]
-      .filter(
-        (item, index, arr) =>
-          arr.findIndex(
-            x => x.id === item.id
-          ) === index
-      )
-      .sort(
-        (a, b) => a.id - b.id
-      );
-
-
-  document.getElementById(
-    'thoughtTitle'
-  ).textContent =
-    getThoughtTitle(thread, memo);
-
-
-  renderThoughtTimeline(thread);
-
-
-  renderThoughtSummary(thread);
-
-
-  renderThoughtQuestion(thread);
-
-
-  switchTab('thought');
-}
-
-
-/* =====================================================
-   생각 제목 만들기
-===================================================== */
-
-function getThoughtTitle(thread, currentMemo) {
-
-  const keywords =
-    extractImportantWords(
-      thread
-        .map(m => m.text)
-        .join(' ')
-    );
-
-
-  if (keywords.length > 0) {
-    return `「${keywords.slice(0, 2).join(' · ')}」에 대한 생각`;
-  }
-
-
-  return '관련된 생각의 흐름';
-}
-
-
-/* =====================================================
-   생각 타임라인
-===================================================== */
-
-function renderThoughtTimeline(thread) {
-
-  const container =
-    document.getElementById(
-      'thoughtTimeline'
-    );
-
-  container.innerHTML = '';
-
-
-  thread.forEach((memo, index) => {
-
-    const item =
-      document.createElement('div');
-
-    item.className =
-      'timeline-item';
-
-
-    const date =
-      new Date(memo.id);
-
-
-    item.innerHTML = `
-
-      <div class="timeline-date">
-        ${formatFullDate(date)}
-        ${index === 0 ? ' · 처음 기록' : ''}
-      </div>
-
-      <div class="timeline-text">
-        ${escapeHtml(memo.text)}
-      </div>
-
-    `;
-
-
-    item.onclick = () => {
-      const realIndex =
-        savedMemos.findIndex(
-          m => m.id === memo.id
-        );
-
-      if (realIndex !== -1) {
-        openMemoModal(realIndex);
-      }
-    };
-
-
-    item.style.cursor = 'pointer';
-
-
-    container.appendChild(item);
-
-  });
-
-}
-
-
-/* =====================================================
-   생각 변화 요약
-===================================================== */
-
-function renderThoughtSummary(thread) {
-
-  const container =
-    document.getElementById(
-      'thoughtSummary'
-    );
-
-
-  if (thread.length < 2) {
-
-    container.innerHTML = `
-      아직 이 생각과 연결된 기록이 많지 않아요.
-
-      <br><br>
-
-      비슷한 생각을 계속 기록하면
-      시간이 지나면서 생각이 어떻게 달라졌는지
-      확인할 수 있어요.
-    `;
-
-    return;
-  }
-
-
-  const first =
-    thread[0];
-
-  const latest =
-    thread[thread.length - 1];
-
-
-  const commonWords =
-    getCommonImportantWords(
-      first.text,
-      latest.text
-    );
-
-
-  let message =
-    `처음에는 「${escapeHtml(first.text)}」라고 기록했어요.<br><br>`;
-
-
-  if (thread.length >= 3) {
-
-    message +=
-      `그 이후 ${thread.length - 2}개의 관련 기록이 더 남아 있어요.<br><br>`;
-
-  }
-
-
-  message +=
-    `가장 최근에는 「${escapeHtml(latest.text)}」라고 기록했어요.`;
-
-
-  if (commonWords.length > 0) {
-
-    message +=
-      `<br><br>🔗 계속 등장한 키워드: ${commonWords.join(', ')}`;
-
-  }
-
-
-  container.innerHTML =
-    message;
-
-}
-
-
-/* =====================================================
-   생각에 대한 질문
-===================================================== */
-
-function renderThoughtQuestion(thread) {
-
-  const container =
-    document.getElementById(
-      'thoughtQuestion'
-    );
-
-
-  if (thread.length < 2) {
-
-    container.innerHTML = `
-      💭 이 생각이 시간이 지나면서 어떻게 달라지는지
-      나중에 다시 기록해보세요.
-    `;
-
-    return;
-  }
-
-
-  const first =
-    thread[0];
-
-  const latest =
-    thread[thread.length - 1];
-
-
-  container.innerHTML = `
-
-    💡 처음 생각과 지금 생각이 달라졌나요?
-
-    <br>
-
-    처음에는
-    「${escapeHtml(first.text)}」
-
-    <br>
-
-    지금은
-    「${escapeHtml(latest.text)}」
-
-    <br><br>
-
-    <button
-      class="thought-button"
-      onclick="addThoughtFollowUp()">
-      지금 생각 남기기
-    </button>
-
-  `;
-
-}
-
-
-/* =====================================================
-   생각 이어서 기록하기
-===================================================== */
-
-function addThoughtFollowUp() {
-
-  const text =
-    prompt(
-      '지금 이 생각에 대해 새롭게 떠오른 내용을 적어보세요.'
-    );
-
-
-  if (!text || !text.trim()) {
-    return;
-  }
-
-
-  const currentMemo =
-    savedMemos.find(
-      m => m.id === currentThoughtMemoId
-    );
-
-
-  const newMemo = {
-
-    id: Date.now(),
-
-    text: text.trim(),
-
-    category:
-      currentMemo
-        ? currentMemo.category
-        : '#미분류',
-
-    tag:
-      currentMemo
-        ? currentMemo.tag
-        : '',
-
-    thoughtParent:
-      currentThoughtMemoId
-
-  };
-
-
-  savedMemos.push(newMemo);
-
-
-  localStorage.setItem(
-    'notepound_memos',
-    JSON.stringify(savedMemos)
-  );
-
-
-  openThoughtPage(
-    newMemo.id
-  );
-
-
-  renderWritePage();
-
-}
-
-
-/* =====================================================
-   생각 흐름에서 돌아가기
-===================================================== */
-
-function backFromThought() {
-
-  if (currentThoughtMemoId) {
-
-    const index =
-      savedMemos.findIndex(
-        m => m.id === currentThoughtMemoId
-      );
-
-
-    if (index !== -1) {
-
-      openMemoModal(index);
-
-      return;
-
+  <script>
+    let savedMemos = JSON.parse(localStorage.getItem('notepound_memos')) || [];
+    let categories = JSON.parse(localStorage.getItem('notepound_categories')) || [
+      { name: '일정', icon: '📅' },
+      { name: '아이디어', icon: '💡' },
+      { name: '좋아하는 음식', icon: '🍕' },
+      { name: '위시리스트', icon: '🛍️' }
+    ];
+    let searchHistory = JSON.parse(localStorage.getItem('notepound_search_history')) || [];
+
+    let currentSelectedCategory = '';
+    let isUserManuallySelected = false;
+    let activeCategoryDetail = '';
+    let currentSortOrder = 'newest';
+    let editingMemoIndex = null;
+    let selectedEmoji = '📁';
+    let editingCategoryIndex = null;
+
+    const memoInput = document.getElementById('memoInput');
+
+    function switchTab(tabName) {
+      document.getElementById('tabWrite').classList.toggle('active', tabName === 'write');
+      document.getElementById('tabCategory').classList.toggle('active', tabName === 'category' || tabName === 'categoryDetail');
+      document.getElementById('tabSearch').classList.toggle('active', tabName === 'search');
+
+      document.getElementById('pageWrite').classList.toggle('active', tabName === 'write');
+      document.getElementById('pageCategory').classList.toggle('active', tabName === 'category');
+      document.getElementById('pageCategoryDetail').classList.toggle('active', tabName === 'categoryDetail');
+      document.getElementById('pageSearch').classList.toggle('active', tabName === 'search');
+
+      hideHistoryPopup();
+
+      if (tabName === 'category') renderCategoryPage();
+      if (tabName === 'search') renderAllMemosPage();
     }
 
-  }
-
-
-  switchTab('write');
-
-}
-
-
-/* =====================================================
-   관련 메모 찾기
-===================================================== */
-
-function findRelatedMemos(targetMemo, memos) {
-
-  const targetWords =
-    extractImportantWords(
-      targetMemo.text
-    );
-
-
-  if (targetWords.length === 0) {
-    return [];
-  }
-
-
-  const scored = [];
-
-
-  memos.forEach(memo => {
-
-    if (memo.id === targetMemo.id) {
-      return;
+    /* 카테고리 추가/수정 모달 로직 */
+    function openNewCategoryModal() {
+      editingCategoryIndex = null;
+      document.getElementById('catModalHeaderTitle').textContent = '📂 새 카테고리 추가';
+      document.getElementById('newCatNameInput').value = '';
+      selectedEmoji = '📁';
+      updateEmojiRecommendations();
+      document.getElementById('catModalOverlay').style.display = 'flex';
+      setTimeout(() => document.getElementById('newCatNameInput').focus(), 100);
     }
 
-
-    const score =
-      calculateSimilarity(
-        targetMemo,
-        memo
-      );
-
-
-    if (score >= 20) {
-
-      scored.push({
-        memo: memo,
-        score: score
-      });
-
+    function editCategoryNamePrompt(catIdx) {
+      editingCategoryIndex = catIdx;
+      const cat = categories[catIdx];
+      document.getElementById('catModalHeaderTitle').textContent = '✏️ 카테고리 수정';
+      document.getElementById('newCatNameInput').value = cat.name;
+      selectedEmoji = cat.icon;
+      updateEmojiRecommendations();
+      document.getElementById('catModalOverlay').style.display = 'flex';
+      setTimeout(() => document.getElementById('newCatNameInput').focus(), 100);
     }
 
-  });
-
-
-  scored.sort(
-    (a, b) =>
-      b.score - a.score
-  );
-
-
-  return scored
-    .slice(0, 6)
-    .map(item => item.memo);
-
-}
-
-
-/* =====================================================
-   메모 관련도 계산
-===================================================== */
-
-function calculateSimilarity(a, b) {
-
-  let score = 0;
-
-
-  const wordsA =
-    extractImportantWords(
-      a.text
-    );
-
-
-  const wordsB =
-    extractImportantWords(
-      b.text
-    );
-
-
-  wordsA.forEach(word => {
-
-    if (wordsB.includes(word)) {
-
-      score += 25;
-
+    function closeCatModal() {
+      document.getElementById('catModalOverlay').style.display = 'none';
+      editingCategoryIndex = null;
     }
 
-  });
-
-
-  if (
-    a.category &&
-    b.category &&
-    a.category === b.category
-  ) {
-
-    score += 15;
-
-  }
-
-
-  if (
-    a.tag &&
-    b.tag &&
-    a.tag === b.tag
-  ) {
-
-    score += 10;
-
-  }
-
-
-  const groups = [
-    ['학교', '과제', '시험', '공부', '전공', '수업'],
-    ['여행', '호주', '일본', '여행지'],
-    ['음식', '먹', '맛집', '카페', '냉면'],
-    ['운동', '배드민턴', '헬스', '러닝'],
-    ['알바', '일', '근무', '직장'],
-    ['진로', '전공', 'AI', '데이터', '통계'],
-    ['영화', '드라마', '게임'],
-    ['생각', '고민', '아이디어']
-  ];
-
-
-  groups.forEach(group => {
-
-    const hasA =
-      group.some(
-        word =>
-          a.text.includes(word)
-      );
-
-
-    const hasB =
-      group.some(
-        word =>
-          b.text.includes(word)
-      );
-
-
-    if (hasA && hasB) {
-      score += 20;
-    }
-
-  });
-
-
-  return score;
-
-}
-
-
-/* =====================================================
-   중요한 단어 추출
-===================================================== */
-
-function extractImportantWords(text) {
-
-  if (!text) {
-    return [];
-  }
-
-
-  const stopWords = [
-
-    '그리고',
-    '그런',
-    '이런',
-    '저런',
-    '나는',
-    '내가',
-    '오늘',
-    '어제',
-    '내일',
-    '이번',
-    '다음',
-    '그냥',
-    '진짜',
-    '너무',
-    '정말',
-    '조금',
-    '같다',
-    '같아',
-    '해야',
-    '하고',
-    '해서',
-    '하는',
-    '하면',
-    '했다',
-    '할까',
-    '싶다',
-    '싶은',
-    '것',
-    '거',
-    '때문',
-    '때',
-    '그리고',
-    '있다',
-    '있는',
-    '없다',
-    '없는',
-    '같은',
-    '대한',
-    '에서',
-    '으로',
-    '에게',
-    '까지',
-    '부터',
-    '으로',
-    '이랑',
-    '하고',
-    '도',
-    '가',
-    '이',
-    '은',
-    '는',
-    '을',
-    '를',
-    '의',
-    '에'
-  ];
-
-
-  const words =
-    text
-      .replace(
-        /[.,!?;:()[\]{}"'“”‘’]/g,
-        ' '
-      )
-      .split(/\s+/)
-      .map(
-        word =>
-          word
-            .replace(
-              /(이야|이네|이다|인가|같아|같다|해서|하고|하는|할까|싶다|싶어|했어|했음|해야|해야함)$/g,
-              ''
-            )
-      )
-      .filter(
-        word =>
-          word.length >= 2 &&
-          !stopWords.includes(word)
-      );
-
-
-  return [...new Set(words)];
-
-}
-
-
-/* =====================================================
-   공통 키워드
-===================================================== */
-
-function getCommonImportantWords(a, b) {
-
-  const wordsA =
-    extractImportantWords(a);
-
-  const wordsB =
-    extractImportantWords(b);
-
-
-  return wordsA.filter(
-    word =>
-      wordsB.includes(word)
-  ).slice(0, 5);
-
-}
-
-
-/* =====================================================
-   메모 수정 모달
-===================================================== */
-
-function openMemoModal(index) {
-
-  editingMemoIndex = index;
-
-
-  document.getElementById(
-    'modalTextarea'
-  ).value =
-    savedMemos[index].text;
-
-
-  document.getElementById(
-    'memoModalOverlay'
-  ).style.display =
-    'flex';
-
-}
-
-
-function closeMemoModal() {
-
-  document.getElementById(
-    'memoModalOverlay'
-  ).style.display =
-    'none';
-
-
-  editingMemoIndex = null;
-
-}
-
-
-function saveMemoModal() {
-
-  if (editingMemoIndex !== null) {
-
-    const updatedText =
-      document.getElementById(
-        'modalTextarea'
-      ).value.trim();
-
-
-    if (updatedText) {
-
-      savedMemos[
-        editingMemoIndex
-      ].text =
-        updatedText;
-
-
-      localStorage.setItem(
-        'notepound_memos',
-        JSON.stringify(savedMemos)
-      );
-
-
-      renderWritePage();
-
-      renderCategoryPage();
-
-      if (activeCategoryDetail) {
-        renderDetailMemoList();
+    /* 카테고리 이름 키워드 인식 연동 이모지 추천 로직 */
+    function updateEmojiRecommendations() {
+      const name = document.getElementById('newCatNameInput').value.trim();
+      const recBox = document.getElementById('emojiRecBox');
+      recBox.innerHTML = '';
+
+      let emojis = ['📁', '📌', '✨', '🏷️', '📝'];
+
+      if (name.includes('일기') || name.includes('일상') || name.includes('생각') || name.includes('기록') || name.includes('할 일') || name.includes('할일')) {
+        emojis = ['📖', '📔', '✏️', '🗓️', '💭'];
+      } else if (name.includes('학교') || name.includes('수원대') || name.includes('과제') || name.includes('공부') || name.includes('시험') || name.includes('컴활') || name.includes('토익')) {
+        emojis = ['🎓', '📚', '💻', '✍️', '🎯'];
+      } else if (name.includes('음식') || name.includes('먹') || name.includes('맛집') || name.includes('카페') || name.includes('디저트') || name.includes('좋아하는')) {
+        emojis = ['🍕', '🍰', '☕', '🍧', '🍲'];
+      } else if (name.includes('운동') || name.includes('헬스') || name.includes('러닝') || name.includes('건강')) {
+        emojis = ['⚽', '🏋️‍♂️', '🏃‍♀️', '🥊', '🧘‍♀️'];
+      } else if (name.includes('쇼핑') || name.includes('위시') || name.includes('구매') || name.includes('사고')) {
+        emojis = ['🛍️', '🛒', '💳', '🎁', '👗'];
+      } else if (name.includes('영화') || name.includes('드라마') || name.includes('게임') || name.includes('아이디어')) {
+        emojis = ['💡', '🎬', '🍿', '🎮', '🎧'];
+      } else if (name.includes('알바') || name.includes('업무') || name.includes('직장') || name.includes('일정')) {
+        emojis = ['📅', '💼', '⏰', '🍔', '💰'];
       }
 
-      renderAllMemosPage(
-        document.getElementById(
-          'searchInput'
-        ).value
-      );
-
-    }
-
-  }
-
-
-  closeMemoModal();
-
-}
-
-
-/* =====================================================
-   카테고리 모달
-===================================================== */
-
-function openNewCategoryModal() {
-
-  editingCategoryIndex = null;
-
-  document.getElementById(
-    'catModalHeaderTitle'
-  ).textContent =
-    '📂 새 카테고리 추가';
-
-
-  document.getElementById(
-    'newCatNameInput'
-  ).value =
-    '';
-
-
-  selectedEmoji =
-    '📁';
-
-
-  updateEmojiRecommendations();
-
-
-  document.getElementById(
-    'catModalOverlay'
-  ).style.display =
-    'flex';
-
-
-  setTimeout(
-    () =>
-      document.getElementById(
-        'newCatNameInput'
-      ).focus(),
-    100
-  );
-
-}
-
-
-function editCategoryNamePrompt(catIdx) {
-
-  editingCategoryIndex =
-    catIdx;
-
-
-  const cat =
-    categories[catIdx];
-
-
-  document.getElementById(
-    'catModalHeaderTitle'
-  ).textContent =
-    '✏️ 카테고리 수정';
-
-
-  document.getElementById(
-    'newCatNameInput'
-  ).value =
-    cat.name;
-
-
-  selectedEmoji =
-    cat.icon;
-
-
-  updateEmojiRecommendations();
-
-
-  document.getElementById(
-    'catModalOverlay'
-  ).style.display =
-    'flex';
-
-
-  setTimeout(
-    () =>
-      document.getElementById(
-        'newCatNameInput'
-      ).focus(),
-    100
-  );
-
-}
-
-
-function closeCatModal() {
-
-  document.getElementById(
-    'catModalOverlay'
-  ).style.display =
-    'none';
-
-
-  editingCategoryIndex =
-    null;
-
-}
-
-
-/* =====================================================
-   이모지 추천
-===================================================== */
-
-function updateEmojiRecommendations() {
-
-  const name =
-    document.getElementById(
-      'newCatNameInput'
-    ).value.trim();
-
-
-  const recBox =
-    document.getElementById(
-      'emojiRecBox'
-    );
-
-
-  recBox.innerHTML =
-    '';
-
-
-  let emojis = [
-    '📁',
-    '📌',
-    '✨',
-    '🏷️',
-    '📝'
-  ];
-
-
-  if (
-    name.includes('일기') ||
-    name.includes('일상') ||
-    name.includes('생각') ||
-    name.includes('기록') ||
-    name.includes('할 일') ||
-    name.includes('할일')
-  ) {
-
-    emojis = [
-      '📖',
-      '📔',
-      '✏️',
-      '🗓️',
-      '💭'
-    ];
-
-  }
-
-
-  else if (
-    name.includes('학교') ||
-    name.includes('수원대') ||
-    name.includes('과제') ||
-    name.includes('공부') ||
-    name.includes('시험') ||
-    name.includes('컴활') ||
-    name.includes('토익')
-  ) {
-
-    emojis = [
-      '🎓',
-      '📚',
-      '💻',
-      '✍️',
-      '🎯'
-    ];
-
-  }
-
-
-  else if (
-    name.includes('음식') ||
-    name.includes('먹') ||
-    name.includes('맛집') ||
-    name.includes('카페') ||
-    name.includes('디저트') ||
-    name.includes('좋아하는')
-  ) {
-
-    emojis = [
-      '🍕',
-      '🍰',
-      '☕',
-      '🍧',
-      '🍲'
-    ];
-
-  }
-
-
-  else if (
-    name.includes('운동') ||
-    name.includes('헬스') ||
-    name.includes('러닝') ||
-    name.includes('건강')
-  ) {
-
-    emojis = [
-      '⚽',
-      '🏋️‍♂️',
-      '🏃‍♀️',
-      '🥊',
-      '🧘‍♀️'
-    ];
-
-  }
-
-
-  else if (
-    name.includes('쇼핑') ||
-    name.includes('위시') ||
-    name.includes('구매') ||
-    name.includes('사고')
-  ) {
-
-    emojis = [
-      '🛍️',
-      '🛒',
-      '💳',
-      '🎁',
-      '👗'
-    ];
-
-  }
-
-
-  else if (
-    name.includes('영화') ||
-    name.includes('드라마') ||
-    name.includes('게임') ||
-    name.includes('아이디어')
-  ) {
-
-    emojis = [
-      '💡',
-      '🎬',
-      '🍿',
-      '🎮',
-      '🎧'
-    ];
-
-  }
-
-
-  else if (
-    name.includes('알바') ||
-    name.includes('업무') ||
-    name.includes('직장') ||
-    name.includes('일정')
-  ) {
-
-    emojis = [
-      '📅',
-      '💼',
-      '⏰',
-      '🍔',
-      '💰'
-    ];
-
-  }
-
-
-  if (
-    !emojis.includes(
-      selectedEmoji
-    )
-  ) {
-
-    emojis.unshift(
-      selectedEmoji
-    );
-
-  }
-
-
-  emojis.forEach(
-    emo => {
-
-      const btn =
-        document.createElement(
-          'button'
-        );
-
-
-      btn.type =
-        'button';
-
-
-      btn.className =
-        'emoji-btn' +
-        (
-          selectedEmoji === emo
-            ? ' selected'
-            : ''
-        );
-
-
-      btn.textContent =
-        emo;
-
-
-      btn.onclick =
-        () => {
-
-          selectedEmoji =
-            emo;
-
+      if (!emojis.includes(selectedEmoji)) {
+        emojis.unshift(selectedEmoji);
+      }
+
+      emojis.forEach(emo => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'emoji-btn' + (selectedEmoji === emo ? ' selected' : '');
+        btn.textContent = emo;
+        btn.onclick = () => {
+          selectedEmoji = emo;
           updateEmojiRecommendations();
-
         };
-
-
-      recBox.appendChild(
-        btn
-      );
-
-    }
-  );
-
-}
-
-
-/* =====================================================
-   카테고리 저장
-===================================================== */
-
-function submitCategoryModal() {
-
-  const name =
-    document.getElementById(
-      'newCatNameInput'
-    ).value.trim();
-
-
-  if (!name) {
-
-    alert(
-      '카테고리 이름을 입력해주세요.'
-    );
-
-    return;
-
-  }
-
-
-  if (
-    editingCategoryIndex !== null
-  ) {
-
-    const oldCat =
-      categories[
-        editingCategoryIndex
-      ];
-
-
-    const oldFullName =
-      `${oldCat.icon} ${oldCat.name}`;
-
-
-    const newFullName =
-      `${selectedEmoji} ${name}`;
-
-
-    savedMemos.forEach(
-      memo => {
-
-        if (
-          memo.category ===
-          oldFullName
-        ) {
-
-          memo.category =
-            newFullName;
-
-        }
-
-      }
-    );
-
-
-    categories[
-      editingCategoryIndex
-    ] = {
-
-      name: name,
-
-      icon: selectedEmoji
-
-    };
-
-
-    localStorage.setItem(
-      'notepound_memos',
-      JSON.stringify(savedMemos)
-    );
-
-
-    if (
-      activeCategoryDetail ===
-      oldFullName
-    ) {
-
-      openCategoryDetail(
-        newFullName
-      );
-
+        recBox.appendChild(btn);
+      });
     }
 
-  }
-
-
-  else {
-
-    categories.push({
-
-      name: name,
-
-      icon: selectedEmoji
-
-    });
-
-  }
-
-
-  localStorage.setItem(
-    'notepound_categories',
-    JSON.stringify(categories)
-  );
-
-
-  const wasEditing =
-    editingCategoryIndex !== null;
-
-
-  closeCatModal();
-
-
-  renderCategoryPage();
-
-  renderWritePage();
-
-
-  if (
-    memoInput.value.trim() &&
-    !wasEditing
-  ) {
-
-    currentSelectedCategory =
-      `${selectedEmoji} ${name}`;
-
-
-    isUserManuallySelected =
-      true;
-
-
-    renderLiveCategoryChips();
-
-  }
-
-}
-
-
-/* =====================================================
-   메모 입력
-===================================================== */
-
-memoInput.addEventListener(
-  'input',
-  function () {
-
-    const text =
-      memoInput.value.trim();
-
-
-    const headerBox =
-      document.getElementById(
-        'categoryHeaderBox'
-      );
-
-
-    const container =
-      document.getElementById(
-        'categoryChips'
-      );
-
-
-    if (!text) {
-
-      headerBox.style.display =
-        'none';
-
-
-      container.innerHTML =
-        '';
-
-
-      currentSelectedCategory =
-        '';
-
-
-      isUserManuallySelected =
-        false;
-
-
-      return;
-
-    }
-
-
-    headerBox.style.display =
-      'flex';
-
-
-    let dynamicNewCat =
-      null;
-
-
-    if (
-      !isUserManuallySelected
-    ) {
-
-      if (
-        text.includes('과제') ||
-        text.includes('시험') ||
-        text.includes('약속') ||
-        text.includes('오늘')
-      ) {
-
-        currentSelectedCategory =
-          findCategoryFullName(
-            '일정'
-          ) ||
-          findCategoryFullName(
-            '📅'
-          );
-
-      }
-
-
-      else if (
-        text.includes('먹') ||
-        text.includes('음식') ||
-        text.includes('맛집')
-      ) {
-
-        currentSelectedCategory =
-          findCategoryFullName(
-            '음식'
-          ) ||
-          findCategoryFullName(
-            '🍕'
-          );
-
-      }
-
-
-      else if (
-        text.includes('사고') ||
-        text.includes('살까') ||
-        text.includes('위시')
-      ) {
-
-        currentSelectedCategory =
-          findCategoryFullName(
-            '위시'
-          ) ||
-          findCategoryFullName(
-            '🛍️'
-          );
-
-      }
-
-
-      else if (
-        text.includes('생각') ||
-        text.includes('아이디어')
-      ) {
-
-        currentSelectedCategory =
-          findCategoryFullName(
-            '아이디어'
-          ) ||
-          findCategoryFullName(
-            '💡'
-          );
-
-      }
-
-
-      else {
-
-        const newKey =
-          extractNewCategoryKeyword(
-            text
-          );
-
-
-        if (newKey) {
-
-          const exists =
-            categories.some(
-              c =>
-                c.name ===
-                newKey.name
-            );
-
-
-          if (!exists) {
-
-            dynamicNewCat =
-              `${newKey.icon} ${newKey.name}`;
-
-          }
-
-        }
-
-      }
-
-    }
-
-
-    renderLiveCategoryChips(
-      dynamicNewCat
-    );
-
-  }
-);
-
-
-/* =====================================================
-   새로운 카테고리 후보
-===================================================== */
-
-function extractNewCategoryKeyword(text) {
-
-  if (
-    text.includes('수원대') ||
-    text.includes('학교')
-  ) {
-
-    return {
-      name: '학교',
-      icon: '🎓'
-    };
-
-  }
-
-
-  if (
-    text.includes('운동') ||
-    text.includes('헬스')
-  ) {
-
-    return {
-      name: '운동',
-      icon: '⚽'
-    };
-
-  }
-
-
-  if (
-    text.includes('영화') ||
-    text.includes('게임')
-  ) {
-
-    return {
-      name: '문화',
-      icon: '🎬'
-    };
-
-  }
-
-
-  if (
-    text.includes('알바') ||
-    text.includes('시급')
-  ) {
-
-    return {
-      name: '아르바이트',
-      icon: '💼'
-    };
-
-  }
-
-
-  if (
-    text.includes('일기') ||
-    text.includes('오늘 하루')
-  ) {
-
-    return {
-      name: '일기',
-      icon: '📖'
-    };
-
-  }
-
-
-  return null;
-
-}
-
-
-/* =====================================================
-   카테고리 이름 찾기
-===================================================== */
-
-function findCategoryFullName(
-  keyword
-) {
-
-  const found =
-    categories.find(
-      c =>
-        c.name.includes(keyword) ||
-        c.icon.includes(keyword)
-    );
-
-
-  return found
-    ? `${found.icon} ${found.name}`
-    : null;
-
-}
-
-
-/* =====================================================
-   카테고리 칩
-===================================================== */
-
-function renderLiveCategoryChips(
-  dynamicNewCat = null
-) {
-
-  const container =
-    document.getElementById(
-      'categoryChips'
-    );
-
-
-  container.innerHTML =
-    '';
-
-
-  categories.forEach(
-    cat => {
-
-      const fullName =
-        `${cat.icon} ${cat.name}`;
-
-
-      const chip =
-        document.createElement(
-          'span'
-        );
-
-
-      chip.className =
-        'cat-chip';
-
-
-      if (
-        currentSelectedCategory ===
-        fullName
-      ) {
-
-        chip.classList.add(
-          'active'
-        );
-
-      }
-
-
-      chip.textContent =
-        fullName;
-
-
-      chip.onclick =
-        () => {
-
-          currentSelectedCategory =
-            fullName;
-
-
-          isUserManuallySelected =
-            true;
-
-
-          renderLiveCategoryChips();
-
-
-          memoInput.focus();
-
-        };
-
-
-      container.appendChild(
-        chip
-      );
-
-    }
-  );
-
-
-  if (dynamicNewCat) {
-
-    const newChip =
-      document.createElement(
-        'span'
-      );
-
-
-    newChip.className =
-      'cat-chip new-rec';
-
-
-    newChip.textContent =
-      `✨ ${dynamicNewCat} (새로 추가)`;
-
-
-    newChip.onclick =
-      () => {
-
-        const parts =
-          dynamicNewCat.split(' ');
-
-
-        const icon =
-          parts[0];
-
-
-        const name =
-          parts.slice(1).join(' ');
-
-
-        categories.push({
-
-          name: name,
-
-          icon: icon
-
-        });
-
-
-        localStorage.setItem(
-          'notepound_categories',
-          JSON.stringify(categories)
-        );
-
-
-        currentSelectedCategory =
-          dynamicNewCat;
-
-
-        isUserManuallySelected =
-          true;
-
-
-        renderLiveCategoryChips();
-
-
-        memoInput.focus();
-
-      };
-
-
-    container.appendChild(
-      newChip
-    );
-
-  }
-
-}
-
-
-/* =====================================================
-   시간 표시
-===================================================== */
-
-function formatTimestamp(
-  timestamp
-) {
-
-  const d =
-    new Date(timestamp);
-
-
-  const yy =
-    String(
-      d.getFullYear()
-    ).slice(-2);
-
-
-  const mm =
-    String(
-      d.getMonth() + 1
-    ).padStart(2, '0');
-
-
-  const dd =
-    String(
-      d.getDate()
-    ).padStart(2, '0');
-
-
-  const hh =
-    String(
-      d.getHours()
-    ).padStart(2, '0');
-
-
-  const min =
-    String(
-      d.getMinutes()
-    ).padStart(2, '0');
-
-
-  return `
-    <span class="time-part">
-      ${hh}:${min}
-    </span>
-    /
-    ${yy}.${mm}.${dd}.
-  `;
-
-}
-
-
-function formatFullDate(
-  date
-) {
-
-  const yy =
-    date.getFullYear();
-
-
-  const mm =
-    String(
-      date.getMonth() + 1
-    ).padStart(2, '0');
-
-
-  const dd =
-    String(
-      date.getDate()
-    ).padStart(2, '0');
-
-
-  const hh =
-    String(
-      date.getHours()
-    ).padStart(2, '0');
-
-
-  const min =
-    String(
-      date.getMinutes()
-    ).padStart(2, '0');
-
-
-  return `${yy}.${mm}.${dd}. ${hh}:${min}`;
-
-}
-
-
-/* =====================================================
-   HTML 안전 처리
-===================================================== */
-
-function escapeHtml(text) {
-
-  return String(text)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-
-}
-
-
-/* =====================================================
-   작성 페이지
-===================================================== */
-
-function renderWritePage() {
-
-  const recentList =
-    document.getElementById(
-      'recentMemoList'
-    );
-
-
-  recentList.innerHTML =
-    '';
-
-
-  [...savedMemos]
-    .reverse()
-    .slice(0, 4)
-    .forEach(
-      memo => {
-
-        const realIndex =
-          savedMemos.findIndex(
-            m =>
-              m.id ===
-              memo.id
-          );
-
-
-        const item =
-          document.createElement(
-            'div'
-          );
-
-
-        item.className =
-          'recent-card';
-
-
-        item.innerHTML = `
-
-          <span style="flex:1;">
-            ${escapeHtml(memo.text)}
-          </span>
-
-          <span style="
-            font-size:11px;
-            color:#666;
-          ">
-            ${escapeHtml(
-              memo.category || '#미분류'
-            )}
-          </span>
-
-        `;
-
-
-        item.onclick =
-          () =>
-            openMemoModal(
-              realIndex
-            );
-
-
-        recentList.appendChild(
-          item
-        );
-
-      }
-    );
-
-
-  const unclassifiedList =
-    document.getElementById(
-      'unclassifiedMemoList'
-    );
-
-
-  unclassifiedList.innerHTML =
-    '';
-
-
-  const unclassifiedMemos =
-    savedMemos.filter(
-      m =>
-        m.category === '#미분류' ||
-        !m.category
-    );
-
-
-  unclassifiedMemos.forEach(
-    memo => {
-
-      const realIndex =
-        savedMemos.findIndex(
-          m =>
-            m.id === memo.id
-        );
-
-
-      const item =
-        document.createElement(
-          'div'
-        );
-
-
-      item.className =
-        'memo-item';
-
-
-      item.innerHTML = `
-
-        <span
-          class="memo-text-clickable"
-          onclick="openMemoModal(${realIndex})"
-        >
-          ${escapeHtml(memo.text)}
-        </span>
-
-        <div>
-
-          <button
-            class="classify-btn"
-            onclick="assignCategoryDirect(${realIndex})"
-          >
-            📂 분류
-          </button>
-
-          <button
-            class="delete-btn"
-            onclick="deleteMemo(${realIndex})"
-          >
-            ✕
-          </button>
-
-        </div>
-
-      `;
-
-
-      unclassifiedList.prepend(
-        item
-      );
-
-    }
-  );
-
-
-  document.getElementById(
-    'unclassifiedCount'
-  ).textContent =
-    unclassifiedMemos.length;
-
-}
-
-
-/* =====================================================
-   직접 카테고리 분류
-===================================================== */
-
-window.assignCategoryDirect =
-  function(index) {
-
-    const optionsStr =
-      categories
-        .map(
-          (c, i) =>
-            `${i + 1}. ${c.icon} ${c.name}`
-        )
-        .join('\n');
-
-
-    const choice =
-      prompt(
-        `이 메모의 카테고리를 선택하세요:\n\n${optionsStr}`
-      );
-
-
-    const choiceNum =
-      parseInt(choice);
-
-
-    if (
-      choiceNum &&
-      choiceNum > 0 &&
-      choiceNum <= categories.length
-    ) {
-
-      const selectedCat =
-        categories[
-          choiceNum - 1
-        ];
-
-
-      savedMemos[index].category =
-        `${selectedCat.icon} ${selectedCat.name}`;
-
-
-      localStorage.setItem(
-        'notepound_memos',
-        JSON.stringify(savedMemos)
-      );
-
-
-      renderWritePage();
-
-      renderCategoryPage();
-
-
-      if (activeCategoryDetail) {
-        renderDetailMemoList();
-      }
-
-    }
-
-  };
-
-
-/* =====================================================
-   카테고리 페이지
-===================================================== */
-
-function renderCategoryPage() {
-
-  const grid =
-    document.getElementById(
-      'categoryGrid'
-    );
-
-
-  grid.innerHTML =
-    '';
-
-
-  categories.forEach(
-    (cat, idx) => {
-
-      const fullName =
-        `${cat.icon} ${cat.name}`;
-
-
-      const catMemos =
-        savedMemos.filter(
-          m =>
-            m.category ===
-            fullName
-        );
-
-
-      const card =
-        document.createElement(
-          'div'
-        );
-
-
-      card.className =
-        'category-folder-card';
-
-
-      card.innerHTML = `
-
-        <div
-          style="cursor:pointer;flex:1;"
-        >
-
-          <span style="
-            font-weight:bold;
-            font-size:14px;
-          ">
-            ${escapeHtml(fullName)}
-          </span>
-
-          <span style="
-            font-size:12px;
-            color:#888;
-            margin-left:6px;
-          ">
-            (${catMemos.length})
-          </span>
-
-        </div>
-
-
-        <div>
-
-          <span
-            class="edit-icon-btn"
-          >
-            ✏️
-          </span>
-
-          <span style="
-            font-size:12px;
-            color:#1a73e8;
-            font-weight:bold;
-            cursor:pointer;
-            margin-left:8px;
-          ">
-            이동 ›
-          </span>
-
-        </div>
-
-      `;
-
-
-      card
-        .querySelector(
-          'div:first-child'
-        )
-        .onclick =
-          () =>
-            openCategoryDetail(
-              fullName
-            );
-
-
-      card
-        .querySelector(
-          '.edit-icon-btn'
-        )
-        .onclick =
-          () =>
-            editCategoryNamePrompt(
-              idx
-            );
-
-
-      card
-        .querySelector(
-          'div:last-child span:last-child'
-        )
-        .onclick =
-          () =>
-            openCategoryDetail(
-              fullName
-            );
-
-
-      grid.appendChild(
-        card
-      );
-
-    }
-  );
-
-}
-
-
-/* =====================================================
-   카테고리 상세
-===================================================== */
-
-function openCategoryDetail(
-  categoryFullName
-) {
-
-  activeCategoryDetail =
-    categoryFullName;
-
-
-  document.getElementById(
-    'detailCategoryTitle'
-  ).textContent =
-    `📂 ${categoryFullName} 보관함`;
-
-
-  const catIdx =
-    categories.findIndex(
-      c =>
-        `${c.icon} ${c.name}` ===
-        categoryFullName
-    );
-
-
-  document.getElementById(
-    'editDetailCatBtn'
-  ).onclick =
-    () =>
-      editCategoryNamePrompt(
-        catIdx
-      );
-
-
-  const btn =
-    document.getElementById(
-      'addMemoInDetailBtn'
-    );
-
-
-  btn.onclick =
-    () =>
-      addMemoToCategoryPrompt(
-        categoryFullName
-      );
-
-
-  renderDetailMemoList();
-
-
-  switchTab(
-    'categoryDetail'
-  );
-
-}
-
-
-function renderDetailMemoList() {
-
-  const list =
-    document.getElementById(
-      'detailMemoList'
-    );
-
-
-  list.innerHTML =
-    '';
-
-
-  const catMemos =
-    savedMemos.filter(
-      m =>
-        m.category ===
-        activeCategoryDetail
-    );
-
-
-  catMemos.forEach(
-    memo => {
-
-      const realIndex =
-        savedMemos.findIndex(
-          m =>
-            m.id ===
-            memo.id
-        );
-
-
-      const tagText =
-        memo.tag
-          ? memo.tag
-          : '+ 태그 추가';
-
-
-      const item =
-        document.createElement(
-          'div'
-        );
-
-
-      item.className =
-        'memo-item';
-
-
-      item.innerHTML = `
-
-        <div style="flex:1;">
-
-          <span
-            class="memo-text-clickable"
-          >
-            ${escapeHtml(memo.text)}
-          </span>
-
-          <span
-            class="tag-badge"
-          >
-            ${escapeHtml(tagText)}
-          </span>
-
-          <div
-            class="thought-section"
-            style="margin-top:8px;padding:7px;"
-          >
-
-            <span style="
-              font-size:10px;
-              color:#1a73e8;
-              cursor:pointer;
-            ">
-              🧠 이 생각과 연결된 기록 보기
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div>
-
-          <button
-            class="classify-btn"
-          >
-            📂 변경
-          </button>
-
-          <button
-            class="delete-btn"
-          >
-            ✕
-          </button>
-
-        </div>
-
-      `;
-
-
-      item
-        .querySelector(
-          '.memo-text-clickable'
-        )
-        .onclick =
-          () =>
-            openMemoModal(
-              realIndex
-            );
-
-
-      item
-        .querySelector(
-          '.tag-badge'
-        )
-        .onclick =
-          () =>
-            smartTagMultiSelectPrompt(
-              realIndex
-            );
-
-
-      item
-        .querySelector(
-          '.thought-section'
-        )
-        .onclick =
-          () =>
-            openThoughtPage(
-              memo.id
-            );
-
-
-      item
-        .querySelector(
-          '.classify-btn'
-        )
-        .onclick =
-          () =>
-            assignCategoryDirect(
-              realIndex
-            );
-
-
-      item
-        .querySelector(
-          '.delete-btn'
-        )
-        .onclick =
-          () =>
-            deleteMemo(
-              realIndex
-            );
-
-
-      list.appendChild(
-        item
-      );
-
-    }
-  );
-
-
-  if (
-    catMemos.length === 0
-  ) {
-
-    list.innerHTML = `
-      <div class="empty-state">
-        저장된 메모가 없습니다.
-      </div>
-    `;
-
-  }
-
-}
-
-
-/* =====================================================
-   태그
-===================================================== */
-
-window.smartTagMultiSelectPrompt =
-  function(index) {
-
-    const memo =
-      savedMemos[index];
-
-
-    let recs = [
-      '#중요',
-      '#일정'
-    ];
-
-
-    if (
-      memo.text.includes('과제') ||
-      memo.text.includes('공부') ||
-      memo.text.includes('시험')
-    ) {
-
-      recs = [
-        '#공부',
-        '#시험',
-        '#과제',
-        '#중요'
-      ];
-
-    }
-
-
-    else if (
-      memo.text.includes('먹') ||
-      memo.text.includes('음식') ||
-      memo.text.includes('카페')
-    ) {
-
-      recs = [
-        '#맛집',
-        '#먹고싶다',
-        '#위시리스트'
-      ];
-
-    }
-
-
-    else if (
-      memo.text.includes('약속') ||
-      memo.text.includes('오늘') ||
-      memo.text.includes('내일')
-    ) {
-
-      recs = [
-        '#일정',
-        '#약속',
-        '#주말'
-      ];
-
-    }
-
-
-    const promptMsg =
-      `추천 태그: ${recs.join(', ')}\n\n` +
-      `원하는 태그를 직접 적거나 번호를 적어주세요:\n` +
-      recs
-        .map(
-          (r, i) =>
-            `${i + 1}. ${r}`
-        )
-        .join('\n');
-
-
-    const input =
-      prompt(
-        promptMsg,
-        memo.tag || recs[0]
-      );
-
-
-    if (input !== null) {
-
-      let finalTag =
-        input.trim();
-
-
-      const num =
-        parseInt(finalTag);
-
-
-      if (
-        num &&
-        num > 0 &&
-        num <= recs.length
-      ) {
-
-        finalTag =
-          recs[num - 1];
-
-      }
-
-
-      else if (
-        finalTag &&
-        !finalTag.startsWith('#')
-      ) {
-
-        finalTag =
-          '#' + finalTag;
-
-      }
-
-
-      savedMemos[index].tag =
-        finalTag;
-
-
-      localStorage.setItem(
-        'notepound_memos',
-        JSON.stringify(savedMemos)
-      );
-
-
-      if (activeCategoryDetail) {
-        renderDetailMemoList();
-      }
-
-    }
-
-  };
-
-
-/* =====================================================
-   카테고리 목록으로
-===================================================== */
-
-function backToCategoryList() {
-
-  activeCategoryDetail =
-    '';
-
-
-  switchTab(
-    'category'
-  );
-
-}
-
-
-/* =====================================================
-   카테고리에 메모 추가
-===================================================== */
-
-function addMemoToCategoryPrompt(
-  categoryFullName
-) {
-
-  const text =
-    prompt(
-      `[${categoryFullName}] 카테고리에 추가할 메모를 입력하세요:`
-    );
-
-
-  if (
-    text &&
-    text.trim()
-  ) {
-
-    const newMemo = {
-
-      id: Date.now(),
-
-      text: text.trim(),
-
-      category:
-        categoryFullName,
-
-      tag: ''
-
-    };
-
-
-    savedMemos.push(
-      newMemo
-    );
-
-
-    localStorage.setItem(
-      'notepound_memos',
-      JSON.stringify(savedMemos)
-    );
-
-
-    renderWritePage();
-
-    renderCategoryPage();
-
-    openCategoryDetail(
-      categoryFullName
-    );
-
-  }
-
-}
-
-
-/* =====================================================
-   정렬
-===================================================== */
-
-function setSortOrder(
-  order
-) {
-
-  currentSortOrder =
-    order;
-
-
-  document.getElementById(
-    'sortNewest'
-  ).classList.toggle(
-    'active',
-    order === 'newest'
-  );
-
-
-  document.getElementById(
-    'sortOldest'
-  ).classList.toggle(
-    'active',
-    order === 'oldest'
-  );
-
-
-  renderAllMemosPage(
-    document.getElementById(
-      'searchInput'
-    ).value
-  );
-
-}
-
-
-/* =====================================================
-   전체 메모
-===================================================== */
-
-function renderAllMemosPage(
-  query = ''
-) {
-
-  const list =
-    document.getElementById(
-      'allMemosList'
-    );
-
-
-  list.innerHTML =
-    '';
-
-
-  let filtered =
-    [...savedMemos];
-
-
-  if (
-    currentSortOrder ===
-    'newest'
-  ) {
-
-    filtered.reverse();
-
-  }
-
-
-  if (
-    query.trim()
-  ) {
-
-    const cleanQuery =
-      query
-        .trim()
-        .replace(
-          /하는|하고|해|좋아/g,
-          ''
-        );
-
-
-    filtered =
-      filtered.filter(
-        m =>
-
-          m.text.includes(
-            query.trim()
-          )
-
-          ||
-
-          (
-            cleanQuery.length >= 2 &&
-            m.text.includes(
-              cleanQuery
-            )
-          )
-
-      );
-
-  }
-
-
-  if (
-    filtered.length === 0
-  ) {
-
-    list.innerHTML = `
-      <div class="empty-state">
-        메모가 없습니다.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  filtered.forEach(
-    memo => {
-
-      const realIndex =
-        savedMemos.findIndex(
-          m =>
-            m.id ===
-            memo.id
-        );
-
-
-      const item =
-        document.createElement(
-          'div'
-        );
-
-
-      item.className =
-        'memo-item';
-
-
-      item.innerHTML = `
-
-        <div style="flex:1;">
-
-          <div
-            class="memo-text-clickable"
-          >
-            ${escapeHtml(memo.text)}
-          </div>
-
-
-          <div style="
-            font-size:11px;
-            color:#888;
-            margin-top:4px;
-          ">
-
-            ${escapeHtml(
-              memo.category ||
-              '#미분류'
-            )}
-
-            ${memo.tag
-              ? '| ' +
-                escapeHtml(
-                  memo.tag
-                )
-              : ''
-            }
-
-          </div>
-
-
-          <div
-            class="thought-section"
-            style="
-              margin-top:7px;
-              padding:6px 8px;
-            "
-          >
-
-            <span style="
-              font-size:10px;
-              color:#1a73e8;
-            ">
-              🧠 관련 생각 보기
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div
-          class="timestamp-box"
-        >
-          ${formatTimestamp(
-            memo.id
-          )}
-        </div>
-
-      `;
-
-
-      item
-        .querySelector(
-          '.memo-text-clickable'
-        )
-        .onclick =
-          () =>
-            openMemoModal(
-              realIndex
-            );
-
-
-      item
-        .querySelector(
-          '.thought-section'
-        )
-        .onclick =
-          () =>
-            openThoughtPage(
-              memo.id
-            );
-
-
-      list.appendChild(
-        item
-      );
-
-    }
-  );
-
-}
-
-
-/* =====================================================
-   검색 기록
-===================================================== */
-
-function showHistoryPopup() {
-
-  const popup =
-    document.getElementById(
-      'historyPopup'
-    );
-
-
-  if (
-    searchHistory.length === 0
-  ) {
-
-    return;
-
-  }
-
-
-  popup.innerHTML =
-    '';
-
-
-  searchHistory.forEach(
-    (item, idx) => {
-
-      const row =
-        document.createElement(
-          'div'
-        );
-
-
-      row.className =
-        'history-item';
-
-
-      row.innerHTML = `
-
-        <span
-          style="cursor:pointer;flex:1;"
-        >
-          🕒 ${escapeHtml(item)}
-        </span>
-
-        <span
-          style="
-            color:#aaa;
-            cursor:pointer;
-            padding:0 4px;
-          "
-        >
-          ✕
-        </span>
-
-      `;
-
-
-      row
-        .querySelector(
-          'span:first-child'
-        )
-        .onclick =
-          () =>
-            useSearchHistory(
-              item
-            );
-
-
-      row
-        .querySelector(
-          'span:last-child'
-        )
-        .onclick =
-          event =>
-            deleteSearchHistory(
-              event,
-              idx
-            );
-
-
-      popup.appendChild(
-        row
-      );
-
-    }
-  );
-
-
-  popup.style.display =
-    'block';
-
-}
-
-
-function hideHistoryPopup() {
-
-  setTimeout(
-    () => {
-
-      document.getElementById(
-        'historyPopup'
-      ).style.display =
-        'none';
-
-    },
-    200
-  );
-
-}
-
-
-function handleSearch() {
-
-  const query =
-    document.getElementById(
-      'searchInput'
-    ).value;
-
-
-  renderAllMemosPage(
-    query
-  );
-
-}
-
-
-document.getElementById(
-  'searchInput'
-).addEventListener(
-  'keypress',
-  function(e) {
-
-    if (
-      e.key === 'Enter'
-    ) {
-
-      const q =
-        this.value.trim();
-
-
-      if (
-        q &&
-        !searchHistory.includes(q)
-      ) {
-
-        searchHistory.unshift(
-          q
-        );
-
-
-        if (
-          searchHistory.length > 5
-        ) {
-
-          searchHistory.pop();
-
-        }
-
-
-        localStorage.setItem(
-          'notepound_search_history',
-          JSON.stringify(
-            searchHistory
-          )
-        );
-
-      }
-
-
-      document.getElementById(
-        'historyPopup'
-      ).style.display =
-        'none';
-
-    }
-
-  }
-);
-
-
-function useSearchHistory(
-  text
-) {
-
-  document.getElementById(
-    'searchInput'
-  ).value =
-    text;
-
-
-  document.getElementById(
-    'historyPopup'
-  ).style.display =
-    'none';
-
-
-  renderAllMemosPage(
-    text
-  );
-
-}
-
-
-function deleteSearchHistory(
-  e,
-  idx
-) {
-
-  e.stopPropagation();
-
-
-  searchHistory.splice(
-    idx,
-    1
-  );
-
-
-  localStorage.setItem(
-    'notepound_search_history',
-    JSON.stringify(
-      searchHistory
-    )
-  );
-
-
-  showHistoryPopup();
-
-}
-
-
-/* =====================================================
-   메모 삭제
-===================================================== */
-
-window.deleteMemo =
-  function(index) {
-
-    savedMemos.splice(
-      index,
-      1
-    );
-
-
-    localStorage.setItem(
-      'notepound_memos',
-      JSON.stringify(
-        savedMemos
-      )
-    );
-
-
-    renderWritePage();
-
-    renderCategoryPage();
-
-
-    if (activeCategoryDetail) {
-      renderDetailMemoList();
-    }
-
-
-    renderAllMemosPage(
-      document.getElementById(
-        'searchInput'
-      ).value
-    );
-
-  };
-
-
-/* =====================================================
-   메모 저장
-===================================================== */
-
-memoInput.addEventListener(
-  'keypress',
-  function(e) {
-
-    if (
-      e.key === 'Enter' &&
-      !e.shiftKey
-    ) {
-
-      e.preventDefault();
-
-
-      const text =
-        this.value.trim();
-
-
-      if (!text) {
+    function submitCategoryModal() {
+      const name = document.getElementById('newCatNameInput').value.trim();
+      if (!name) {
+        alert('카테고리 이름을 입력해주세요.');
         return;
       }
 
+      if (editingCategoryIndex !== null) {
+        const oldCat = categories[editingCategoryIndex];
+        const oldFullName = `${oldCat.icon} ${oldCat.name}`;
+        const newFullName = `${selectedEmoji} ${name}`;
 
-      const newMemo = {
+        savedMemos.forEach(m => {
+          if (m.category === oldFullName) m.category = newFullName;
+        });
 
-        id: Date.now(),
+        categories[editingCategoryIndex] = { name: name, icon: selectedEmoji };
+        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+        
+        if (activeCategoryDetail === oldFullName) {
+          openCategoryDetail(newFullName);
+        }
+      } else {
+        categories.push({ name: name, icon: selectedEmoji });
+      }
 
-        text: text,
-
-        category:
-          currentSelectedCategory ||
-          '#미분류',
-
-        tag: ''
-
-      };
-
-
-      savedMemos.push(
-        newMemo
-      );
-
-
-      localStorage.setItem(
-        'notepound_memos',
-        JSON.stringify(
-          savedMemos
-        )
-      );
-
-
-      this.value =
-        '';
-
-
-      currentSelectedCategory =
-        '';
-
-
-      isUserManuallySelected =
-        false;
-
-
-      document.getElementById(
-        'categoryHeaderBox'
-      ).style.display =
-        'none';
-
-
-      document.getElementById(
-        'categoryChips'
-      ).innerHTML =
-        '';
-
-
+      localStorage.setItem('notepound_categories', JSON.stringify(categories));
+      
+      closeCatModal();
+      renderCategoryPage();
       renderWritePage();
 
+      if (memoInput.value.trim() && editingCategoryIndex === null) {
+        currentSelectedCategory = `${selectedEmoji} ${name}`;
+        isUserManuallySelected = true;
+        renderLiveCategoryChips();
+      }
     }
 
-  );
+    memoInput.addEventListener('input', function() {
+      const text = memoInput.value.trim();
+      const headerBox = document.getElementById('categoryHeaderBox');
+      const container = document.getElementById('categoryChips');
 
+      if (!text) {
+        headerBox.style.display = 'none';
+        container.innerHTML = '';
+        currentSelectedCategory = '';
+        isUserManuallySelected = false;
+        return;
+      }
 
-/* =====================================================
-   초기 실행
-===================================================== */
+      headerBox.style.display = 'flex';
 
-renderWritePage();
+      let dynamicNewCat = null;
+      if (!isUserManuallySelected) {
+        if (text.includes('과제') || text.includes('시험') || text.includes('약속') || text.includes('오늘')) {
+          currentSelectedCategory = findCategoryFullName('일정') || findCategoryFullName('📅');
+        } else if (text.includes('먹') || text.includes('음식') || text.includes('맛집')) {
+          currentSelectedCategory = findCategoryFullName('음식') || findCategoryFullName('🍕');
+        } else if (text.includes('사고') || text.includes('살까') || text.includes('위시')) {
+          currentSelectedCategory = findCategoryFullName('위시') || findCategoryFullName('🛍️');
+        } else if (text.includes('생각') || text.includes('아이디어')) {
+          currentSelectedCategory = findCategoryFullName('아이디어') || findCategoryFullName('💡');
+        } else {
+          const newKey = extractNewCategoryKeyword(text);
+          if (newKey) {
+            const exists = categories.some(c => c.name === newKey.name);
+            if (!exists) {
+              dynamicNewCat = `${newKey.icon} ${newKey.name}`;
+            }
+          }
+        }
+      }
 
-</script>
+      renderLiveCategoryChips(dynamicNewCat);
+    });
+
+    function extractNewCategoryKeyword(text) {
+      if (text.includes('수원대') || text.includes('학교')) return { name: '학교', icon: '🎓' };
+      if (text.includes('운동') || text.includes('헬스')) return { name: '운동', icon: '⚽' };
+      if (text.includes('영화') || text.includes('게임')) return { name: '문화', icon: '🎬' };
+      if (text.includes('알바') || text.includes('시급')) return { name: '아르바이트', icon: '💼' };
+      if (text.includes('일기') || text.includes('오늘 하루')) return { name: '일기', icon: '📖' };
+      return null;
+    }
+
+    function findCategoryFullName(keyword) {
+      const found = categories.find(c => c.name.includes(keyword) || c.icon.includes(keyword));
+      return found ? `${found.icon} ${found.name}` : null;
+    }
+
+    function renderLiveCategoryChips(dynamicNewCat = null) {
+      const container = document.getElementById('categoryChips');
+      container.innerHTML = '';
+
+      categories.forEach(cat => {
+        const fullName = `${cat.icon} ${cat.name}`;
+        const chip = document.createElement('span');
+        chip.className = 'cat-chip';
+        if (currentSelectedCategory === fullName) chip.classList.add('active');
+        chip.textContent = fullName;
+        
+        chip.onclick = () => {
+          currentSelectedCategory = fullName;
+          isUserManuallySelected = true;
+          renderLiveCategoryChips();
+          memoInput.focus();
+        };
+        container.appendChild(chip);
+      });
+
+      if (dynamicNewCat) {
+        const newChip = document.createElement('span');
+        newChip.className = 'cat-chip new-rec';
+        newChip.textContent = `✨ ${dynamicNewCat} (새로 추가)`;
+        newChip.onclick = () => {
+          const parts = dynamicNewCat.split(' ');
+          const icon = parts[0];
+          const name = parts.slice(1).join(' ');
+          
+          categories.push({ name: name, icon: icon });
+          localStorage.setItem('notepound_categories', JSON.stringify(categories));
+          
+          currentSelectedCategory = dynamicNewCat;
+          isUserManuallySelected = true;
+          renderLiveCategoryChips();
+          memoInput.focus();
+        };
+        container.appendChild(newChip);
+      }
+    }
+
+    function formatTimestamp(timestamp) {
+      const d = new Date(timestamp);
+      const yy = String(d.getFullYear()).slice(-2);
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const hh = String(d.getHours()).padStart(2, '0');
+      const min = String(d.getMinutes()).padStart(2, '0');
+
+      return `<span class="time-part">${hh}:${min}</span> / ${yy}.${mm}.${dd}.`;
+    }
+
+    function renderWritePage() {
+      const recentList = document.getElementById('recentMemoList');
+      recentList.innerHTML = '';
+      [...savedMemos].reverse().slice(0, 4).forEach(memo => {
+        const realIndex = savedMemos.findIndex(m => m.id === memo.id);
+        const item = document.createElement('div');
+        item.className = 'recent-card';
+        item.onclick = () => openMemoModal(realIndex);
+        item.innerHTML = `
+          <span>${memo.text}</span>
+          <span style="font-size:11px; color:#666;">${memo.category}</span>
+        `;
+        recentList.appendChild(item);
+      });
+
+      const unclassifiedList = document.getElementById('unclassifiedMemoList');
+      unclassifiedList.innerHTML = '';
+      const unclassifiedMemos = savedMemos.filter(m => m.category === '#미분류' || !m.category);
+
+      unclassifiedMemos.forEach(memo => {
+        const realIndex = savedMemos.findIndex(m => m.id === memo.id);
+        const item = document.createElement('div');
+        item.className = 'memo-item';
+        item.innerHTML = `
+          <span class="memo-text-clickable" onclick="openMemoModal(${realIndex})">${memo.text}</span>
+          <div>
+            <button class="classify-btn" onclick="assignCategoryDirect(${realIndex})">📂 분류</button>
+            <button class="delete-btn" onclick="deleteMemo(${realIndex})">✕</button>
+          </div>
+        `;
+        unclassifiedList.prepend(item);
+      });
+
+      document.getElementById('unclassifiedCount').textContent = unclassifiedMemos.length;
+    }
+
+    function openMemoModal(index) {
+      editingMemoIndex = index;
+      document.getElementById('modalTextarea').value = savedMemos[index].text;
+      document.getElementById('memoModalOverlay').style.display = 'flex';
+    }
+
+    function closeMemoModal() {
+      document.getElementById('memoModalOverlay').style.display = 'none';
+      editingMemoIndex = null;
+    }
+
+    function saveMemoModal() {
+      if (editingMemoIndex !== null) {
+        const updatedText = document.getElementById('modalTextarea').value.trim();
+        if (updatedText) {
+          savedMemos[editingMemoIndex].text = updatedText;
+          localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+          renderWritePage();
+          renderCategoryPage();
+          if (activeCategoryDetail) renderDetailMemoList();
+          renderAllMemosPage(document.getElementById('searchInput').value);
+        }
+      }
+      closeMemoModal();
+    }
+
+    window.assignCategoryDirect = function(index) {
+      let optionsStr = categories.map((c, i) => `${i + 1}. ${c.icon} ${c.name}`).join('\n');
+      const choice = prompt(`이 메모의 카테고리를 선택하세요:\n\n${optionsStr}`);
+      const choiceNum = parseInt(choice);
+
+      if (choiceNum && choiceNum > 0 && choiceNum <= categories.length) {
+        const selectedCat = categories[choiceNum - 1];
+        savedMemos[index].category = `${selectedCat.icon} ${selectedCat.name}`;
+        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+        renderWritePage();
+        renderCategoryPage();
+        if (activeCategoryDetail) renderDetailMemoList();
+      }
+    };
+
+    function renderCategoryPage() {
+      const grid = document.getElementById('categoryGrid');
+      grid.innerHTML = '';
+
+      categories.forEach((cat, idx) => {
+        const fullName = `${cat.icon} ${cat.name}`;
+        const catMemos = savedMemos.filter(m => m.category === fullName);
+
+        const card = document.createElement('div');
+        card.className = 'category-folder-card';
+
+        card.innerHTML = `
+          <div style="cursor:pointer; flex:1;" onclick="openCategoryDetail('${fullName}')">
+            <span style="font-weight:bold; font-size:14px;">${fullName}</span>
+            <span style="font-size:12px; color:#888; margin-left:6px;">(${catMemos.length})</span>
+          </div>
+          <div>
+            <span class="edit-icon-btn" onclick="editCategoryNamePrompt(${idx})">✏️</span>
+            <span style="font-size:12px; color:#1a73e8; font-weight:bold; cursor:pointer; margin-left:8px;" onclick="openCategoryDetail('${fullName}')">이동 ›</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function openCategoryDetail(categoryFullName) {
+      activeCategoryDetail = categoryFullName;
+      document.getElementById('detailCategoryTitle').textContent = `📂 ${categoryFullName} 보관함`;
+      
+      const catIdx = categories.findIndex(c => `${c.icon} ${c.name}` === categoryFullName);
+      document.getElementById('editDetailCatBtn').onclick = () => editCategoryNamePrompt(catIdx);
+
+      const btn = document.getElementById('addMemoInDetailBtn');
+      btn.onclick = () => addMemoToCategoryPrompt(categoryFullName);
+
+      renderDetailMemoList();
+      switchTab('categoryDetail');
+    }
+
+    function renderDetailMemoList() {
+      const list = document.getElementById('detailMemoList');
+      list.innerHTML = '';
+
+      const catMemos = savedMemos.filter(m => m.category === activeCategoryDetail);
+
+      catMemos.forEach(memo => {
+        const realIndex = savedMemos.findIndex(m => m.id === memo.id);
+        const tagText = memo.tag ? memo.tag : '+ 태그 추가';
+        const item = document.createElement('div');
+        item.className = 'memo-item';
+        item.innerHTML = `
+          <div style="flex:1;">
+            <span class="memo-text-clickable" onclick="openMemoModal(${realIndex})">${memo.text}</span>
+            <span class="tag-badge" onclick="smartTagMultiSelectPrompt(${realIndex})">${tagText}</span>
+          </div>
+          <div>
+            <button class="classify-btn" onclick="assignCategoryDirect(${realIndex})">📂 변경</button>
+            <button class="delete-btn" onclick="deleteMemo(${realIndex})">✕</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+
+      if (catMemos.length === 0) {
+        list.innerHTML = '<div style="font-size:13px; color:#aaa; padding:20px 0; text-align:center;">저장된 메모가 없습니다.</div>';
+      }
+    }
+
+    window.smartTagMultiSelectPrompt = function(index) {
+      const memo = savedMemos[index];
+      let recs = ['#중요', '#일정'];
+
+      if (memo.text.includes('과제') || memo.text.includes('공부') || memo.text.includes('시험')) {
+        recs = ['#공부', '#시험', '#과제', '#중요'];
+      } else if (memo.text.includes('먹') || memo.text.includes('음식') || memo.text.includes('카페')) {
+        recs = ['#맛집', '#먹고싶다', '#위시리스트'];
+      } else if (memo.text.includes('약속') || memo.text.includes('오늘') || memo.text.includes('내일')) {
+        recs = ['#일정', '#약속', '#주말'];
+      }
+
+      const promptMsg = `추천 태그: ${recs.join(', ')}\n\n원하는 태그를 직접 적거나 번호를 적어주세요:\n` + recs.map((r, i) => `${i + 1}. ${r}`).join('\n');
+      const input = prompt(promptMsg, memo.tag || recs[0]);
+
+      if (input !== null) {
+        let finalTag = input.trim();
+        const num = parseInt(finalTag);
+        if (num && num > 0 && num <= recs.length) {
+          finalTag = recs[num - 1];
+        } else if (finalTag && !finalTag.startsWith('#')) {
+          finalTag = '#' + finalTag;
+        }
+
+        savedMemos[index].tag = finalTag;
+        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+        if (activeCategoryDetail) renderDetailMemoList();
+      }
+    };
+
+    function backToCategoryList() {
+      activeCategoryDetail = '';
+      switchTab('category');
+    }
+
+    function addMemoToCategoryPrompt(categoryFullName) {
+      const text = prompt(`[${categoryFullName}] 카테고리에 추가할 메모를 입력하세요:`);
+      if (text && text.trim()) {
+        const newMemo = {
+          id: Date.now(),
+          text: text.trim(),
+          category: categoryFullName,
+          tag: ''
+        };
+        savedMemos.push(newMemo);
+        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+        renderWritePage();
+        renderCategoryPage();
+        openCategoryDetail(categoryFullName);
+      }
+    }
+
+    function setSortOrder(order) {
+      currentSortOrder = order;
+      document.getElementById('sortNewest').classList.toggle('active', order === 'newest');
+      document.getElementById('sortOldest').classList.toggle('active', order === 'oldest');
+      renderAllMemosPage(document.getElementById('searchInput').value);
+    }
+
+    function renderAllMemosPage(query = '') {
+      const list = document.getElementById('allMemosList');
+      list.innerHTML = '';
+
+      let filtered = [...savedMemos];
+
+      if (currentSortOrder === 'newest') {
+        filtered.reverse();
+      }
+
+      if (query.trim()) {
+        const cleanQuery = query.trim().replace(/하는|하고|해|좋아/g, '');
+        filtered = filtered.filter(m => 
+          m.text.includes(query.trim()) || (cleanQuery.length >= 2 && m.text.includes(cleanQuery))
+        );
+      }
+
+      filtered.forEach(memo => {
+        const realIndex = savedMemos.findIndex(m => m.id === memo.id);
+        const item = document.createElement('div');
+        item.className = 'memo-item';
+        item.innerHTML = `
+          <div style="flex:1;">
+            <div class="memo-text-clickable" onclick="openMemoModal(${realIndex})">${memo.text}</div>
+            <div style="font-size:11px; color:#888; margin-top:4px;">
+              ${memo.category} ${memo.tag ? '| ' + memo.tag : ''}
+            </div>
+          </div>
+          <div class="timestamp-box">${formatTimestamp(memo.id)}</div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function showHistoryPopup() {
+      const popup = document.getElementById('historyPopup');
+      if (searchHistory.length === 0) return;
+      
+      popup.innerHTML = '';
+      searchHistory.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'history-item';
+        row.innerHTML = `
+          <span style="cursor:pointer; flex:1;" onclick="useSearchHistory('${item}')">🕒 ${item}</span>
+          <span onclick="deleteSearchHistory(event, ${idx})" style="color:#aaa; cursor:pointer; padding:0 4px;">✕</span>
+        `;
+        popup.appendChild(row);
+      });
+      popup.style.display = 'block';
+    }
+
+    function hideHistoryPopup() {
+      setTimeout(() => {
+        document.getElementById('historyPopup').style.display = 'none';
+      }, 200);
+    }
+
+    function handleSearch() {
+      const query = document.getElementById('searchInput').value;
+      renderAllMemosPage(query);
+    }
+
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const q = this.value.trim();
+        if (q && !searchHistory.includes(q)) {
+          searchHistory.unshift(q);
+          if (searchHistory.length > 5) searchHistory.pop();
+          localStorage.setItem('notepound_search_history', JSON.stringify(searchHistory));
+        }
+        document.getElementById('historyPopup').style.display = 'none';
+      }
+    });
+
+    function useSearchHistory(text) {
+      document.getElementById('searchInput').value = text;
+      document.getElementById('historyPopup').style.display = 'none';
+      renderAllMemosPage(text);
+    }
+
+    function deleteSearchHistory(e, idx) {
+      e.stopPropagation();
+      searchHistory.splice(idx, 1);
+      localStorage.setItem('notepound_search_history', JSON.stringify(searchHistory));
+      showHistoryPopup();
+    }
+
+    window.deleteMemo = function(index) {
+      savedMemos.splice(index, 1);
+      localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+      renderWritePage();
+      renderCategoryPage();
+      if (activeCategoryDetail) renderDetailMemoList();
+      renderAllMemosPage(document.getElementById('searchInput').value);
+    };
+
+    memoInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const text = this.value.trim();
+        if (!text) return;
+
+        const newMemo = {
+          id: Date.now(),
+          text: text,
+          category: currentSelectedCategory || '#미분류',
+          tag: ''
+        };
+
+        savedMemos.push(newMemo);
+        localStorage.setItem('notepound_memos', JSON.stringify(savedMemos));
+
+        this.value = '';
+        currentSelectedCategory = '';
+        isUserManuallySelected = false;
+        document.getElementById('categoryHeaderBox').style.display = 'none';
+        document.getElementById('categoryChips').innerHTML = '';
+        renderWritePage();
+      }
+    });
+
+    renderWritePage();
+  </script>
 
 </body>
 </html>
