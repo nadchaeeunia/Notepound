@@ -547,12 +547,16 @@
     .thought-empty-graphic{font-size:30px;margin-bottom:8px}
     .thought-auto-note{padding:0 14px 8px;font-size:9px;color:#777;line-height:1.5;display:none}
     .thought-center-badge{display:inline-flex;align-items:center;gap:4px;background:var(--theme-soft);color:var(--theme-main-dark);border-radius:12px;padding:5px 8px;font-size:9px;font-weight:bold;margin:0 14px 8px;}
-.thought-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:#f8f9fa;overflow:auto;position:relative}
-    .thought-graph{position:relative;width:100%;min-width:1000px;height:760px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden}
+.thought-graph-controls{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin:0 10px 6px;}
+    .thought-graph-controls button{width:28px;height:26px;border:1px solid var(--theme-border);background:#fff;color:var(--theme-main-dark);border-radius:9px;font-size:14px;font-weight:800;cursor:pointer;}
+    .thought-graph-controls button:hover{background:var(--theme-soft);}
+    .thought-graph-controls span{min-width:44px;text-align:center;font-size:9px;font-weight:800;color:#777;}
+    .thought-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:#f8f9fa;overflow:auto;position:relative}
+    .thought-graph{position:relative;width:100%;min-width:1000px;height:760px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden;transform-origin:top left;}
     .thought-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
     /* 메모 연결선: 모든 연결은 현재 선택한 테마 색상으로 통일 */
-    .thought-edge{fill:none;stroke:var(--theme-main);stroke-width:1.8;opacity:.82;stroke-linecap:round;stroke-linejoin:round}
-    .thought-edge.suggested,.thought-edge.auto,.thought-edge.manual{stroke:var(--theme-main);stroke-width:1.8;opacity:.82}
+    .thought-edge{fill:none;stroke:var(--theme-connection);stroke-width:1.45;opacity:.82;stroke-linecap:round;stroke-linejoin:round}
+    .thought-edge.suggested,.thought-edge.auto,.thought-edge.manual{stroke:var(--theme-connection);stroke-width:1.45;opacity:.82}
     .thought-node{position:absolute;width:210px;min-height:118px;background:#fff;border:1px solid #dfe3e8;border-radius:14px;padding:10px 10px 9px;box-shadow:0 4px 12px rgba(0,0,0,.09);cursor:grab;user-select:none;touch-action:none}
     .thought-node:hover{box-shadow:0 5px 14px var(--theme-shadow-blue)}
     /* 생각의 계층에 따라 테두리 강도를 다르게 표시 */
@@ -596,8 +600,9 @@
     .theme-choice{border:1px solid #e5e7eb;background:#fff;border-radius:14px;padding:9px 6px;cursor:pointer;text-align:center;transition:.15s;}
     .theme-choice:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.06);}
     .theme-choice.active{border:2px solid var(--theme-main);background:var(--theme-pale);}
-    .theme-swatch{width:30px;height:30px;border-radius:50%;margin:0 auto 6px;border:4px solid rgba(255,255,255,.8);box-shadow:0 1px 5px rgba(0,0,0,.12);}
-    .theme-choice-name{font-size:10px;font-weight:800;color:#555;}
+    .theme-palette-swatch{display:flex;width:100%;height:34px;border-radius:9px;overflow:hidden;margin:0 auto 7px;box-shadow:0 1px 5px rgba(0,0,0,.10);}
+    .theme-palette-swatch span{flex:1;display:block;}
+    .theme-choice-name{font-size:9px;font-weight:800;color:#555;line-height:1.25;}
     .theme-close-row{display:flex;justify-content:flex-end;margin-top:12px;}
     .theme-close-btn{border:none;background:#f1f3f4;color:#666;border-radius:12px;padding:7px 12px;font-size:10px;font-weight:bold;cursor:pointer;}
 
@@ -884,6 +889,12 @@
       <div style="display:flex;justify-content:flex-end;margin:6px 0 10px;"><button class="thought-refresh-btn" type="button" onclick="addMemoToCurrentThought()">＋ 메모 추가하기</button></div>
         <div class="thought-legend" style="display:none;"></div>
         <div id="thoughtSelectedInfo" class="selected-info" style="display:none;"></div>
+        <div class="thought-graph-controls" aria-label="생각 연결 화면 확대/축소">
+          <button type="button" onclick="changeThoughtZoom(-0.1)" title="축소">−</button>
+          <span id="thoughtZoomLabel">100%</span>
+          <button type="button" onclick="changeThoughtZoom(0.1)" title="확대">＋</button>
+          <button type="button" onclick="resetThoughtZoom()" title="원래 크기">↺</button>
+        </div>
         <div class="thought-graph-wrap">
           <div id="thoughtGraph" class="thought-graph">
             <svg id="thoughtSvg" class="thought-svg" aria-hidden="true">
@@ -3472,13 +3483,14 @@ function renderThoughtFlow(){
     const title=getThoughtGroupTitle(active,0);const detailTitle=document.getElementById('thoughtDetailTitle');detailTitle.innerHTML=`<span>${escapeHtml(title)} · ${active.length}개 기록</span><button class="thought-title-edit detail" type="button" title="주제 이름 수정">✏️</button><button class="thought-topic-delete" type="button" title="이 생각 주제 삭제">🗑️</button>`;detailTitle.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(active);});detailTitle.querySelector('.thought-topic-delete').addEventListener('click',e=>{e.stopPropagation();deleteThoughtGroup(active);});
     const centerId=Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null;thoughtCenterId=centerId;const center=active.find(m=>Number(m.id)===centerId);
     if(centerBadge)centerBadge.innerHTML=center?`◎ 중심 메모: 「${escapeHtml(String(center.text).slice(0,28))}${String(center.text).length>28?'…':''}」`:'◎ 이 주제의 중심 메모를 하나 선택해 주세요';
-    const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main)"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main)"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>`;
+    const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-connection)"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-connection)"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>`;
     const svg=graph.querySelector('svg');active.forEach((memo,index)=>graph.appendChild(buildThoughtNode(memo,Number(memo.id)===centerId,index)));
     if(center){
       starifyThoughtGroup(active,centerId);
       layoutThoughtMindMap();
       active.forEach((memo,index)=>{const node=document.querySelector(`.thought-node[data-id="${memo.id}"]`);const pos=getThoughtPosition(memo,index);if(node){node.style.left=`${pos.x}%`;node.style.top=`${pos.y}%`;}});
     }
+    applyThoughtZoom();
     renderThoughtEdgesOnly();
     const summary=document.getElementById('thoughtSummary');if(summary)summary.innerHTML=`<div class="thought-panel-title">🧠 ${escapeHtml(title)}</div><div style="font-size:9px;color:#777;line-height:1.5;">이 주제에 연결된 메모 <b>${active.length}</b>개 · 중심 → 서브 → 서서브 → 서서서브로 단계가 이어져요.<br>메모를 클릭하면 중심으로 선택하거나 이 생각에서 뺄 수 있어요. ● 드래그로 상위 메모에서 서브 메모를 연결할 수 있어요.</div>`;
     renderThoughtChangePanel(active);updateThoughtSelectionUI();return;
@@ -3487,12 +3499,17 @@ function renderThoughtFlow(){
   const summary=document.getElementById('thoughtSummary');if(summary)summary.innerHTML='';const change=document.getElementById('thoughtChangePanel');if(change)change.innerHTML='';
 }
 
+let thoughtZoom=1;
+function applyThoughtZoom(){const graph=document.getElementById('thoughtGraph'),label=document.getElementById('thoughtZoomLabel');if(!graph)return;graph.style.transform=`scale(${thoughtZoom})`;if(label)label.textContent=`${Math.round(thoughtZoom*100)}%`;}
+function changeThoughtZoom(delta){thoughtZoom=Math.max(.6,Math.min(1.8,Math.round((thoughtZoom+delta)*10)/10));applyThoughtZoom();renderThoughtEdgesOnly();}
+function resetThoughtZoom(){thoughtZoom=1;applyThoughtZoom();renderThoughtEdgesOnly();}
+
 function startThoughtLink(event,id){event.stopPropagation();event.preventDefault();linkingFromId=Number(id);const temp=document.getElementById('thoughtTempEdge');if(temp)temp.style.display='block';document.addEventListener('pointermove',moveThoughtLink);document.addEventListener('pointerup',finishThoughtLink,{once:true});}
 function moveThoughtLink(event){if(linkingFromId===null)return;const graph=document.getElementById('thoughtGraph'),temp=document.getElementById('thoughtTempEdge'),start=getNodeCenter(linkingFromId);if(!graph||!temp||!start)return;const gr=graph.getBoundingClientRect();const x=Math.max(0,Math.min(graph.clientWidth,event.clientX-gr.left)),y=Math.max(0,Math.min(graph.clientHeight,event.clientY-gr.top));temp.setAttribute('d',makeCurve(start.x,start.y,x,y));}
 function finishThoughtLink(event){document.removeEventListener('pointermove',moveThoughtLink);const graph=document.getElementById('thoughtGraph'),temp=document.getElementById('thoughtTempEdge');if(temp)temp.style.display='none';if(linkingFromId===null)return;let targetId=null;document.querySelectorAll('.thought-node').forEach(node=>{const r=node.getBoundingClientRect();if(event.clientX>=r.left&&event.clientX<=r.right&&event.clientY>=r.top&&event.clientY<=r.bottom)targetId=Number(node.dataset.id);});if(targetId&&targetId!==linkingFromId){connectMemos(linkingFromId,targetId);renderThoughtFlow();}linkingFromId=null;}
 function startThoughtNodeDrag(event,id){
-  if(event.target.closest('.thought-node-port'))return;const node=event.currentTarget,graph=document.getElementById('thoughtGraph'),gr=graph.getBoundingClientRect(),nr=node.getBoundingClientRect();isDraggingThoughtNode=true;thoughtDragOffset={x:event.clientX-nr.left,y:event.clientY-nr.top};node.classList.add('dragging');
-  const move=e=>{const x=Math.max(2,Math.min(graph.clientWidth-node.offsetWidth-2,e.clientX-gr.left-thoughtDragOffset.x)),y=Math.max(2,Math.min(graph.clientHeight-node.offsetHeight-2,e.clientY-gr.top-thoughtDragOffset.y));node.style.left=x+'px';node.style.top=y+'px';thoughtPositions[String(id)]={x:x/graph.clientWidth*100,y:y/graph.clientHeight*100};renderThoughtEdgesOnly();};
+  if(event.target.closest('.thought-node-port'))return;const node=event.currentTarget,graph=document.getElementById('thoughtGraph'),gr=graph.getBoundingClientRect(),nr=node.getBoundingClientRect();isDraggingThoughtNode=true;thoughtDragOffset={x:(event.clientX-nr.left)/thoughtZoom,y:(event.clientY-nr.top)/thoughtZoom};node.classList.add('dragging');
+  const move=e=>{const x=Math.max(2,Math.min(graph.clientWidth-node.offsetWidth-2,(e.clientX-gr.left)/thoughtZoom-thoughtDragOffset.x)),y=Math.max(2,Math.min(graph.clientHeight-node.offsetHeight-2,(e.clientY-gr.top)/thoughtZoom-thoughtDragOffset.y));node.style.left=x+'px';node.style.top=y+'px';thoughtPositions[String(id)]={x:x/graph.clientWidth*100,y:y/graph.clientHeight*100};renderThoughtEdgesOnly();};
   const up=()=>{node.classList.remove('dragging');isDraggingThoughtNode=false;saveThoughtPositions();document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up,{once:true});
 }
 
@@ -3592,39 +3609,47 @@ function refreshThoughtFlow(){try{const latest=JSON.parse(localStorage.getItem('
    ===================================================== */
 const NOTEOUND_THEME_KEY='notepound_color_theme';
 const COLOR_THEMES={
-  blue:{name:'파랑',main:'#4A7FE5',dark:'#3973DC',soft:'#EAF1FF',border:'#BFD2FF',pale:'#F3F7FF',accent:'#E6EEFF',light:'#C9DCFF',mid:'#93B4F3'},
-  yellow:{name:'노랑',main:'#E7B83E',dark:'#C99616',soft:'#FFF6D9',border:'#F0D98A',pale:'#FFFBEF',accent:'#FFF2BF',light:'#F3DE91',mid:'#E6C55E'},
-  pink:{name:'분홍',main:'#E56B9F',dark:'#D24D86',soft:'#FFEAF3',border:'#F4B8D0',pale:'#FFF4F8',accent:'#FFDCEB',light:'#F6C4D8',mid:'#EC91B5'},
-  lightpink:{name:'연분홍',main:'#F3A6BE',dark:'#E884A3',soft:'#FFF0F5',border:'#F7CBD8',pale:'#FFF8FA',accent:'#FFE4EC',light:'#F8D6E0',mid:'#F0B5C8'},
-  green:{name:'초록',main:'#57A66D',dark:'#398C52',soft:'#E9F7ED',border:'#B8DEC2',pale:'#F4FBF5',accent:'#DDF1E2',light:'#BFE2C8',mid:'#7FC18F'},
-  purple:{name:'보라',main:'#8B72D8',dark:'#6E55C2',soft:'#F0EBFF',border:'#CEC2F5',pale:'#F8F5FF',accent:'#E8E0FF',light:'#D8CFF7',mid:'#AA98E8'},
-  orange:{name:'주황',main:'#E8894A',dark:'#D36A2B',soft:'#FFF0E5',border:'#F2C2A2',pale:'#FFF8F3',accent:'#FFE4D2',light:'#F5C6A7',mid:'#EEA575'},
-  red:{name:'빨강',main:'#E85D68',dark:'#CF3F4B',soft:'#FFECEF',border:'#F3B8BE',pale:'#FFF7F8',accent:'#FFDDE1',light:'#F5C7CC',mid:'#EE8F98'},
-  lime:{name:'연두',main:'#8DBF4A',dark:'#6E9E2D',soft:'#F1F8E7',border:'#C9E0A7',pale:'#FAFDF5',accent:'#E6F2D1',light:'#D2E7B5',mid:'#AACD75'},
-  black:{name:'블랙',main:'#333333',dark:'#171717',soft:'#F0F0F0',border:'#CFCFCF',pale:'#FAFAFA',accent:'#E5E5E5',light:'#D8D8D8',mid:'#999999'},
-  sky:{name:'하늘',main:'#55AEEA',dark:'#2D8FD3',soft:'#E9F6FF',border:'#B8DDF6',pale:'#F5FBFF',accent:'#DDF0FC',light:'#C8E7FA',mid:'#82C6F0'},
-  mint:{name:'민트',main:'#52BFA8',dark:'#2D9E89',soft:'#E8F8F4',border:'#B5E2D8',pale:'#F5FCFA',accent:'#D9F1EB',light:'#C4E8DF',mid:'#7CCFBC'},
-  navy:{name:'남색',main:'#405B9A',dark:'#293F76',soft:'#E9EEF9',border:'#B9C5E2',pale:'#F6F8FC',accent:'#DCE4F4',light:'#CBD5E9',mid:'#7187B8'},
-  gray:{name:'회색',main:'#7B818A',dark:'#5C626B',soft:'#F0F1F3',border:'#D0D3D7',pale:'#FAFAFB',accent:'#E5E7EA',light:'#D9DBDE',mid:'#A8ACB2'},
-  beige:{name:'연갈색',main:'#B99A78',dark:'#9D7D5C',soft:'#F7F0E8',border:'#DDCCB8',pale:'#FCF9F5',accent:'#EFE3D4',light:'#E7D7C5',mid:'#D0B99D'},
-  lavender:{name:'연보라',main:'#A79AD8',dark:'#8879C2',soft:'#F2EFFB',border:'#D6CFF0',pale:'#FAF9FE',accent:'#E8E3F7',light:'#DED8F1',mid:'#BEB4E2'}
+  fireSea:{name:'불타는 바다',colors:['#6E120B','#B12A29','#FBF0D8','#102F47','#729AB9']},
+  oliveGarden:{name:'올리브 가든의 만찬',colors:['#626C3E','#2B361C','#FDFAE3','#D4A369','#B17036']},
+  pastelGlam:{name:'파스텔 글램댄 어드벤처',colors:['#C9B5D8','#F6CADC','#F3B2CB','#C4DFFB','#ACD1FB']},
+  goldenDusk:{name:'황금빛 황혼',colors:['#010813','#071C3B','#133463','#F6C543','#F8D84A']},
+  deepSea:{name:'심해',colors:['#0E1320','#202D42','#445B74','#798BA8','#EFEBDA']},
+  oceanBlue:{name:'오션 블루 세레나데',colors:['#03045A','#3375B1','#50B1D4','#A2DEED','#D1EFF7']},
+  softPink:{name:'부드러운 핑크빛 즐거움',colors:['#FBE6EC','#F6C4D1','#F4B6C6','#F095AB','#EA7793']},
+  goldenField:{name:'황금빛 여름 들판',colors:['#CED5B2','#EAEDCC','#FDFAE3','#F8EDD0','#CCA57A']},
+  darkForest:{name:'흑빛 숲의 색조',colors:['#D9D7CE','#A6B18E','#61805B','#415942','#3A4D42']},
+  earthGarden:{name:'흙빛 정원의 색조',colors:['#6B4522','#CC8582','#EDB4B2','#FBEBCB','#CBD18B']},
+  purpleRain:{name:'보라색 빗방울',colors:['#A62A99','#4E13A6','#350F9C','#4960E6','#70C6EC']},
+  darkSunset:{name:'어두운 석양',colors:['#3D5B66','#FDF3B8','#D6A251','#923430','#4D1211']},
+  freshVegetable:{name:'신선한 채소',colors:['#436544','#749857','#AEC867','#F0E8D2','#AE4F4D']},
+  beachSunset:{name:'해변의 석양',colors:['#C7E8E7','#77B4C8','#284863','#D0E8FD','#71A6CF']},
+  burningRed:{name:'불타는 듯한 붉은 석양',colors:['#04071D','#611214','#BF281B','#D7662A','#EEA73C']},
+  burningPalette:{name:'불타는 팔레트',colors:['#57173F','#8D1C24','#EC9140','#D36C2F','#234B5A']},
+  cherryBloom:{name:'벚꽃이 만개하다',colors:['#511423','#96253E','#EC5B70','#F095A4','#F7CED5']},
+  autumnHarvest:{name:'가을 수확',colors:['#EBE0D5','#E2CDB5','#D7B997','#79573E','#94684A']},
+  blackGold:{name:'블랙 & 골드의 우아함',colors:['#000000','#17213B','#EFA73E','#E5E5E5','#FFFFFF']},
+  lushGreen:{name:'잎이 무성한 녹색 정원',colors:['#192915','#3A5631','#587637','#95A860','#EDF3A8']}
 };
+function paletteToTheme(t){
+  const c=t.colors;
+  return {main:c[1],dark:c[0],soft:c[4],border:c[3],pale:c[4],accent:c[3],light:c[3],mid:c[2],connection:c[1],center:c[0],colors:c};
+}
 function applyColorTheme(name){
-  const key=COLOR_THEMES[name]?name:'blue';
-  const t=COLOR_THEMES[key],root=document.documentElement;
-  root.style.setProperty('--theme-main',t.main);root.style.setProperty('--theme-main-dark',t.dark);root.style.setProperty('--theme-soft',t.soft);root.style.setProperty('--theme-border',t.border);root.style.setProperty('--theme-pale',t.pale);root.style.setProperty('--theme-accent-soft',t.accent);root.style.setProperty('--theme-dot-light',t.light);root.style.setProperty('--theme-dot-mid',t.mid);root.style.setProperty('--theme-center-shadow',hexToRgba(t.main,.25));root.style.setProperty('--theme-shadow-blue',hexToRgba(t.main,.16));root.style.setProperty('--theme-shadow-blue-soft',hexToRgba(t.main,.13));root.style.setProperty('--theme-shadow-blue-strong',hexToRgba(t.main,.20));
-  localStorage.setItem(NOTEOUND_THEME_KEY,key);
-  document.body.dataset.colorTheme=key;
+  const key=COLOR_THEMES[name]?name:'fireSea';
+  const t=paletteToTheme(COLOR_THEMES[key]),root=document.documentElement;
+  root.style.setProperty('--theme-main',t.main);root.style.setProperty('--theme-main-dark',t.dark);root.style.setProperty('--theme-soft',t.soft);root.style.setProperty('--theme-border',t.border);root.style.setProperty('--theme-pale',t.pale);root.style.setProperty('--theme-accent-soft',t.accent);root.style.setProperty('--theme-dot-light',t.light);root.style.setProperty('--theme-dot-mid',t.mid);root.style.setProperty('--theme-connection',t.connection);root.style.setProperty('--theme-center',t.center);root.style.setProperty('--theme-center-shadow',hexToRgba(t.center,.25));root.style.setProperty('--theme-shadow-blue',hexToRgba(t.main,.16));root.style.setProperty('--theme-shadow-blue-soft',hexToRgba(t.main,.13));root.style.setProperty('--theme-shadow-blue-strong',hexToRgba(t.main,.20));
+  localStorage.setItem(NOTEOUND_THEME_KEY,key);document.body.dataset.colorTheme=key;
   const grid=document.getElementById('themeGrid');if(grid)grid.querySelectorAll('.theme-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.theme===key));
 }
+
 function hexToRgba(hex,alpha){const h=hex.replace('#','');const n=parseInt(h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${alpha})`;}
 function renderThemeChoices(){
   const grid=document.getElementById('themeGrid');if(!grid)return;const current=localStorage.getItem(NOTEOUND_THEME_KEY)||'blue';grid.innerHTML='';
-  Object.entries(COLOR_THEMES).forEach(([key,t])=>{const btn=document.createElement('button');btn.type='button';btn.className='theme-choice'+(key===current?' active':'');btn.dataset.theme=key;btn.innerHTML=`<div class="theme-swatch" style="background:${t.main}"></div><div class="theme-choice-name">${t.name}</div>`;btn.addEventListener('click',()=>applyColorTheme(key));grid.appendChild(btn);});
+  Object.entries(COLOR_THEMES).forEach(([key,t])=>{const btn=document.createElement('button');btn.type='button';btn.className='theme-choice'+(key===current?' active':'');btn.dataset.theme=key;btn.innerHTML=`<div class="theme-palette-swatch">${t.colors.map(c=>`<span style="background:${c}"></span>`).join('')}</div><div class="theme-choice-name">${t.name}</div>`;btn.addEventListener('click',()=>applyColorTheme(key));grid.appendChild(btn);});
 }
 function openThemeModal(){renderThemeChoices();const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='flex';}
 function closeThemeModal(){const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='none';}
-(function(){const saved=localStorage.getItem(NOTEOUND_THEME_KEY)||'blue';applyColorTheme(saved);})();
+(function(){const saved=localStorage.getItem(NOTEOUND_THEME_KEY)||'fireSea';applyColorTheme(saved);})();
 
 </script>
 
