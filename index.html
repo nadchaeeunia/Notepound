@@ -594,6 +594,7 @@
     .thought-node-port{position:absolute;top:50%;width:13px;height:13px;margin-top:-6px;border-radius:50%;background:#fff;border:2px solid var(--theme-main);z-index:4;cursor:crosshair}
     .thought-node-port.left{left:-8px}
     .thought-node-port.right{right:-8px}
+    .thought-node-delete{position:absolute;top:7px;right:7px;width:22px;height:22px;border:1px solid var(--theme-border);border-radius:7px;background:var(--theme-surface);color:var(--theme-text-muted);font-size:11px;line-height:20px;cursor:pointer;z-index:6;opacity:.72}.thought-node-delete:hover{background:var(--theme-soft);color:var(--theme-main-dark);border-color:var(--theme-main)}
     .thought-node-port:hover{background:var(--theme-main)}.unlinked-port{position:absolute;top:50%;width:13px;height:13px;margin-top:-6px;border-radius:50%;background:#fff;border:2px solid var(--theme-main);z-index:4;cursor:crosshair}.unlinked-port.left{left:-8px}.unlinked-port.right{right:-8px}.unlinked-port:hover{background:var(--theme-main)}
     .thought-node-hint{font-size:9px;color:#aaa;margin-top:5px}
     .memo-delete-btn{border:none;background:#f8f9fa;color:#999;border-radius:8px;padding:5px 6px;font-size:12px;cursor:pointer;line-height:1}.memo-delete-btn:hover{background:#fff0f0;color:#d93025}
@@ -616,6 +617,7 @@
     .theme-choice{border:1px solid #e5e7eb;background:#fff;border-radius:14px;padding:9px 6px;cursor:pointer;text-align:center;transition:.15s;}
     .theme-choice:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.06);}
     .theme-choice.active{border:2px solid var(--theme-main);background:var(--theme-pale);}
+    .theme-mode-tabs{display:flex;gap:8px;margin:12px 0 14px;padding:4px;background:var(--theme-soft);border-radius:12px}.theme-mode-tab{flex:1;border:1px solid transparent;background:transparent;color:var(--theme-text-muted);border-radius:9px;padding:8px 10px;font-size:11px;font-weight:800;cursor:pointer}.theme-mode-tab.active{background:var(--theme-surface);color:var(--theme-main-dark);border-color:var(--theme-border);box-shadow:0 2px 7px rgba(0,0,0,.05)}
     .theme-palette-swatch{display:flex;width:100%;height:34px;border-radius:9px;overflow:hidden;margin:0 auto 7px;box-shadow:0 1px 5px rgba(0,0,0,.10);}
     .theme-palette-swatch span{flex:1;display:block;}
     .theme-choice-name{font-size:9px;font-weight:800;color:#555;line-height:1.25;}
@@ -960,7 +962,11 @@
   <div id="themeModalOverlay" class="memo-modal-overlay" style="display:none;">
     <div class="memo-modal-card theme-modal-card">
       <div class="theme-modal-title">🎨 색상 테마</div>
-      <div class="theme-modal-sub">Notepound의 포인트 색상을 골라보세요. 선택한 색상은 다음에 다시 열어도 유지돼요.</div>
+      <div class="theme-modal-sub">단색 테마와 복합색상 팔레트 중에서 선택할 수 있어요. 선택한 테마는 다음에 다시 열어도 유지돼요.</div>
+      <div class="theme-mode-tabs" role="tablist" aria-label="테마 종류">
+        <button id="themeModeSolid" class="theme-mode-tab" type="button" onclick="setThemeMode('solid')">단색 테마</button>
+        <button id="themeModePalette" class="theme-mode-tab" type="button" onclick="setThemeMode('palette')">복합색상 테마</button>
+      </div>
       <div id="themeGrid" class="theme-grid"></div>
       <div class="theme-close-row"><button class="theme-close-btn" type="button" onclick="closeThemeModal()">닫기</button></div>
     </div>
@@ -3346,16 +3352,29 @@ function promptSetThoughtCenter(id){
   else selectThoughtNode(id);
 }
 function removeMemoFromThought(id){
-  const group=getActiveGroup();if(!group)return;
+  const group=getActiveGroup();if(!group||!activeThoughtGroupKey)return;
   const centerId=Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null;
-  if(centerId===Number(id)){alert('중심 메모는 이 생각에서 바로 뺄 수 없어요. 먼저 다른 메모를 중심으로 선택해주세요.');return;}
-  if(!confirm('이 메모를 이 생각에서 지우시겠습니까?')){selectThoughtNode(id);return;}
-  if(centerId)disconnectMemos(centerId,id);
-  else{
-    const memo=savedMemos.find(m=>Number(m.id)===Number(id));
-    if(memo)getManualLinkedIds(memo).forEach(otherId=>disconnectMemos(memo.id,otherId));
-  }
+  if(centerId===Number(id)){alert('중심 메모는 바로 삭제할 수 없어요. 먼저 다른 메모를 중심으로 선택해주세요.');return;}
+  const memo=savedMemos.find(m=>Number(m.id)===Number(id));
+  if(!memo)return;
+  if(!confirm('이 메모를 이 생각 주제에서 삭제할까요?\n\n메모 자체는 전체 메모에 남아 있고, 이 주제에서만 빠져요.'))return;
+  const ids=new Set(group.map(m=>Number(m.id)));
+  // Remove this memo from the current topic membership, but keep the original memo.
+  thoughtTopicMembers[activeThoughtGroupKey]=(thoughtTopicMembers[activeThoughtGroupKey]||[]).map(Number).filter(n=>n!==Number(id));
+  // Break only the links belonging to this topic.
+  savedMemos.forEach(other=>{
+    if(Number(other.id)===Number(id))return;
+    if(ids.has(Number(other.id))){
+      if(Array.isArray(other.linkedMemos))other.linkedMemos=other.linkedMemos.filter(x=>Number(x)!==Number(id));
+      if(Array.isArray(other.autoLinkedMemos))other.autoLinkedMemos=other.autoLinkedMemos.filter(x=>Number(x)!==Number(id));
+    }
+  });
+  if(Array.isArray(memo.linkedMemos))memo.linkedMemos=memo.linkedMemos.filter(x=>!ids.has(Number(x)));
+  if(Array.isArray(memo.autoLinkedMemos))memo.autoLinkedMemos=memo.autoLinkedMemos.filter(x=>!ids.has(Number(x)));
+  delete memo.parentThoughtId;
   selectedThoughtIds=selectedThoughtIds.filter(x=>Number(x)!==Number(id));
+  saveMemos();saveThoughtTopicMembers();saveThoughtGroupCenters();
+  ensureThoughtTopics();
   renderThoughtFlow();renderThoughtUnconnected();
 }
 function clearThoughtCenter(){
@@ -3505,19 +3524,21 @@ function buildThoughtNode(memo,isCenter=false,index=0){
   const pos=getThoughtPosition(memo,index);
   node.style.left=`${pos.x}%`;
   node.style.top=`${pos.y}%`;
-  node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><div class="thought-node-meta">${isCenter?'◎ 중심 · ':''}${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div><div class="thought-node-hint">클릭: 중심 선택 / 이 생각에서 빼기 · ● 드래그: 상위→서브 연결 · 선 클릭: 연결 해제</div>`;
-  node.addEventListener('pointerdown',e=>{if(e.target.closest('.thought-node-port'))return;if(e.button!==undefined&&e.button!==0)return;startThoughtNodeDrag(e,memo.id);});
+  node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><button class="thought-node-delete" type="button" title="이 주제에서 메모 삭제">🗑</button><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><div class="thought-node-meta">${isCenter?'◎ 중심 · ':''}${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div><div class="thought-node-hint">클릭: 중심 선택 / 메모 선택 · 🗑: 이 주제에서 삭제 · ● 드래그: 상위→서브 연결 · 선 클릭: 연결 해제</div>`;
+  node.addEventListener('pointerdown',e=>{if(e.target.closest('.thought-node-port')||e.target.closest('.thought-node-delete'))return;if(e.button!==undefined&&e.button!==0)return;startThoughtNodeDrag(e,memo.id);});
   node.addEventListener('click',e=>{
-    if(isDraggingThoughtNode||e.target.closest('.thought-node-port'))return;
+    if(isDraggingThoughtNode||e.target.closest('.thought-node-port')||e.target.closest('.thought-node-delete'))return;
     const group=getActiveGroup();
     const centerId=group?Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null:null;
     if(group && !centerId){promptSetThoughtCenter(memo.id);return;}
-    if(group && centerId && Number(memo.id)!==centerId){removeMemoFromThought(memo.id);return;}
     selectThoughtNode(memo.id);
   });
-  node.querySelector('.thought-node-port.right').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));node.querySelector('.thought-node-port.left').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
+  node.querySelector('.thought-node-delete').addEventListener('click',e=>{e.stopPropagation();removeMemoFromThought(memo.id);});
+  node.querySelector('.thought-node-port.right').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
+  node.querySelector('.thought-node-port.left').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
   node.addEventListener('dblclick',e=>{e.stopPropagation();const idx=savedMemos.findIndex(m=>m.id===memo.id);if(idx!==-1)openMemoModal(idx);});
-  node.addEventListener('contextmenu',e=>{e.preventDefault();openLinkMemoModal(memo.id);});return node;
+  node.addEventListener('contextmenu',e=>{e.preventDefault();openLinkMemoModal(memo.id);});
+  return node;
 }
 function deleteThoughtGroup(group){
   if(!group||!group.length)return;
@@ -3570,7 +3591,7 @@ function renderThoughtFlow(){
     }
     applyThoughtZoom();
     renderThoughtEdgesOnly();
-    const summary=document.getElementById('thoughtSummary');if(summary)summary.innerHTML=`<div class="thought-panel-title">🧠 ${escapeHtml(title)}</div><div style="font-size:9px;color:#777;line-height:1.5;">이 주제에 연결된 메모 <b>${active.length}</b>개 · 중심 → 서브 → 서서브 → 서서서브로 단계가 이어져요.<br>메모를 클릭하면 중심으로 선택하거나 이 생각에서 뺄 수 있어요. ● 드래그로 상위 메모에서 서브 메모를 연결할 수 있어요.</div>`;
+    const summary=document.getElementById('thoughtSummary');if(summary)summary.innerHTML=`<div class="thought-panel-title">🧠 ${escapeHtml(title)}</div><div style="font-size:9px;color:#777;line-height:1.5;">이 주제에 연결된 메모 <b>${active.length}</b>개 · 중심 → 서브 → 서서브 → 서서서브로 단계가 이어져요.<br>메모를 클릭하면 선택할 수 있고, 🗑 버튼으로 이 주제에서 메모를 삭제할 수 있어요. ● 드래그로 상위 메모에서 서브 메모를 연결할 수 있어요.</div>`;
     renderThoughtChangePanel(active);updateThoughtSelectionUI();return;
   }
   groupOverview.style.display='block';detail.style.display='none';if(centerBadge)centerBadge.innerHTML='◎ 연결된 생각의 주제를 선택하면 중심 메모를 정할 수 있어요';renderGroupOverview();
@@ -3708,6 +3729,39 @@ const COLOR_THEMES={
   blackGold:{name:'블랙 & 골드의 우아함',colors:['#000000','#17213B','#EFA73E','#E5E5E5','#FFFFFF']},
   lushGreen:{name:'잎이 무성한 녹색 정원',colors:['#192915','#3A5631','#587637','#95A860','#EDF3A8']}
 };
+const SOLID_THEMES={
+  blue:{name:'파랑',color:'#4A7FE5'},
+  yellow:{name:'노랑',color:'#E5B93F'},
+  pink:{name:'분홍',color:'#E47FA0'},
+  lightPink:{name:'연분홍',color:'#EFAFC2'},
+  green:{name:'초록',color:'#6D9A6A'},
+  purple:{name:'보라',color:'#8C74C6'},
+  orange:{name:'주황',color:'#D98B4A'},
+  red:{name:'빨강',color:'#C95C5C'},
+  lightGreen:{name:'연두',color:'#A8BE69'},
+  black:{name:'블랙',color:'#263142'},
+  sky:{name:'하늘',color:'#72B4D6'},
+  mint:{name:'민트',color:'#68B9AD'},
+  navy:{name:'남색',color:'#334E7D'},
+  gray:{name:'회색',color:'#7E8794'},
+  brown:{name:'연갈색',color:'#A77A57'},
+  lavender:{name:'연보라',color:'#A995C7'}
+};
+let themeMode=localStorage.getItem('notepound_theme_mode')||'palette';
+function solidToPalette(t){
+  const c=t.color;
+  return {name:t.name,colors:[shadeHex(c,-.32),shadeHex(c,-.12),mixHex(c,'#FFFFFF',.72),mixHex(c,'#FFFFFF',.86),mixHex(c,'#FFFFFF',.94)],solid:true};
+}
+function shadeHex(hex,amount){
+  const h=hex.replace('#','');const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
+  const f=v=>Math.max(0,Math.min(255,Math.round(v*(1+amount))));
+  return '#'+[f(r),f(g),f(b)].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+function mixHex(a,b,t){
+  const aa=a.replace('#',''),bb=b.replace('#','');const ar=parseInt(aa.slice(0,2),16),ag=parseInt(aa.slice(2,4),16),ab=parseInt(aa.slice(4,6),16);
+  const br=parseInt(bb.slice(0,2),16),bg=parseInt(bb.slice(2,4),16),bbv=parseInt(bb.slice(4,6),16);
+  const m=(x,y)=>Math.round(x+(y-x)*t);return '#'+[m(ar,br),m(ag,bg),m(ab,bbv)].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
 function hexLuma(hex){const h=hex.replace('#','');const r=parseInt(h.slice(0,2),16)/255,g=parseInt(h.slice(2,4),16)/255,b=parseInt(h.slice(4,6),16)/255;const f=v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);return .2126*f(r)+.7152*f(g)+.0722*f(b);}
 function paletteToTheme(t){
   const colors=[...t.colors];
@@ -3723,19 +3777,48 @@ function paletteToTheme(t){
   };
 }
 function applyColorTheme(name){
-  const key=COLOR_THEMES[name]?name:'fireSea';
-  const t=paletteToTheme(COLOR_THEMES[key]),root=document.documentElement;
+  const isSolid=String(name).startsWith('solid:');
+  const rawKey=isSolid?String(name).slice(7):name;
+  const key=(isSolid&&SOLID_THEMES[rawKey])?`solid:${rawKey}`:(COLOR_THEMES[name]?name:'fireSea');
+  const palette=isSolid?solidToPalette(SOLID_THEMES[rawKey]):COLOR_THEMES[key];
+  const t=paletteToTheme(palette),root=document.documentElement;
   root.style.setProperty('--theme-main',t.main);root.style.setProperty('--theme-main-dark',t.dark);root.style.setProperty('--theme-soft',t.soft);root.style.setProperty('--theme-border',t.border);root.style.setProperty('--theme-pale',t.pale);root.style.setProperty('--theme-accent-soft',t.accent);root.style.setProperty('--theme-dot-light',t.light);root.style.setProperty('--theme-dot-mid',t.mid);root.style.setProperty('--theme-connection',t.connection);root.style.setProperty('--theme-center',t.center);root.style.setProperty('--theme-center-shadow',hexToRgba(t.center,.25));root.style.setProperty('--theme-shadow-blue',hexToRgba(t.main,.16));root.style.setProperty('--theme-shadow-blue-soft',hexToRgba(t.main,.13));root.style.setProperty('--theme-shadow-blue-strong',hexToRgba(t.main,.20));root.style.setProperty('--theme-body-bg',t.bodyBg);root.style.setProperty('--theme-app-bg',t.appBg);root.style.setProperty('--theme-page-bg',t.pageBg);root.style.setProperty('--theme-surface',t.surface);root.style.setProperty('--theme-surface-soft',t.surfaceSoft);root.style.setProperty('--theme-nav-bg',t.navBg);root.style.setProperty('--theme-active-bg',t.activeBg);root.style.setProperty('--theme-input-bg',t.inputBg);root.style.setProperty('--theme-text',t.text);root.style.setProperty('--theme-text-muted',t.textMuted);root.style.setProperty('--theme-line-soft',t.lineSoft);
-  localStorage.setItem(NOTEOUND_THEME_KEY,key);document.body.dataset.colorTheme=key;
+  localStorage.setItem(NOTEOUND_THEME_KEY,key);themeMode=key.startsWith('solid:')?'solid':'palette';localStorage.setItem('notepound_theme_mode',themeMode);document.body.dataset.colorTheme=key;
   const grid=document.getElementById('themeGrid');if(grid)grid.querySelectorAll('.theme-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.theme===key));
 }
 
 function hexToRgba(hex,alpha){const h=hex.replace('#','');const n=parseInt(h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${alpha})`;}
-function renderThemeChoices(){
-  const grid=document.getElementById('themeGrid');if(!grid)return;const current=localStorage.getItem(NOTEOUND_THEME_KEY)||'fireSea';grid.innerHTML='';
-  Object.entries(COLOR_THEMES).forEach(([key,t])=>{const btn=document.createElement('button');btn.type='button';btn.className='theme-choice'+(key===current?' active':'');btn.dataset.theme=key;btn.innerHTML=`<div class="theme-palette-swatch">${t.colors.map(c=>`<span style="background:${c}"></span>`).join('')}</div><div class="theme-choice-name">${t.name}</div>`;btn.addEventListener('click',()=>applyColorTheme(key));grid.appendChild(btn);});
+function setThemeMode(mode){
+  themeMode=mode==='solid'?'solid':'palette';
+  localStorage.setItem('notepound_theme_mode',themeMode);
+  document.getElementById('themeModeSolid')?.classList.toggle('active',themeMode==='solid');
+  document.getElementById('themeModePalette')?.classList.toggle('active',themeMode==='palette');
+  renderThemeChoices();
 }
-function openThemeModal(){renderThemeChoices();const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='flex';}
+function renderThemeChoices(){
+  const grid=document.getElementById('themeGrid');if(!grid)return;
+  const current=localStorage.getItem(NOTEOUND_THEME_KEY)||'fireSea';grid.innerHTML='';
+  const entries=themeMode==='solid'
+    ?Object.entries(SOLID_THEMES).map(([key,t])=>[`solid:${key}`,{...solidToPalette(t),solidColor:t.color}])
+    :Object.entries(COLOR_THEMES).map(([key,t])=>[key,t]);
+  entries.forEach(([key,t])=>{
+    const btn=document.createElement('button');btn.type='button';btn.className='theme-choice'+(key===current?' active':'');btn.dataset.theme=key;
+    if(t.solidColor){
+      btn.innerHTML=`<div class="theme-palette-swatch"><span style="background:${t.solidColor}"></span></div><div class="theme-choice-name">${t.name}</div>`;
+    }else{
+      btn.innerHTML=`<div class="theme-palette-swatch">${t.colors.map(c=>`<span style="background:${c}"></span>`).join('')}</div><div class="theme-choice-name">${t.name}</div>`;
+    }
+    btn.addEventListener('click',()=>applyColorTheme(key));grid.appendChild(btn);
+  });
+}
+function openThemeModal(){
+  const saved=localStorage.getItem(NOTEOUND_THEME_KEY)||'fireSea';
+  themeMode=saved.startsWith('solid:')?'solid':(localStorage.getItem('notepound_theme_mode')||'palette');
+  const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='flex';
+  document.getElementById('themeModeSolid')?.classList.toggle('active',themeMode==='solid');
+  document.getElementById('themeModePalette')?.classList.toggle('active',themeMode==='palette');
+  renderThemeChoices();
+}
 function closeThemeModal(){const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='none';}
 (function(){const saved=localStorage.getItem(NOTEOUND_THEME_KEY)||'fireSea';applyColorTheme(saved);})();
 
