@@ -575,7 +575,7 @@
     /* 메모 연결선: 모든 연결은 현재 선택한 테마 색상으로 통일 */
     .thought-edge{fill:none;stroke:var(--theme-connection);stroke-width:1.25;opacity:.82;stroke-linecap:round;stroke-linejoin:round}
     .thought-edge.suggested,.thought-edge.auto,.thought-edge.manual{stroke:var(--theme-connection);stroke-width:1.25;opacity:.82}
-    .thought-node{position:absolute;width:210px;min-height:118px;background:var(--theme-surface);border:1px solid var(--theme-border);border-radius:14px;padding:10px 10px 9px;box-shadow:0 4px 12px rgba(0,0,0,.09);cursor:grab;user-select:none;touch-action:none}
+    .thought-node{position:absolute;width:210px;min-height:0;background:var(--theme-surface);border:1px solid var(--theme-border);border-radius:14px;padding:9px 10px 9px;box-shadow:0 4px 12px rgba(0,0,0,.09);cursor:grab;user-select:none;touch-action:none}
     .thought-node:hover{box-shadow:0 5px 14px var(--theme-shadow-blue)}
     /* 생각의 계층에 따라 테두리 강도를 다르게 표시 */
     .thought-node.depth-0{border:4px double var(--theme-main-dark);box-shadow:0 7px 22px var(--theme-center-shadow)}
@@ -590,9 +590,13 @@
 
     .thought-node.selected{box-shadow:0 5px 18px var(--theme-shadow-blue-strong)}
     .thought-node.dragging{cursor:grabbing;z-index:30}
-    .thought-node-date{font-size:9px;color:#999;margin-bottom:5px}
-    .thought-node-text{font-size:12px;line-height:1.45;color:#333;word-break:break-word;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
-    .thought-node-meta{font-size:8px;color:var(--theme-main);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .thought-node-date{font-size:9px;color:#999;margin-bottom:4px}
+    .thought-node-text{font-size:12px;line-height:1.45;color:#333;word-break:break-word;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+    .thought-node.expanded .thought-node-text{display:block;-webkit-line-clamp:unset;overflow:visible}
+    .thought-node-more{display:none;border:none;background:transparent;color:var(--theme-main-dark);font-size:9px;font-weight:700;padding:3px 0 0;cursor:pointer;text-align:left}
+    .thought-node-more.visible{display:block}
+    .thought-node-more:hover{text-decoration:underline}
+    .thought-node-meta{font-size:8px;color:var(--theme-main);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .thought-node-port{position:absolute;top:50%;width:13px;height:13px;margin-top:-6px;border-radius:50%;background:#fff;border:2px solid var(--theme-main);z-index:4;cursor:crosshair}
     .thought-node-port.left{left:-8px}
     .thought-node-port.right{right:-8px}
@@ -631,11 +635,11 @@
     .theme-palette-swatch{display:flex;width:100%;height:34px;border-radius:9px;overflow:hidden;margin:0 auto 7px;box-shadow:0 1px 5px rgba(0,0,0,.10);}
     .theme-palette-swatch span{flex:1;display:block;}
     .theme-choice-name{font-size:9px;font-weight:800;color:#555;line-height:1.25;}
-    .theme-close-row{display:flex;justify-content:flex-end;align-items:center;margin-top:10px;padding:8px 2px 0;flex:0 0 auto;min-height:42px;position:relative;z-index:3;border-top:1px solid var(--theme-line-soft);background:var(--theme-surface);}
+    .theme-close-row{display:flex;justify-content:flex-end;align-items:center;margin-top:10px;padding:4px 2px 0;flex:0 0 auto;min-height:36px;position:relative;z-index:3;border-top:none;background:transparent;}
     .theme-close-btn{min-width:64px;}
     .theme-close-btn{border:none;background:#f1f3f4;color:#666;border-radius:12px;padding:7px 12px;font-size:10px;font-weight:bold;cursor:pointer;}
     .theme-modal-card.palette-mode .theme-close-btn{background:var(--theme-soft);color:var(--theme-main-dark);border:1px solid var(--theme-border);}
-    .theme-modal-card.palette-mode .theme-close-row{box-shadow:0 -4px 12px rgba(0,0,0,.04);}
+    .theme-modal-card.palette-mode .theme-close-row{box-shadow:none;background:transparent;}
 
     /* 연결 모달 */
     .link-modal-card{max-height:540px;display:flex;flex-direction:column;gap:10px}
@@ -3607,10 +3611,31 @@ function buildThoughtNode(memo,isCenter=false,index=0){
   const pos=getThoughtPosition(memo,index);
   node.style.left=`${pos.x}%`;
   node.style.top=`${pos.y}%`;
-  node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><button class="thought-node-delete" type="button" title="이 주제에서 메모 삭제">🗑</button><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><div class="thought-node-meta">${isCenter?'◎ 중심 · ':''}${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div>`;
-  node.addEventListener('pointerdown',e=>{if(e.target.closest('.thought-node-port')||e.target.closest('.thought-node-delete'))return;if(e.button!==undefined&&e.button!==0)return;startThoughtNodeDrag(e,memo.id);});
+  node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><button class="thought-node-delete" type="button" title="이 주제에서 메모 삭제">🗑</button><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><button class="thought-node-more" type="button">더보기</button><div class="thought-node-meta">${isCenter?'◎ 중심 · ':''}${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div>`;
+  // 긴 메모는 처음에는 최대 5줄만 보여주고, 실제로 5줄을 넘을 때만 '더보기'를 표시한다.
+  requestAnimationFrame(()=>{
+    const textEl=node.querySelector('.thought-node-text');
+    const moreBtn=node.querySelector('.thought-node-more');
+    if(!textEl||!moreBtn)return;
+    const lineHeight=parseFloat(getComputedStyle(textEl).lineHeight)||17.4;
+    const exceedsFiveLines=textEl.scrollHeight > lineHeight*5 + 1;
+    moreBtn.classList.toggle('visible',exceedsFiveLines);
+    if(exceedsFiveLines){
+      moreBtn.textContent='더보기';
+      moreBtn.onclick=e=>{
+        e.stopPropagation();
+        const expanded=node.classList.toggle('expanded');
+        moreBtn.textContent=expanded?'접기':'더보기';
+        requestAnimationFrame(()=>{
+          resizeThoughtGraphCanvas();
+          renderThoughtEdgesOnly();
+        });
+      };
+    }
+  });
+  node.addEventListener('pointerdown',e=>{if(e.target.closest('.thought-node-port')||e.target.closest('.thought-node-delete')||e.target.closest('.thought-node-more'))return;if(e.button!==undefined&&e.button!==0)return;startThoughtNodeDrag(e,memo.id);});
   node.addEventListener('click',e=>{
-    if(isDraggingThoughtNode||e.target.closest('.thought-node-port')||e.target.closest('.thought-node-delete'))return;
+    if(isDraggingThoughtNode||e.target.closest('.thought-node-port')||e.target.closest('.thought-node-delete')||e.target.closest('.thought-node-more'))return;
     const group=getActiveGroup();
     const centerId=group?Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null:null;
     if(group && !centerId){promptSetThoughtCenter(memo.id);return;}
