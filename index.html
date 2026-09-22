@@ -597,9 +597,12 @@
     .thought-node-more.visible{display:block}
     .thought-node-more:hover{text-decoration:underline}
     .thought-node-meta{font-size:8px;color:var(--theme-main);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .thought-node-port{position:absolute;top:50%;width:13px;height:13px;margin-top:-6px;border-radius:50%;background:#fff;border:2px solid var(--theme-main);z-index:4;cursor:crosshair}
-    .thought-node-port.left{left:-8px}
-    .thought-node-port.right{right:-8px}
+    .thought-node-port{position:absolute;width:13px;height:13px;border-radius:50%;background:#fff;border:2px solid var(--theme-connection,var(--theme-main));z-index:8;cursor:crosshair;touch-action:none;box-sizing:border-box}
+    .thought-node-port.left{left:-8px;top:50%;margin-top:-6px}
+    .thought-node-port.right{right:-8px;top:50%;margin-top:-6px}
+    .thought-node-port.top{top:-8px;left:50%;margin-left:-6px}
+    .thought-node-port.bottom{bottom:-8px;left:50%;margin-left:-6px}
+    .thought-node-port:hover{background:var(--theme-connection,var(--theme-main));transform:scale(1.12)}
     .thought-node-delete{position:absolute;top:7px;right:7px;width:22px;height:22px;border:1px solid var(--theme-border);border-radius:7px;background:var(--theme-surface);color:var(--theme-text-muted);font-size:11px;line-height:20px;cursor:pointer;z-index:6;opacity:.72}.thought-node-delete:hover{background:var(--theme-soft);color:var(--theme-main-dark);border-color:var(--theme-main)}
     .thought-node-port:hover{background:var(--theme-main)}.unlinked-port{position:absolute;top:50%;width:13px;height:13px;margin-top:-6px;border-radius:50%;background:#fff;border:2px solid var(--theme-main);z-index:4;cursor:crosshair}.unlinked-port.left{left:-8px}.unlinked-port.right{right:-8px}.unlinked-port:hover{background:var(--theme-main)}
     .thought-node-hint{font-size:9px;color:#aaa;margin-top:5px}
@@ -3668,7 +3671,7 @@ function buildThoughtNode(memo,isCenter=false,index=0){
   const pos=getThoughtPosition(memo,index);
   node.style.left=`${pos.x}%`;
   node.style.top=`${pos.y}%`;
-  node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><button class="thought-node-delete" type="button" title="이 주제에서 메모 삭제">🗑</button><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><button class="thought-node-more" type="button">더보기</button><div class="thought-node-meta">${isCenter?'◎ 중심 · ':''}${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div>`;
+  node.innerHTML=`<div class="thought-node-port left" title="여기서 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><div class="thought-node-port top" title="여기서 연결"></div><div class="thought-node-port bottom" title="여기서 연결"></div><button class="thought-node-delete" type="button" title="이 주제에서 메모 삭제">🗑</button><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><button class="thought-node-more" type="button">더보기</button><div class="thought-node-meta">${isCenter?'◎ 중심 · ':''}${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div>`;
   // 긴 메모는 처음에는 최대 5줄만 보여주고, 실제로 5줄을 넘을 때만 '더보기'를 표시한다.
   requestAnimationFrame(()=>{
     const textEl=node.querySelector('.thought-node-text');
@@ -3699,8 +3702,7 @@ function buildThoughtNode(memo,isCenter=false,index=0){
     selectThoughtNode(memo.id);
   });
   node.querySelector('.thought-node-delete').addEventListener('click',e=>{e.stopPropagation();removeMemoFromThought(memo.id);});
-  node.querySelector('.thought-node-port.right').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
-  node.querySelector('.thought-node-port.left').addEventListener('pointerdown',e=>startThoughtLink(e,memo.id));
+  node.querySelectorAll('.thought-node-port').forEach(port=>port.addEventListener('pointerdown',e=>startThoughtLink(e,memo.id)));
   node.addEventListener('dblclick',e=>{e.stopPropagation();const idx=savedMemos.findIndex(m=>m.id===memo.id);if(idx!==-1)openMemoModal(idx);});
   node.addEventListener('contextmenu',e=>{e.preventDefault();openLinkMemoModal(memo.id);});
   return node;
@@ -3797,9 +3799,38 @@ function changeThoughtZoom(delta){
 function resetThoughtZoom(){thoughtZoom=1;applyThoughtZoom();renderThoughtEdgesOnly();}
 window.addEventListener('resize',()=>{resizeThoughtGraphCanvas();renderThoughtEdgesOnly();});
 
-function startThoughtLink(event,id){event.stopPropagation();event.preventDefault();linkingFromId=Number(id);const temp=document.getElementById('thoughtTempEdge');if(temp)temp.style.display='block';document.addEventListener('pointermove',moveThoughtLink);document.addEventListener('pointerup',finishThoughtLink,{once:true});}
-function moveThoughtLink(event){if(linkingFromId===null)return;const graph=document.getElementById('thoughtGraph'),temp=document.getElementById('thoughtTempEdge');if(!graph||!temp)return;const gr=graph.getBoundingClientRect();const x=Math.max(0,Math.min(graph.clientWidth,(event.clientX-gr.left)/thoughtZoom)),y=Math.max(0,Math.min(graph.clientHeight,(event.clientY-gr.top)/thoughtZoom));temp.setAttribute('d',makeNodeToPointCurve(linkingFromId,x,y));}
-function finishThoughtLink(event){document.removeEventListener('pointermove',moveThoughtLink);const graph=document.getElementById('thoughtGraph'),temp=document.getElementById('thoughtTempEdge');if(temp)temp.style.display='none';if(linkingFromId===null)return;let targetId=null;document.querySelectorAll('.thought-node').forEach(node=>{const r=node.getBoundingClientRect();if(event.clientX>=r.left&&event.clientX<=r.right&&event.clientY>=r.top&&event.clientY<=r.bottom)targetId=Number(node.dataset.id);});if(targetId&&targetId!==linkingFromId){connectMemos(linkingFromId,targetId);renderThoughtFlow();}linkingFromId=null;}
+function startThoughtLink(event,id){
+  event.stopPropagation();event.preventDefault();
+  linkingFromId=Number(id);
+  const port=event.currentTarget;
+  port.setPointerCapture?.(event.pointerId);
+  port.classList.add('linking');
+  const temp=document.getElementById('thoughtTempEdge');if(temp)temp.style.display='block';
+  document.addEventListener('pointermove',moveThoughtLink);
+  document.addEventListener('pointerup',finishThoughtLink,{once:true});
+}
+function moveThoughtLink(event){
+  if(linkingFromId===null)return;
+  const graph=document.getElementById('thoughtGraph'),temp=document.getElementById('thoughtTempEdge');if(!graph||!temp)return;
+  const gr=graph.getBoundingClientRect();
+  const x=Math.max(0,Math.min(graph.clientWidth,(event.clientX-gr.left)/thoughtZoom)),y=Math.max(0,Math.min(graph.clientHeight,(event.clientY-gr.top)/thoughtZoom));
+  temp.setAttribute('d',makeNodeToPointCurve(linkingFromId,x,y));
+  temp.style.display='block';
+}
+function finishThoughtLink(event){
+  document.removeEventListener('pointermove',moveThoughtLink);
+  const temp=document.getElementById('thoughtTempEdge');if(temp)temp.style.display='none';
+  if(linkingFromId===null)return;
+  document.querySelectorAll('.thought-node-port.linking').forEach(p=>p.classList.remove('linking'));
+  const el=document.elementFromPoint(event.clientX,event.clientY);
+  const targetNode=el?.closest?.('.thought-node');
+  const targetId=targetNode?Number(targetNode.dataset.id):null;
+  if(targetId&&targetId!==linkingFromId){
+    connectMemos(linkingFromId,targetId);
+    renderThoughtFlow();
+  }
+  linkingFromId=null;
+}
 function startThoughtNodeDrag(event,id){
   if(event.target.closest('.thought-node-port'))return;const node=event.currentTarget,graph=document.getElementById('thoughtGraph'),gr=graph.getBoundingClientRect(),nr=node.getBoundingClientRect();isDraggingThoughtNode=true;thoughtDragOffset={x:(event.clientX-nr.left)/thoughtZoom,y:(event.clientY-nr.top)/thoughtZoom};node.classList.add('dragging');
   const move=e=>{const x=Math.max(2,Math.min(graph.clientWidth-node.offsetWidth-2,(e.clientX-gr.left)/thoughtZoom-thoughtDragOffset.x)),y=Math.max(2,Math.min(graph.clientHeight-node.offsetHeight-2,(e.clientY-gr.top)/thoughtZoom-thoughtDragOffset.y));node.style.left=x+'px';node.style.top=y+'px';thoughtPositions[String(id)]={x:x/graph.clientWidth*100,y:y/graph.clientHeight*100};renderThoughtEdgesOnly();};
