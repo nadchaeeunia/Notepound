@@ -1,7 +1,4 @@
-from pathlib import Path
-import webbrowser
-
-HTML = r"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -4486,16 +4483,4 @@ function closeThemeModal(){const overlay=document.getElementById('themeModalOver
 </script>
 
 </body>
-</html>"""
-
-BASE_DIR = Path(__file__).resolve().parent
-OUTPUT_HTML = BASE_DIR / "index.html"
-
-def create_html():
-    OUTPUT_HTML.write_text(HTML, encoding="utf-8")
-    return OUTPUT_HTML
-
-if __name__ == "__main__":
-    path = create_html()
-    print(f"Notepound 실행 파일 생성 완료: {path}")
-    webbrowser.open_new_tab(path.as_uri())
+</html>
