@@ -658,6 +658,46 @@
     .link-modal-btn{border:none;border-radius:14px;padding:7px 13px;font-size:11px;cursor:pointer}
     .link-modal-btn.cancel{background:#eee;color:#666}
     .link-modal-btn.save{background:var(--theme-main);color:#fff;font-weight:bold}
+
+    /* ===== 캘린더 ===== */
+    .calendar-content{padding:14px;display:flex;flex-direction:column;gap:12px;}
+    .calendar-section{background:var(--theme-surface);border:1px solid var(--theme-border);border-radius:16px;padding:12px;box-shadow:0 4px 14px var(--theme-shadow-blue-soft);}
+    .calendar-section-title{font-size:12px;font-weight:800;color:var(--theme-text);margin-bottom:9px;}
+    .calendar-year-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;}
+    .calendar-year-btn{border:1px solid var(--theme-border);background:var(--theme-surface-soft);color:var(--theme-text-muted);border-radius:12px;padding:7px 10px;font-size:10px;font-weight:700;white-space:nowrap;cursor:pointer;}
+    .calendar-year-btn.active{background:var(--theme-main);border-color:var(--theme-main);color:#fff;}
+    .calendar-month-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+    .calendar-month-btn{border:1px solid var(--theme-border);background:var(--theme-surface-soft);border-radius:12px;padding:10px 5px;text-align:center;cursor:pointer;color:var(--theme-text);font-size:11px;font-weight:700;}
+    .calendar-month-btn:hover,.calendar-month-btn.active{background:var(--theme-soft);border-color:var(--theme-main);}
+    .calendar-month-btn.has-record{box-shadow:inset 0 -3px 0 var(--theme-main);}
+    .calendar-month-count{display:block;font-size:8px;color:var(--theme-text-muted);margin-top:3px;font-weight:600;}
+    .calendar-record-months{display:flex;flex-direction:column;gap:7px;max-height:190px;overflow-y:auto;padding-right:2px;}
+    .calendar-record-item{width:100%;border:1px solid var(--theme-border);background:var(--theme-surface-soft);border-radius:12px;padding:9px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;text-align:left;color:var(--theme-text);}
+    .calendar-record-item:hover{background:var(--theme-soft);border-color:var(--theme-main);}
+    .calendar-record-title{font-size:10px;font-weight:800;}
+    .calendar-record-meta{font-size:8px;color:var(--theme-text-muted);margin-top:2px;}
+    .calendar-record-badge{font-size:8px;background:var(--theme-pale);color:var(--theme-main-dark);padding:4px 7px;border-radius:10px;white-space:nowrap;}
+    .calendar-detail{background:var(--theme-surface);border:1px solid var(--theme-border);border-radius:16px;padding:12px;}
+    .calendar-detail-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
+    .calendar-detail-title{font-size:15px;font-weight:900;color:var(--theme-text);}
+    .calendar-detail-sub{font-size:9px;color:var(--theme-text-muted);margin-top:2px;}
+    .calendar-back-months{border:1px solid var(--theme-border);background:var(--theme-surface-soft);color:var(--theme-text);border-radius:12px;padding:6px 9px;font-size:9px;font-weight:700;cursor:pointer;}
+    .calendar-weekdays,.calendar-days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+    .calendar-weekday{text-align:center;font-size:8px;color:var(--theme-text-muted);padding:3px 0;font-weight:800;}
+    .calendar-day{min-height:39px;border:1px solid transparent;background:var(--theme-surface-soft);border-radius:9px;padding:4px;cursor:pointer;color:var(--theme-text);position:relative;text-align:left;}
+    .calendar-day.empty{background:transparent;cursor:default;}
+    .calendar-day:hover:not(.empty){border-color:var(--theme-main);}
+    .calendar-day.has-record{background:var(--theme-pale);border-color:var(--theme-border);}
+    .calendar-day-number{font-size:8px;font-weight:800;}
+    .calendar-day-dot{width:5px;height:5px;border-radius:50%;background:var(--theme-main);position:absolute;right:4px;top:5px;}
+    .calendar-day-count{display:block;margin-top:7px;font-size:7px;color:var(--theme-main-dark);font-weight:800;}
+    .calendar-day-list{margin-top:10px;display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;}
+    .calendar-memo-item{border:1px solid var(--theme-border);background:var(--theme-surface-soft);border-radius:10px;padding:8px;}
+    .calendar-memo-date{font-size:8px;color:var(--theme-text-muted);margin-bottom:3px;}
+    .calendar-memo-text{font-size:10px;line-height:1.4;color:var(--theme-text);word-break:break-word;}
+    .calendar-memo-cat{font-size:8px;color:var(--theme-text-muted);margin-top:4px;}
+    .calendar-empty{font-size:9px;color:var(--theme-text-muted);text-align:center;padding:12px 4px;}
+
     /* ===== 팔레트 기반 배경/표면 조화 ===== */
     .phone-container{background:var(--theme-app-bg)!important;}
     .app-header{background:linear-gradient(135deg,var(--theme-surface),var(--theme-surface-soft))!important;}
@@ -694,6 +734,10 @@
 
     <div id="tabSearch" class="tab-btn" onclick="switchTab('search')">
       🔍 전체 메모
+    </div>
+
+    <div id="tabCalendar" class="tab-btn" onclick="switchTab('calendar')">
+      📅 캘린더
     </div>
 
     <div id="tabThought" class="tab-btn" onclick="switchTab('thought')">
@@ -902,6 +946,24 @@
 
     </div>
 
+  </div>
+
+  <!-- 캘린더 -->
+  <div id="pageCalendar" class="tab-content">
+    <div class="calendar-content">
+      <div class="calendar-section">
+        <div class="calendar-section-title">📆 모든 달 보기</div>
+        <div id="calendarYearTabs" class="calendar-year-tabs"></div>
+        <div id="calendarMonthGrid" class="calendar-month-grid" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="calendar-section">
+        <div class="calendar-section-title">✨ 기록이 있는 달만 보기</div>
+        <div id="calendarRecordMonths" class="calendar-record-months"></div>
+      </div>
+
+      <div id="calendarDetail" class="calendar-detail" style="display:none;"></div>
+    </div>
   </div>
 
   <!-- 생각 연결 -->
@@ -1208,6 +1270,9 @@ let editingMemoIndex = null;
 let selectedEmoji = '📁';
 let editingCategoryIndex = null;
 let linkingMemoId = null;
+let calendarYear = new Date().getFullYear();
+let calendarSelectedMonth = null;
+let calendarSelectedDay = null;
 
 
 /* =====================================================
@@ -1304,6 +1369,7 @@ function switchTab(tabName) {
     category: 'tabCategory',
     categoryDetail: 'tabCategory',
     search: 'tabSearch',
+    calendar: 'tabCalendar',
     thought: 'tabThought'
   };
 
@@ -1312,6 +1378,7 @@ function switchTab(tabName) {
     category: 'pageCategory',
     categoryDetail: 'pageCategoryDetail',
     search: 'pageSearch',
+    calendar: 'pageCalendar',
     thought: 'pageThought'
   };
 
@@ -1345,12 +1412,93 @@ function switchTab(tabName) {
     renderAllMemosPage();
   }
 
+  if (tabName === 'calendar') {
+    renderCalendarPage();
+  }
+
   if (tabName === 'thought') {
     renderThoughtFlow();
   }
 
 }
 
+
+
+/* =====================================================
+   캘린더
+   ===================================================== */
+
+function calendarDateFromMemo(memo){
+  const d=new Date(Number(memo.id));
+  return Number.isNaN(d.getTime())?null:d;
+}
+function calendarMonthKey(year,month){return `${year}-${String(month+1).padStart(2,'0')}`;}
+function calendarMemosByMonth(){
+  const map={};
+  savedMemos.forEach(m=>{
+    const d=calendarDateFromMemo(m); if(!d)return;
+    const key=calendarMonthKey(d.getFullYear(),d.getMonth());
+    (map[key] ||= []).push(m);
+  });
+  Object.values(map).forEach(arr=>arr.sort((a,b)=>Number(b.id)-Number(a.id)));
+  return map;
+}
+function calendarYearHasRecord(year){
+  return savedMemos.some(m=>{const d=calendarDateFromMemo(m);return d&&d.getFullYear()===year;});
+}
+function selectCalendarYear(year){calendarYear=year;calendarSelectedMonth=null;calendarSelectedDay=null;renderCalendarPage();}
+function selectCalendarMonth(year,month){calendarYear=year;calendarSelectedMonth=month;calendarSelectedDay=null;renderCalendarPage();}
+function selectCalendarDay(day){calendarSelectedDay=day;renderCalendarPage();}
+function showCalendarMonthList(){calendarSelectedMonth=null;calendarSelectedDay=null;renderCalendarPage();}
+function renderCalendarPage(){
+  const yearTabs=document.getElementById('calendarYearTabs');
+  const monthGrid=document.getElementById('calendarMonthGrid');
+  const recordMonths=document.getElementById('calendarRecordMonths');
+  const detail=document.getElementById('calendarDetail');
+  if(!yearTabs||!monthGrid||!recordMonths||!detail)return;
+  const now=new Date().getFullYear();
+  const years=[now-1,now,now+1];
+  yearTabs.innerHTML=years.map(y=>`<button type="button" class="calendar-year-btn ${y===calendarYear?'active':''}" onclick="selectCalendarYear(${y})">${y===now?'올해 ':''}${y}년</button>`).join('');
+  const map=calendarMemosByMonth();
+  const monthNames=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  monthGrid.innerHTML=monthNames.map((name,m)=>{
+    const key=calendarMonthKey(calendarYear,m), count=(map[key]||[]).length;
+    return `<button type="button" class="calendar-month-btn ${calendarSelectedMonth===m?'active':''} ${count?'has-record':''}" onclick="selectCalendarMonth(${calendarYear},${m})">${name}<span class="calendar-month-count">${count?`기록 ${count}개`:'기록 없음'}</span></button>`;
+  }).join('');
+
+  const entries=Object.entries(map).filter(([key])=>{
+    const [y]=key.split('-').map(Number);return y===calendarYear;
+  }).sort((a,b)=>b[0].localeCompare(a[0]));
+  if(entries.length){
+    recordMonths.innerHTML=entries.map(([key,arr])=>{
+      const [y,m]=key.split('-').map(Number), scheduleCount=arr.filter(x=>String(x.category||'').includes('일정')).length;
+      return `<button type="button" class="calendar-record-item" onclick="selectCalendarMonth(${y},${m-1})"><span><span class="calendar-record-title">${y}년 ${m}월</span><span class="calendar-record-meta">기록 ${arr.length}개${scheduleCount?` · 일정 ${scheduleCount}개`:''}</span></span><span class="calendar-record-badge">열어보기</span></button>`;
+    }).join('');
+  }else{
+    recordMonths.innerHTML=`<div class="calendar-empty">${calendarYear}년에 기록이 있는 달이 아직 없어요.</div>`;
+  }
+  if(calendarSelectedMonth===null){detail.style.display='none';detail.innerHTML='';return;}
+  renderCalendarMonthDetail(detail,calendarYear,calendarSelectedMonth,calendarSelectedDay);
+}
+function renderCalendarMonthDetail(detail,year,month,selectedDay){
+  const monthNames=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  const first=new Date(year,month,1), lastDay=new Date(year,month+1,0).getDate(), start=first.getDay();
+  const map=calendarMemosByMonth(), arr=map[calendarMonthKey(year,month)]||[];
+  const byDay={}; arr.forEach(m=>{const d=calendarDateFromMemo(m);if(d)(byDay[d.getDate()] ||= []).push(m);});
+  let cells=''; for(let i=0;i<start;i++)cells+='<div class="calendar-day empty"></div>';
+  for(let day=1;day<=lastDay;day++){
+    const list=byDay[day]||[]; cells+=`<button type="button" class="calendar-day ${list.length?'has-record':''}" onclick="selectCalendarDay(${day})"><span class="calendar-day-number">${day}</span>${list.length?'<span class="calendar-day-dot"></span><span class="calendar-day-count">'+list.length+'개</span>':''}</button>`;
+  }
+  let listHtml='';
+  if(selectedDay){
+    const list=byDay[selectedDay]||[];
+    listHtml=list.length?list.map(m=>{const d=calendarDateFromMemo(m);return `<div class="calendar-memo-item"><div class="calendar-memo-date">${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</div><div class="calendar-memo-text">${escapeHtml(m.text)}</div><div class="calendar-memo-cat">${escapeHtml(m.category||'#미분류')}${m.tag?' · '+escapeHtml(m.tag):''}</div></div>`;}).join(''):`<div class="calendar-empty">이 날에는 기록이 없어요.</div>`;
+  }else{
+    listHtml=`<div class="calendar-empty">날짜를 누르면 그날의 기록을 볼 수 있어요.</div>`;
+  }
+  detail.style.display='block';
+  detail.innerHTML=`<div class="calendar-detail-head"><div><div class="calendar-detail-title">${year}년 ${monthNames[month]}</div><div class="calendar-detail-sub">기록이 있는 날짜를 눌러 내용을 확인할 수 있어요.</div></div><button type="button" class="calendar-back-months" onclick="showCalendarMonthList()">달 목록</button></div><div class="calendar-weekdays">${['일','월','화','수','목','금','토'].map(d=>`<div class="calendar-weekday">${d}</div>`).join('')}</div><div class="calendar-days">${cells}</div><div class="calendar-day-list">${listHtml}</div>`;
+}
 
 /* =====================================================
    카테고리
