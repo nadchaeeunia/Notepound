@@ -19,6 +19,17 @@
       --theme-shadow-blue: rgba(74,127,229,.16);
       --theme-shadow-blue-soft: rgba(74,127,229,.13);
       --theme-shadow-blue-strong: rgba(74,127,229,.20);
+      --theme-body-bg: linear-gradient(135deg, #f6f8ff 0%, #eef3ff 48%, #f9f7ff 100%);
+      --theme-app-bg: #ffffff;
+      --theme-page-bg: linear-gradient(145deg, rgba(255,255,255,.98), rgba(240,245,255,.72));
+      --theme-surface: rgba(255,255,255,.78);
+      --theme-surface-soft: rgba(255,255,255,.56);
+      --theme-nav-bg: rgba(255,255,255,.72);
+      --theme-active-bg: rgba(255,255,255,.94);
+      --theme-input-bg: rgba(255,255,255,.72);
+      --theme-text: #24324a;
+      --theme-text-muted: #6f7890;
+      --theme-line-soft: rgba(70,90,120,.12);
     }
 
     * {
@@ -26,7 +37,8 @@
     }
 
     body {
-      background-color: #f0f2f5;
+      background: var(--theme-body-bg);
+      color: var(--theme-text);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -38,7 +50,7 @@
     .phone-container {
       width: 375px;
       height: 730px;
-      background-color: #fff;
+      background: var(--theme-app-bg);
       border-radius: 36px;
       box-shadow: 0 10px 25px rgba(0,0,0,.15);
       border: 8px solid #333;
@@ -52,8 +64,8 @@
       padding: 14px 16px 10px 20px;
       font-size: 18px;
       font-weight: bold;
-      color: #333;
-      border-bottom: 1px solid #f0f0f0;
+      color: var(--theme-text);
+      border-bottom: 1px solid var(--theme-line-soft);
       display:flex;
       align-items:center;
       justify-content:space-between;
@@ -75,8 +87,8 @@
 
     .tab-nav {
       display: flex;
-      background: #f8f9fa;
-      border-bottom: 1px solid #eee;
+      background: var(--theme-nav-bg);
+      border-bottom: 1px solid var(--theme-line-soft);
     }
 
     .tab-btn {
@@ -94,7 +106,7 @@
     .tab-btn.active {
       color: var(--theme-main);
       border-bottom-color: var(--theme-main);
-      background: #fff;
+      background: var(--theme-active-bg);
     }
 
     .tab-content {
@@ -102,6 +114,7 @@
       display: none;
       flex-direction: column;
       overflow-y: auto;
+      background: var(--theme-page-bg);
     }
 
     .tab-content.active {
@@ -124,7 +137,10 @@
       resize: none;
       font-size: 15px;
       line-height: 1.5;
-      color: #222;
+      color: var(--theme-text);
+      background: var(--theme-input-bg);
+      border-radius: 12px;
+      padding: 8px 10px;
     }
 
     .section-header-box {
@@ -514,7 +530,7 @@
     .thought-view{display:none;}
     .thought-view.active{display:block;}
     .thought-group-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;padding:2px 10px 14px;}
-    .thought-group-card{background:#fff;border:1px solid #e3e7ed;border-radius:18px;padding:15px;box-shadow:0 4px 14px rgba(0,0,0,.06);cursor:pointer;transition:.18s;min-height:145px;position:relative;overflow:hidden;}
+    .thought-group-card{background:var(--theme-surface);border:1px solid var(--theme-border);border-radius:18px;padding:15px;box-shadow:0 4px 14px rgba(0,0,0,.06);cursor:pointer;transition:.18s;min-height:145px;position:relative;overflow:hidden;}
     .thought-group-card:hover{border-color:var(--theme-main-dark);box-shadow:0 8px 22px var(--theme-shadow-blue-soft);transform:translateY(-2px)}
     .thought-group-kicker{font-size:9px;color:var(--theme-main-dark);font-weight:bold;margin-bottom:7px}
     .thought-group-title{font-size:15px;font-weight:800;color:#333;margin-bottom:6px;line-height:1.25}
@@ -534,9 +550,9 @@
     .thought-group-dot:nth-child(2){background:var(--theme-dot-mid)}.thought-group-dot:nth-child(3){background:var(--theme-main-dark)}
     .thought-back-btn{border:none;background:#f1f3f4;color:#555;border-radius:14px;padding:7px 10px;font-size:10px;font-weight:bold;cursor:pointer;margin:0 14px 8px}
     .thought-detail-title{padding:0 14px 8px;font-size:13px;font-weight:800;color:#333}
-    .unlinked-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:#f8f9fa;overflow:auto;position:relative}
+    .unlinked-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:var(--theme-surface-soft);overflow:auto;position:relative}
     .unlinked-graph{position:relative;width:100%;min-width:1000px;height:760px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden}
-    .unlinked-card{position:absolute;width:210px;min-height:118px;background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:12px;box-shadow:0 4px 13px rgba(0,0,0,.07);cursor:grab;animation:thoughtFloat 5.2s ease-in-out infinite;transition:box-shadow .18s,border-color .18s;user-select:none;touch-action:none}
+    .unlinked-card{position:absolute;width:210px;min-height:118px;background:var(--theme-surface);border:1px solid var(--theme-border);border-radius:16px;padding:12px;box-shadow:0 4px 13px rgba(0,0,0,.07);cursor:grab;animation:thoughtFloat 5.2s ease-in-out infinite;transition:box-shadow .18s,border-color .18s;user-select:none;touch-action:none}
     .unlinked-card:hover{border-color:var(--theme-main);box-shadow:0 7px 20px var(--theme-shadow-blue-soft)}
     .unlinked-card.dragging{cursor:grabbing;animation:none;z-index:30}
     .unlinked-card.linking{border-color:var(--theme-main);box-shadow:0 0 0 3px rgba(26,115,232,.12);}
@@ -548,16 +564,16 @@
     .thought-auto-note{padding:0 14px 8px;font-size:9px;color:#777;line-height:1.5;display:none}
     .thought-center-badge{display:inline-flex;align-items:center;gap:4px;background:var(--theme-soft);color:var(--theme-main-dark);border-radius:12px;padding:5px 8px;font-size:9px;font-weight:bold;margin:0 14px 8px;}
 .thought-graph-controls{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin:0 10px 6px;}
-    .thought-graph-controls button{width:28px;height:26px;border:1px solid var(--theme-border);background:#fff;color:var(--theme-main-dark);border-radius:9px;font-size:14px;font-weight:800;cursor:pointer;}
+    .thought-graph-controls button{width:28px;height:26px;border:1px solid var(--theme-border);background:var(--theme-surface);color:var(--theme-main-dark);border-radius:9px;font-size:14px;font-weight:800;cursor:pointer;}
     .thought-graph-controls button:hover{background:var(--theme-soft);}
     .thought-graph-controls span{min-width:44px;text-align:center;font-size:9px;font-weight:800;color:#777;}
-    .thought-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:#f8f9fa;overflow:auto;position:relative}
+    .thought-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:var(--theme-surface-soft);overflow:auto;position:relative}
     .thought-graph{position:relative;width:100%;min-width:1000px;height:760px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden;transform-origin:top left;}
     .thought-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
     /* 메모 연결선: 모든 연결은 현재 선택한 테마 색상으로 통일 */
-    .thought-edge{fill:none;stroke:var(--theme-connection);stroke-width:1.45;opacity:.82;stroke-linecap:round;stroke-linejoin:round}
-    .thought-edge.suggested,.thought-edge.auto,.thought-edge.manual{stroke:var(--theme-connection);stroke-width:1.45;opacity:.82}
-    .thought-node{position:absolute;width:210px;min-height:118px;background:#fff;border:1px solid #dfe3e8;border-radius:14px;padding:10px 10px 9px;box-shadow:0 4px 12px rgba(0,0,0,.09);cursor:grab;user-select:none;touch-action:none}
+    .thought-edge{fill:none;stroke:var(--theme-connection);stroke-width:1.25;opacity:.82;stroke-linecap:round;stroke-linejoin:round}
+    .thought-edge.suggested,.thought-edge.auto,.thought-edge.manual{stroke:var(--theme-connection);stroke-width:1.25;opacity:.82}
+    .thought-node{position:absolute;width:210px;min-height:118px;background:var(--theme-surface);border:1px solid var(--theme-border);border-radius:14px;padding:10px 10px 9px;box-shadow:0 4px 12px rgba(0,0,0,.09);cursor:grab;user-select:none;touch-action:none}
     .thought-node:hover{box-shadow:0 5px 14px var(--theme-shadow-blue)}
     /* 생각의 계층에 따라 테두리 강도를 다르게 표시 */
     .thought-node.depth-0{border:4px double var(--theme-main-dark);box-shadow:0 7px 22px var(--theme-center-shadow)}
@@ -583,7 +599,7 @@
     .memo-delete-btn{border:none;background:#f8f9fa;color:#999;border-radius:8px;padding:5px 6px;font-size:12px;cursor:pointer;line-height:1}.memo-delete-btn:hover{background:#fff0f0;color:#d93025}
     .thought-empty{margin:20px 0;padding:24px 16px;text-align:center;background:#f8f9fa;border-radius:14px;color:#999;font-size:12px;line-height:1.6}
     .thought-bottom{padding:10px 10px 20px}
-    .thought-panel{background:#fff;border:1px solid #eee;border-radius:14px;padding:10px;margin-top:8px}
+    .thought-panel{background:var(--theme-surface);border:1px solid var(--theme-border);border-radius:14px;padding:10px;margin-top:8px}
     .thought-panel-title{font-size:11px;font-weight:bold;color:#555;margin-bottom:7px}
     .suggestion-item{display:flex;align-items:center;gap:6px;padding:7px 0;border-top:1px solid #f2f2f2}
     .suggestion-item:first-child{border-top:none}
@@ -620,6 +636,22 @@
     .link-modal-btn{border:none;border-radius:14px;padding:7px 13px;font-size:11px;cursor:pointer}
     .link-modal-btn.cancel{background:#eee;color:#666}
     .link-modal-btn.save{background:var(--theme-main);color:#fff;font-weight:bold}
+    /* ===== 팔레트 기반 배경/표면 조화 ===== */
+    .phone-container{background:var(--theme-app-bg)!important;}
+    .app-header{background:linear-gradient(135deg,var(--theme-surface),var(--theme-surface-soft))!important;}
+    .tab-nav{background:var(--theme-nav-bg)!important;}
+    .tab-btn.active{background:var(--theme-active-bg)!important;}
+    .tab-content{background:var(--theme-page-bg)!important;}
+    .content-area{background:transparent;}
+    .memo-input{background:var(--theme-input-bg)!important;color:var(--theme-text)!important;}
+    .section-title,.thought-group-title,.thought-detail-title,.thought-node-text,.unlinked-card-text,.theme-modal-title{color:var(--theme-text)!important;}
+    .section-title,.thought-group-sub,.thought-description,.thought-legend,.thought-node-date,.unlinked-card-date{color:var(--theme-text-muted)!important;}
+    .thought-graph-wrap,.unlinked-graph-wrap{background:linear-gradient(145deg,var(--theme-surface-soft),var(--theme-page-bg))!important;border-color:var(--theme-border)!important;}
+    .thought-panel,.thought-group-card,.thought-node,.unlinked-card{background:var(--theme-surface)!important;}
+    .theme-choice,.thought-view-btn,.thought-graph-controls button,.thought-back-btn,.theme-close-btn{background:var(--theme-surface)!important;}
+    .thought-view-btn.active,.theme-choice.active{background:var(--theme-soft)!important;}
+    .theme-modal-sub,.theme-choice-name,.link-modal-description,.link-memo-option-main{color:var(--theme-text-muted)!important;}
+    .theme-choice:hover,.thought-group-card:hover,.unlinked-card:hover,.thought-node:hover{background:var(--theme-surface)!important;}
   </style>
 </head>
 
@@ -903,7 +935,7 @@
                 <marker id="arrowSuggested" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main)"></path></marker>
               </defs>
               <g id="thoughtEdges"></g>
-              <path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path>
+              <path id="thoughtTempEdge" class="thought-edge manual" style="display:none;"></path>
             </svg>
           </div>
         </div>
@@ -3378,20 +3410,66 @@ function disconnectMemos(aId,bId){
   saveMemos();
 }
 
-function makeCurve(x1,y1,x2,y2){
-  const dx=x2-x1,dy=y2-y1,dist=Math.hypot(dx,dy)||1;
-  const bend=Math.max(28,Math.min(120,dist*.22));
-  const nx=-dy/dist,ny=dx/dist;
-  const sign=(Math.abs(dx)>=Math.abs(dy)?(dx>=0?1:-1):(dy>=0?1:-1));
-  const offset=bend*.55*sign;
-  const c1x=x1+dx*.28+nx*offset,c1y=y1+dy*.28+ny*offset;
-  const c2x=x1+dx*.72+nx*offset,c2y=y1+dy*.72+ny*offset;
-  return `M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}`;
+function getNodeLocalRect(id){
+  const node=document.querySelector(`.thought-node[data-id="${id}"]`);
+  if(!node)return null;
+  return {left:node.offsetLeft,top:node.offsetTop,width:node.offsetWidth,height:node.offsetHeight,
+    right:node.offsetLeft+node.offsetWidth,bottom:node.offsetTop+node.offsetHeight,
+    cx:node.offsetLeft+node.offsetWidth/2,cy:node.offsetTop+node.offsetHeight/2};
 }
-function getNodeCenter(id){const node=document.querySelector(`.thought-node[data-id="${id}"]`),graph=document.getElementById('thoughtGraph');if(!node||!graph)return null;const nr=node.getBoundingClientRect(),gr=graph.getBoundingClientRect();return{x:nr.left-gr.left+nr.width/2,y:nr.top-gr.top+nr.height/2};}
+function getNodeCenter(id){
+  const r=getNodeLocalRect(id);
+  return r?{x:r.cx,y:r.cy}:null;
+}
+function clampCurve(v,min,max){return Math.max(min,Math.min(max,v));}
+function getNodeAnchorToPoint(id,px,py){
+  const r=getNodeLocalRect(id);
+  if(!r)return null;
+  const dx=px-r.cx,dy=py-r.cy;
+  if(Math.abs(dx)>=Math.abs(dy)){
+    return dx>=0?{x:r.right,y:r.cy,side:'right'}:{x:r.left,y:r.cy,side:'left'};
+  }
+  return dy>=0?{x:r.cx,y:r.bottom,side:'bottom'}:{x:r.cx,y:r.top,side:'top'};
+}
+function getNodeAnchorPair(fromId,toId){
+  const a=getNodeLocalRect(fromId),b=getNodeLocalRect(toId);
+  if(!a||!b)return null;
+  const dx=b.cx-a.cx,dy=b.cy-a.cy;
+  if(Math.abs(dx)>=Math.abs(dy)){
+    if(dx>=0)return {a:{x:a.right,y:a.cy,side:'right'},b:{x:b.left,y:b.cy,side:'left'}};
+    return {a:{x:a.left,y:a.cy,side:'left'},b:{x:b.right,y:b.cy,side:'right'}};
+  }
+  if(dy>=0)return {a:{x:a.cx,y:a.bottom,side:'bottom'},b:{x:b.cx,y:b.top,side:'top'}};
+  return {a:{x:a.cx,y:a.top,side:'top'},b:{x:b.cx,y:b.bottom,side:'bottom'}};
+}
+function makeNodeCurve(fromId,toId){
+  const pair=getNodeAnchorPair(fromId,toId);
+  if(!pair)return '';
+  const a=pair.a,b=pair.b;
+  const dx=b.x-a.x,dy=b.y-a.y;
+  const dist=Math.hypot(dx,dy)||1;
+  const bend=clampCurve(dist*0.28,28,105);
+  let c1x=a.x,c1y=a.y,c2x=b.x,c2y=b.y;
+  if(a.side==='right'){c1x=a.x+bend;c2x=b.x-bend;}
+  else if(a.side==='left'){c1x=a.x-bend;c2x=b.x+bend;}
+  else if(a.side==='bottom'){c1y=a.y+bend;c2y=b.y-bend;}
+  else {c1y=a.y-bend;c2y=b.y+bend;}
+  return `M ${a.x} ${a.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${b.x} ${b.y}`;
+}
+function makeNodeToPointCurve(fromId,px,py){
+  const a=getNodeAnchorToPoint(fromId,px,py);
+  if(!a)return '';
+  const bend=clampCurve(Math.hypot(px-a.x,py-a.y)*0.28,24,90);
+  let c1x=a.x,c1y=a.y,c2x=px,c2y=py;
+  if(a.side==='right'){c1x+=bend;c2x-=bend;}
+  else if(a.side==='left'){c1x-=bend;c2x+=bend;}
+  else if(a.side==='bottom'){c1y+=bend;c2y-=bend;}
+  else {c1y-=bend;c2y+=bend;}
+  return `M ${a.x} ${a.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${px} ${py}`;
+}
 function renderThoughtEdgesOnly(){
   const group=document.getElementById('thoughtEdges'),graph=document.getElementById('thoughtGraph');if(!group||!graph)return;group.innerHTML='';const visibleIds=new Set([...document.querySelectorAll('.thought-node')].map(n=>Number(n.dataset.id)));
-  getConnectionPairs().filter(e=>visibleIds.has(Number(e.from))&&visibleIds.has(Number(e.to))).forEach(edge=>{const a=getNodeCenter(edge.from),b=getNodeCenter(edge.to);if(!a||!b)return;const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',makeCurve(a.x,a.y,b.x,b.y));path.setAttribute('class',edge.type==='auto'?'thought-edge auto':'thought-edge manual');path.setAttribute('marker-end',edge.type==='auto'?'url(#arrowSuggested)':'url(#arrowManual)');path.style.pointerEvents='stroke';path.style.cursor='pointer';path.addEventListener('click',e=>{e.stopPropagation();if(confirm('이 연결을 끊을까요?')){disconnectMemos(edge.from,edge.to);renderThoughtFlow();}});group.appendChild(path);});
+  getConnectionPairs().filter(e=>visibleIds.has(Number(e.from))&&visibleIds.has(Number(e.to))).forEach(edge=>{const a=getNodeCenter(edge.from),b=getNodeCenter(edge.to);if(!a||!b)return;const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',makeNodeCurve(edge.from,edge.to));path.setAttribute('class',edge.type==='auto'?'thought-edge auto':'thought-edge manual');path.style.pointerEvents='stroke';path.style.cursor='pointer';path.addEventListener('click',e=>{e.stopPropagation();if(confirm('이 연결을 끊을까요?')){disconnectMemos(edge.from,edge.to);renderThoughtFlow();}});group.appendChild(path);});
 }
 function getThoughtNodeDepth(memo, centerId, component){
   const ids=new Set((component||[]).map(m=>Number(m.id)));
@@ -3483,7 +3561,7 @@ function renderThoughtFlow(){
     const title=getThoughtGroupTitle(active,0);const detailTitle=document.getElementById('thoughtDetailTitle');detailTitle.innerHTML=`<span>${escapeHtml(title)} · ${active.length}개 기록</span><button class="thought-title-edit detail" type="button" title="주제 이름 수정">✏️</button><button class="thought-topic-delete" type="button" title="이 생각 주제 삭제">🗑️</button>`;detailTitle.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(active);});detailTitle.querySelector('.thought-topic-delete').addEventListener('click',e=>{e.stopPropagation();deleteThoughtGroup(active);});
     const centerId=Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null;thoughtCenterId=centerId;const center=active.find(m=>Number(m.id)===centerId);
     if(centerBadge)centerBadge.innerHTML=center?`◎ 중심 메모: 「${escapeHtml(String(center.text).slice(0,28))}${String(center.text).length>28?'…':''}」`:'◎ 이 주제의 중심 메모를 하나 선택해 주세요';
-    const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-connection)"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-connection)"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>`;
+    const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-connection)"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-connection)"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;"></path></svg>`;
     const svg=graph.querySelector('svg');active.forEach((memo,index)=>graph.appendChild(buildThoughtNode(memo,Number(memo.id)===centerId,index)));
     if(center){
       starifyThoughtGroup(active,centerId);
@@ -3505,7 +3583,7 @@ function changeThoughtZoom(delta){thoughtZoom=Math.max(.6,Math.min(1.8,Math.roun
 function resetThoughtZoom(){thoughtZoom=1;applyThoughtZoom();renderThoughtEdgesOnly();}
 
 function startThoughtLink(event,id){event.stopPropagation();event.preventDefault();linkingFromId=Number(id);const temp=document.getElementById('thoughtTempEdge');if(temp)temp.style.display='block';document.addEventListener('pointermove',moveThoughtLink);document.addEventListener('pointerup',finishThoughtLink,{once:true});}
-function moveThoughtLink(event){if(linkingFromId===null)return;const graph=document.getElementById('thoughtGraph'),temp=document.getElementById('thoughtTempEdge'),start=getNodeCenter(linkingFromId);if(!graph||!temp||!start)return;const gr=graph.getBoundingClientRect();const x=Math.max(0,Math.min(graph.clientWidth,event.clientX-gr.left)),y=Math.max(0,Math.min(graph.clientHeight,event.clientY-gr.top));temp.setAttribute('d',makeCurve(start.x,start.y,x,y));}
+function moveThoughtLink(event){if(linkingFromId===null)return;const graph=document.getElementById('thoughtGraph'),temp=document.getElementById('thoughtTempEdge');if(!graph||!temp)return;const gr=graph.getBoundingClientRect();const x=Math.max(0,Math.min(graph.clientWidth,(event.clientX-gr.left)/thoughtZoom)),y=Math.max(0,Math.min(graph.clientHeight,(event.clientY-gr.top)/thoughtZoom));temp.setAttribute('d',makeNodeToPointCurve(linkingFromId,x,y));}
 function finishThoughtLink(event){document.removeEventListener('pointermove',moveThoughtLink);const graph=document.getElementById('thoughtGraph'),temp=document.getElementById('thoughtTempEdge');if(temp)temp.style.display='none';if(linkingFromId===null)return;let targetId=null;document.querySelectorAll('.thought-node').forEach(node=>{const r=node.getBoundingClientRect();if(event.clientX>=r.left&&event.clientX<=r.right&&event.clientY>=r.top&&event.clientY<=r.bottom)targetId=Number(node.dataset.id);});if(targetId&&targetId!==linkingFromId){connectMemos(linkingFromId,targetId);renderThoughtFlow();}linkingFromId=null;}
 function startThoughtNodeDrag(event,id){
   if(event.target.closest('.thought-node-port'))return;const node=event.currentTarget,graph=document.getElementById('thoughtGraph'),gr=graph.getBoundingClientRect(),nr=node.getBoundingClientRect();isDraggingThoughtNode=true;thoughtDragOffset={x:(event.clientX-nr.left)/thoughtZoom,y:(event.clientY-nr.top)/thoughtZoom};node.classList.add('dragging');
@@ -3630,21 +3708,31 @@ const COLOR_THEMES={
   blackGold:{name:'블랙 & 골드의 우아함',colors:['#000000','#17213B','#EFA73E','#E5E5E5','#FFFFFF']},
   lushGreen:{name:'잎이 무성한 녹색 정원',colors:['#192915','#3A5631','#587637','#95A860','#EDF3A8']}
 };
+function hexLuma(hex){const h=hex.replace('#','');const r=parseInt(h.slice(0,2),16)/255,g=parseInt(h.slice(2,4),16)/255,b=parseInt(h.slice(4,6),16)/255;const f=v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);return .2126*f(r)+.7152*f(g)+.0722*f(b);}
 function paletteToTheme(t){
-  const c=t.colors;
-  return {main:c[1],dark:c[0],soft:c[4],border:c[3],pale:c[4],accent:c[3],light:c[3],mid:c[2],connection:c[1],center:c[0],colors:c};
+  const colors=[...t.colors];
+  const ranked=[...colors].sort((a,b)=>hexLuma(a)-hexLuma(b));
+  const darkest=ranked[0], dark=ranked[1]||ranked[0], middle=ranked[Math.floor(ranked.length/2)]||ranked[0], light=ranked[ranked.length-2]||ranked[0], lightest=ranked[ranked.length-1]||ranked[0];
+  return {
+    main:dark, dark:darkest, soft:hexToRgba(lightest,.30), border:hexToRgba(middle,.28), pale:hexToRgba(lightest,.20), accent:hexToRgba(light,.34), light, mid:middle, connection:dark, center:darkest, colors,
+    bodyBg:`linear-gradient(135deg, ${hexToRgba(lightest,.36)} 0%, ${hexToRgba(light,.22)} 48%, ${hexToRgba(middle,.10)} 100%)`,
+    appBg:`linear-gradient(145deg, rgba(255,255,255,.96), ${hexToRgba(lightest,.18)})`,
+    pageBg:`linear-gradient(145deg, ${hexToRgba(lightest,.20)}, ${hexToRgba(light,.12)} 52%, rgba(255,255,255,.78))`,
+    surface:hexToRgba(lightest,.74), surfaceSoft:hexToRgba(lightest,.48), navBg:hexToRgba(lightest,.64), activeBg:hexToRgba(lightest,.90), inputBg:hexToRgba(lightest,.62),
+    text:darkest, textMuted:hexToRgba(darkest,.62), lineSoft:hexToRgba(darkest,.12)
+  };
 }
 function applyColorTheme(name){
   const key=COLOR_THEMES[name]?name:'fireSea';
   const t=paletteToTheme(COLOR_THEMES[key]),root=document.documentElement;
-  root.style.setProperty('--theme-main',t.main);root.style.setProperty('--theme-main-dark',t.dark);root.style.setProperty('--theme-soft',t.soft);root.style.setProperty('--theme-border',t.border);root.style.setProperty('--theme-pale',t.pale);root.style.setProperty('--theme-accent-soft',t.accent);root.style.setProperty('--theme-dot-light',t.light);root.style.setProperty('--theme-dot-mid',t.mid);root.style.setProperty('--theme-connection',t.connection);root.style.setProperty('--theme-center',t.center);root.style.setProperty('--theme-center-shadow',hexToRgba(t.center,.25));root.style.setProperty('--theme-shadow-blue',hexToRgba(t.main,.16));root.style.setProperty('--theme-shadow-blue-soft',hexToRgba(t.main,.13));root.style.setProperty('--theme-shadow-blue-strong',hexToRgba(t.main,.20));
+  root.style.setProperty('--theme-main',t.main);root.style.setProperty('--theme-main-dark',t.dark);root.style.setProperty('--theme-soft',t.soft);root.style.setProperty('--theme-border',t.border);root.style.setProperty('--theme-pale',t.pale);root.style.setProperty('--theme-accent-soft',t.accent);root.style.setProperty('--theme-dot-light',t.light);root.style.setProperty('--theme-dot-mid',t.mid);root.style.setProperty('--theme-connection',t.connection);root.style.setProperty('--theme-center',t.center);root.style.setProperty('--theme-center-shadow',hexToRgba(t.center,.25));root.style.setProperty('--theme-shadow-blue',hexToRgba(t.main,.16));root.style.setProperty('--theme-shadow-blue-soft',hexToRgba(t.main,.13));root.style.setProperty('--theme-shadow-blue-strong',hexToRgba(t.main,.20));root.style.setProperty('--theme-body-bg',t.bodyBg);root.style.setProperty('--theme-app-bg',t.appBg);root.style.setProperty('--theme-page-bg',t.pageBg);root.style.setProperty('--theme-surface',t.surface);root.style.setProperty('--theme-surface-soft',t.surfaceSoft);root.style.setProperty('--theme-nav-bg',t.navBg);root.style.setProperty('--theme-active-bg',t.activeBg);root.style.setProperty('--theme-input-bg',t.inputBg);root.style.setProperty('--theme-text',t.text);root.style.setProperty('--theme-text-muted',t.textMuted);root.style.setProperty('--theme-line-soft',t.lineSoft);
   localStorage.setItem(NOTEOUND_THEME_KEY,key);document.body.dataset.colorTheme=key;
   const grid=document.getElementById('themeGrid');if(grid)grid.querySelectorAll('.theme-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.theme===key));
 }
 
 function hexToRgba(hex,alpha){const h=hex.replace('#','');const n=parseInt(h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${alpha})`;}
 function renderThemeChoices(){
-  const grid=document.getElementById('themeGrid');if(!grid)return;const current=localStorage.getItem(NOTEOUND_THEME_KEY)||'blue';grid.innerHTML='';
+  const grid=document.getElementById('themeGrid');if(!grid)return;const current=localStorage.getItem(NOTEOUND_THEME_KEY)||'fireSea';grid.innerHTML='';
   Object.entries(COLOR_THEMES).forEach(([key,t])=>{const btn=document.createElement('button');btn.type='button';btn.className='theme-choice'+(key===current?' active':'');btn.dataset.theme=key;btn.innerHTML=`<div class="theme-palette-swatch">${t.colors.map(c=>`<span style="background:${c}"></span>`).join('')}</div><div class="theme-choice-name">${t.name}</div>`;btn.addEventListener('click',()=>applyColorTheme(key));grid.appendChild(btn);});
 }
 function openThemeModal(){renderThemeChoices();const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='flex';}
