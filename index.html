@@ -661,6 +661,11 @@
 
     /* ===== 캘린더 ===== */
     .calendar-content{padding:14px;display:flex;flex-direction:column;gap:12px;}
+    .calendar-mode-tabs{display:flex;gap:7px;padding:2px;background:var(--theme-surface-soft);border:1px solid var(--theme-border);border-radius:14px;}
+    .calendar-mode-btn{flex:1;border:0;background:transparent;color:var(--theme-text-muted);border-radius:11px;padding:9px 8px;font-size:10px;font-weight:800;cursor:pointer;}
+    .calendar-mode-btn.active{background:var(--theme-main);color:#fff;box-shadow:0 2px 8px var(--theme-shadow-blue-soft);}
+    .calendar-mode-panel{display:none;flex-direction:column;gap:12px;}
+    .calendar-mode-panel.active{display:flex;}
     .calendar-section{background:var(--theme-surface);border:1px solid var(--theme-border);border-radius:16px;padding:12px;box-shadow:0 4px 14px var(--theme-shadow-blue-soft);}
     .calendar-section-title{font-size:12px;font-weight:800;color:var(--theme-text);margin-bottom:9px;}
     .calendar-year-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;}
@@ -995,35 +1000,42 @@
   <!-- 캘린더 -->
   <div id="pageCalendar" class="tab-content">
     <div class="calendar-content">
-      <div class="calendar-section">
-        <div class="calendar-section-title">📝 기록 달력</div>
-        <div class="calendar-section-title" style="font-size:9px;font-weight:600;color:var(--theme-text-muted);margin-top:-5px;">메모와 별개로 이날 무엇을 했는지 간단하게 남기는 기록 달력</div>
-        <div id="calendarYearTabs" class="calendar-year-tabs"></div>
-        <div id="calendarMonthGrid" class="calendar-month-grid" style="margin-top:8px;"></div>
+      <div class="calendar-mode-tabs">
+        <button type="button" id="calendarModeRecordBtn" class="calendar-mode-btn active" onclick="switchCalendarMode('record')">📝 기록 달력</button>
+        <button type="button" id="calendarModeScheduleBtn" class="calendar-mode-btn" onclick="switchCalendarMode('schedule')">🔔 일정 달력</button>
       </div>
 
-      <div class="calendar-section">
-        <div class="calendar-section-title">✨ 기록이 있는 달만 보기</div>
-        <div id="calendarRecordMonths" class="calendar-record-months"></div>
+      <div id="calendarRecordPanel" class="calendar-mode-panel active">
+        <div class="calendar-section">
+          <div class="calendar-section-title">📝 기록 달력</div>
+          <div class="calendar-section-title" style="font-size:9px;font-weight:600;color:var(--theme-text-muted);margin-top:-5px;">메모와 별개로 이날 무엇을 했는지 깔끔하게 기록하는 달력</div>
+          <div id="calendarYearTabs" class="calendar-year-tabs"></div>
+          <div id="calendarMonthGrid" class="calendar-month-grid" style="margin-top:8px;"></div>
+        </div>
+        <div class="calendar-section">
+          <div class="calendar-section-title">✨ 기록이 있는 달만 보기</div>
+          <div id="calendarRecordMonths" class="calendar-record-months"></div>
+        </div>
+        <div id="calendarDetail" class="calendar-detail" style="display:none;"></div>
       </div>
 
-      <div id="calendarDetail" class="calendar-detail" style="display:none;"></div>
-
-      <div class="calendar-section">
-        <div class="calendar-schedule-toolbar">
-          <div>
-            <div class="calendar-section-title" style="margin-bottom:2px;">🔔 일정 달력</div>
-            <div style="font-size:9px;color:var(--theme-text-muted);">다가올 일을 알려주는 달력 · 나중에 알림/리마인더와 연결됩니다.</div>
+      <div id="calendarSchedulePanel" class="calendar-mode-panel">
+        <div class="calendar-section">
+          <div class="calendar-schedule-toolbar">
+            <div>
+              <div class="calendar-section-title" style="margin-bottom:2px;">🔔 일정 달력</div>
+              <div style="font-size:9px;color:var(--theme-text-muted);">다가올 일을 알려주는 달력 · 알림/리마인더와 연결되는 일정 관리</div>
+            </div>
+            <button type="button" class="calendar-schedule-add" onclick="openScheduleModal()">＋ 일정 추가</button>
           </div>
-          <button type="button" class="calendar-schedule-add" onclick="openScheduleModal()">＋ 일정 추가</button>
+          <div class="schedule-month-nav">
+            <button type="button" onclick="moveScheduleMonth(-1)">‹</button>
+            <div id="scheduleMonthTitle" class="schedule-month-title"></div>
+            <button type="button" onclick="moveScheduleMonth(1)">›</button>
+          </div>
+          <div id="scheduleCalendarGrid" class="calendar-days schedule-days"></div>
+          <div id="scheduleList" class="schedule-list"></div>
         </div>
-        <div class="schedule-month-nav">
-          <button type="button" onclick="moveScheduleMonth(-1)">‹</button>
-          <div id="scheduleMonthTitle" class="schedule-month-title"></div>
-          <button type="button" onclick="moveScheduleMonth(1)">›</button>
-        </div>
-        <div id="scheduleCalendarGrid" class="calendar-days schedule-days"></div>
-        <div id="scheduleList" class="schedule-list"></div>
       </div>
     </div>
   </div>
@@ -1347,6 +1359,7 @@ let linkingMemoId = null;
 let calendarYear = new Date().getFullYear();
 let calendarSelectedMonth = null;
 let calendarSelectedDay = null;
+let calendarMode = 'record';
 let dailyRecords = JSON.parse(localStorage.getItem('notepound_daily_records') || '{}');
 let memoDateFilter = '';
 let scheduleItems = JSON.parse(localStorage.getItem('notepound_schedules') || '[]');
@@ -1492,8 +1505,7 @@ function switchTab(tabName) {
   }
 
   if (tabName === 'calendar') {
-    renderCalendarPage();
-    renderScheduleCalendar();
+    switchCalendarMode(calendarMode);
     checkScheduleReminders();
   }
 
@@ -1504,6 +1516,20 @@ function switchTab(tabName) {
 }
 
 
+
+function switchCalendarMode(mode){
+  calendarMode=mode==='schedule'?'schedule':'record';
+  const recordPanel=document.getElementById('calendarRecordPanel');
+  const schedulePanel=document.getElementById('calendarSchedulePanel');
+  const recordBtn=document.getElementById('calendarModeRecordBtn');
+  const scheduleBtn=document.getElementById('calendarModeScheduleBtn');
+  if(recordPanel)recordPanel.classList.toggle('active',calendarMode==='record');
+  if(schedulePanel)schedulePanel.classList.toggle('active',calendarMode==='schedule');
+  if(recordBtn)recordBtn.classList.toggle('active',calendarMode==='record');
+  if(scheduleBtn)scheduleBtn.classList.toggle('active',calendarMode==='schedule');
+  if(calendarMode==='record')renderCalendarPage();
+  else renderScheduleCalendar();
+}
 
 /* =====================================================
    기록 달력 — 메모와 완전히 분리된 일상 기록
