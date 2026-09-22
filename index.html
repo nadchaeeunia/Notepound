@@ -610,10 +610,14 @@
     .thought-change-box{margin-top:8px;padding:8px 9px;background:#fff8e1;border-radius:9px;color:#795548;font-size:9px;line-height:1.5}
     .selected-info{padding:7px 10px;margin:0 10px 8px;background:var(--theme-pale);border-radius:10px;color:#4b6380;font-size:9px;line-height:1.4}
     /* 색상 테마 모달 */
-    .theme-modal-card{width:300px;max-width:calc(100vw - 34px);}
-    .theme-modal-title{font-size:15px;font-weight:800;color:#333;margin-bottom:4px;}
-    .theme-modal-sub{font-size:10px;color:#999;line-height:1.5;margin-bottom:12px;}
-    .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+    .theme-modal-card{width:300px;max-width:calc(100vw - 34px);max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden;}
+    .theme-modal-title{font-size:15px;font-weight:800;color:#333;margin-bottom:4px;flex-shrink:0;}
+    .theme-modal-sub{font-size:10px;color:#999;line-height:1.5;margin-bottom:12px;flex-shrink:0;}
+    .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;overflow-y:auto;overflow-x:hidden;min-height:0;padding:2px 5px 4px 2px;scrollbar-width:thin;scrollbar-color:var(--theme-border) transparent;}
+    .theme-grid::-webkit-scrollbar{width:7px;}
+    .theme-grid::-webkit-scrollbar-track{background:transparent;}
+    .theme-grid::-webkit-scrollbar-thumb{background:var(--theme-border);border-radius:10px;}
+    .theme-grid::-webkit-scrollbar-thumb:hover{background:var(--theme-main);}
     .theme-choice{border:1px solid #e5e7eb;background:#fff;border-radius:14px;padding:9px 6px;cursor:pointer;text-align:center;transition:.15s;}
     .theme-choice:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.06);}
     .theme-choice.active{border:2px solid var(--theme-main);background:var(--theme-pale);}
@@ -621,7 +625,8 @@
     .theme-palette-swatch{display:flex;width:100%;height:34px;border-radius:9px;overflow:hidden;margin:0 auto 7px;box-shadow:0 1px 5px rgba(0,0,0,.10);}
     .theme-palette-swatch span{flex:1;display:block;}
     .theme-choice-name{font-size:9px;font-weight:800;color:#555;line-height:1.25;}
-    .theme-close-row{display:flex;justify-content:flex-end;margin-top:12px;}
+    .theme-close-row{display:flex;justify-content:flex-end;margin-top:10px;padding-top:8px;flex-shrink:0;border-top:1px solid var(--theme-line-soft);background:var(--theme-surface);}
+    .theme-close-btn{min-width:58px;}
     .theme-close-btn{border:none;background:#f1f3f4;color:#666;border-radius:12px;padding:7px 12px;font-size:10px;font-weight:bold;cursor:pointer;}
 
     /* 연결 모달 */
@@ -3441,25 +3446,35 @@ function getNodeCenter(id){
   return r?{x:r.cx,y:r.cy}:null;
 }
 function clampCurve(v,min,max){return Math.max(min,Math.min(max,v));}
+function projectAnchorOnSide(r,side,targetX,targetY){
+  const pad=12;
+  if(side==='right')return {x:r.right,y:clampCurve(targetY,r.top+pad,r.bottom-pad),side};
+  if(side==='left')return {x:r.left,y:clampCurve(targetY,r.top+pad,r.bottom-pad),side};
+  if(side==='bottom')return {x:clampCurve(targetX,r.left+pad,r.right-pad),y:r.bottom,side};
+  return {x:clampCurve(targetX,r.left+pad,r.right-pad),y:r.top,side:'top'};
+}
 function getNodeAnchorToPoint(id,px,py){
   const r=getNodeLocalRect(id);
   if(!r)return null;
   const dx=px-r.cx,dy=py-r.cy;
   if(Math.abs(dx)>=Math.abs(dy)){
-    return dx>=0?{x:r.right,y:r.cy,side:'right'}:{x:r.left,y:r.cy,side:'left'};
+    return dx>=0?projectAnchorOnSide(r,'right',px,py):projectAnchorOnSide(r,'left',px,py);
   }
-  return dy>=0?{x:r.cx,y:r.bottom,side:'bottom'}:{x:r.cx,y:r.top,side:'top'};
+  return dy>=0?projectAnchorOnSide(r,'bottom',px,py):projectAnchorOnSide(r,'top',px,py);
 }
 function getNodeAnchorPair(fromId,toId){
   const a=getNodeLocalRect(fromId),b=getNodeLocalRect(toId);
   if(!a||!b)return null;
   const dx=b.cx-a.cx,dy=b.cy-a.cy;
+  // Anchor each end at the point on the chosen edge that faces the other memo.
+  // This prevents several connections from collapsing into one point at the middle
+  // of a memo and makes sibling branches enter the box at separate positions.
   if(Math.abs(dx)>=Math.abs(dy)){
-    if(dx>=0)return {a:{x:a.right,y:a.cy,side:'right'},b:{x:b.left,y:b.cy,side:'left'}};
-    return {a:{x:a.left,y:a.cy,side:'left'},b:{x:b.right,y:b.cy,side:'right'}};
+    if(dx>=0)return {a:projectAnchorOnSide(a,'right',b.cx,b.cy),b:projectAnchorOnSide(b,'left',a.cx,a.cy)};
+    return {a:projectAnchorOnSide(a,'left',b.cx,b.cy),b:projectAnchorOnSide(b,'right',a.cx,a.cy)};
   }
-  if(dy>=0)return {a:{x:a.cx,y:a.bottom,side:'bottom'},b:{x:b.cx,y:b.top,side:'top'}};
-  return {a:{x:a.cx,y:a.top,side:'top'},b:{x:b.cx,y:b.bottom,side:'bottom'}};
+  if(dy>=0)return {a:projectAnchorOnSide(a,'bottom',b.cx,b.cy),b:projectAnchorOnSide(b,'top',a.cx,a.cy)};
+  return {a:projectAnchorOnSide(a,'top',b.cx,b.cy),b:projectAnchorOnSide(b,'bottom',a.cx,a.cy)};
 }
 function makeNodeCurve(fromId,toId){
   const pair=getNodeAnchorPair(fromId,toId);
@@ -3467,7 +3482,7 @@ function makeNodeCurve(fromId,toId){
   const a=pair.a,b=pair.b;
   const dx=b.x-a.x,dy=b.y-a.y;
   const dist=Math.hypot(dx,dy)||1;
-  const bend=clampCurve(dist*0.28,28,105);
+  const bend=clampCurve(dist*0.32,30,115);
   let c1x=a.x,c1y=a.y,c2x=b.x,c2y=b.y;
   if(a.side==='right'){c1x=a.x+bend;c2x=b.x-bend;}
   else if(a.side==='left'){c1x=a.x-bend;c2x=b.x+bend;}
@@ -3478,7 +3493,7 @@ function makeNodeCurve(fromId,toId){
 function makeNodeToPointCurve(fromId,px,py){
   const a=getNodeAnchorToPoint(fromId,px,py);
   if(!a)return '';
-  const bend=clampCurve(Math.hypot(px-a.x,py-a.y)*0.28,24,90);
+  const bend=clampCurve(Math.hypot(px-a.x,py-a.y)*0.32,26,95);
   let c1x=a.x,c1y=a.y,c2x=px,c2y=py;
   if(a.side==='right'){c1x+=bend;c2x-=bend;}
   else if(a.side==='left'){c1x-=bend;c2x+=bend;}
