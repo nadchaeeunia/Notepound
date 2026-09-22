@@ -1,7 +1,4 @@
-from pathlib import Path
-import webbrowser
-
-HTML = r"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -679,6 +676,12 @@ HTML = r"""<!DOCTYPE html>
     .calendar-month-btn:hover,.calendar-month-btn.active{background:var(--theme-soft);border-color:var(--theme-main);}
     .calendar-month-btn.has-record{box-shadow:inset 0 -3px 0 var(--theme-main);}
     .calendar-month-count{display:block;font-size:8px;color:var(--theme-text-muted);margin-top:3px;font-weight:600;}
+    .calendar-record-months{display:flex;flex-direction:column;gap:7px;max-height:190px;overflow-y:auto;padding-right:2px;}
+    .calendar-record-item{width:100%;border:1px solid var(--theme-border);background:var(--theme-surface-soft);border-radius:12px;padding:9px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;text-align:left;color:var(--theme-text);}
+    .calendar-record-item:hover{background:var(--theme-soft);border-color:var(--theme-main);}
+    .calendar-record-title{font-size:10px;font-weight:800;}
+    .calendar-record-meta{font-size:8px;color:var(--theme-text-muted);margin-top:2px;}
+    .calendar-record-badge{font-size:8px;background:var(--theme-pale);color:var(--theme-main-dark);padding:4px 7px;border-radius:10px;white-space:nowrap;}
     .calendar-detail{background:var(--theme-surface);border:1px solid var(--theme-border);border-radius:16px;padding:12px;}
     .calendar-detail-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
     .calendar-detail-title{font-size:15px;font-weight:900;color:var(--theme-text);}
@@ -703,11 +706,9 @@ HTML = r"""<!DOCTYPE html>
     .daily-record-date{font-size:9px;color:var(--theme-text-muted);font-weight:800;}
     .daily-record-input{width:100%;min-height:70px;resize:vertical;border:1px solid var(--theme-border);background:var(--theme-surface-soft);color:var(--theme-text);border-radius:12px;padding:10px;font-size:10px;line-height:1.5;box-sizing:border-box;outline:none;}
     .daily-record-input:focus{border-color:var(--theme-main);box-shadow:0 0 0 2px var(--theme-soft);}
-    .daily-record-list{display:flex;flex-direction:column;gap:7px;}
-    .daily-record-card{border:1px solid var(--theme-border);background:var(--theme-surface-soft);border-radius:12px;padding:9px 10px;}
-    .daily-record-card-text{font-size:10px;line-height:1.5;color:var(--theme-text);white-space:pre-wrap;word-break:break-word;}
-    .daily-record-card-actions{display:flex;justify-content:flex-end;gap:5px;margin-top:7px;}
-    .daily-record-edit{border:1px solid var(--theme-border);background:var(--theme-surface);color:var(--theme-text-muted);border-radius:8px;padding:4px 7px;font-size:8px;font-weight:700;cursor:pointer;}
+    .daily-record-list{display:flex;flex-direction:column;gap:8px;}
+    .daily-record-item{border:1px solid var(--theme-border);background:var(--theme-surface-soft);border-radius:12px;padding:8px;}
+    .daily-record-add{width:100%;border:1px dashed var(--theme-main);background:var(--theme-soft);color:var(--theme-main-dark);border-radius:10px;padding:8px;font-size:9px;font-weight:800;cursor:pointer;}
     .daily-record-actions{display:flex;justify-content:flex-end;gap:6px;}
     .daily-record-save,.daily-record-delete{border-radius:10px;padding:6px 9px;font-size:9px;font-weight:800;cursor:pointer;}
     .daily-record-save{border:1px solid var(--theme-main);background:var(--theme-main);color:#fff;}
@@ -716,24 +717,14 @@ HTML = r"""<!DOCTYPE html>
     .memo-date-filter label{font-size:9px;font-weight:800;color:var(--theme-text-muted);}
     .memo-date-input{border:1px solid var(--theme-border);background:var(--theme-surface-soft);color:var(--theme-text);border-radius:10px;padding:6px 8px;font-size:9px;outline:none;}
     .memo-date-clear{border:1px solid var(--theme-border);background:var(--theme-surface-soft);color:var(--theme-text-muted);border-radius:10px;padding:6px 8px;font-size:9px;font-weight:800;cursor:pointer;}
-    .calendar-schedule-toolbar{display:flex;justify-content:space-between;align-items:flex-start;gap:7px;margin-bottom:8px;}
-    .calendar-schedule-toolbar > div:last-child{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;flex-shrink:0;}
-    .calendar-schedule-add{border:1px solid var(--theme-main);background:var(--theme-main);color:#fff;border-radius:12px;padding:7px 10px;font-size:9px;font-weight:800;cursor:pointer;white-space:nowrap;min-width:76px;}
-    .schedule-import-btn{white-space:nowrap;min-width:92px;}
+    .calendar-schedule-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;}
+    .calendar-schedule-add{border:1px solid var(--theme-main);background:var(--theme-main);color:#fff;border-radius:12px;padding:7px 10px;font-size:9px;font-weight:800;cursor:pointer;}
     .schedule-month-nav{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:8px;}
     .schedule-month-nav button{border:1px solid var(--theme-border);background:var(--theme-surface-soft);color:var(--theme-text);border-radius:10px;width:28px;height:26px;cursor:pointer;}
     .schedule-month-title{font-size:13px;font-weight:900;color:var(--theme-text);}
     .schedule-days .calendar-day{min-height:43px;}
     .schedule-day-dot{width:5px;height:5px;border-radius:50%;background:var(--theme-main-dark);position:absolute;right:4px;top:5px;}
     .schedule-day-count{display:block;margin-top:7px;font-size:7px;color:var(--theme-main-dark);font-weight:800;}
-    .schedule-months{display:flex;flex-direction:column;gap:7px;max-height:180px;overflow-y:auto;margin:8px 0 10px;}
-    .schedule-month-item{width:100%;border:1px solid var(--theme-border);background:var(--theme-surface-soft);border-radius:12px;padding:9px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;text-align:left;color:var(--theme-text);}
-    .schedule-month-item:hover,.schedule-month-item.active{background:var(--theme-soft);border-color:var(--theme-main);}
-    .schedule-month-title-small{font-size:10px;font-weight:800;}
-    .schedule-month-meta{font-size:8px;color:var(--theme-text-muted);margin-top:2px;}
-    .schedule-source-badge{display:inline-block;font-size:7px;background:var(--theme-pale);color:var(--theme-main-dark);border-radius:8px;padding:3px 5px;margin-left:4px;}
-    .schedule-import-btn{border:1px solid var(--theme-border);background:var(--theme-surface-soft);color:var(--theme-text);border-radius:11px;padding:7px 9px;font-size:9px;font-weight:800;cursor:pointer;}
-    .schedule-import-btn:hover{border-color:var(--theme-main);background:var(--theme-soft);}
     .schedule-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;max-height:210px;overflow-y:auto;}
     .schedule-item{border:1px solid var(--theme-border);background:var(--theme-surface-soft);border-radius:11px;padding:8px 9px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
     .schedule-item-main{min-width:0;}
@@ -1024,6 +1015,10 @@ HTML = r"""<!DOCTYPE html>
           <div id="calendarYearTabs" class="calendar-year-tabs"></div>
           <div id="calendarMonthGrid" class="calendar-month-grid" style="margin-top:8px;"></div>
         </div>
+        <div class="calendar-section">
+          <div class="calendar-section-title">✨ 기록이 있는 달만 보기</div>
+          <div id="calendarRecordMonths" class="calendar-record-months"></div>
+        </div>
         <div id="calendarDetail" class="calendar-detail" style="display:none;"></div>
       </div>
 
@@ -1032,23 +1027,17 @@ HTML = r"""<!DOCTYPE html>
           <div class="calendar-schedule-toolbar">
             <div>
               <div class="calendar-section-title" style="margin-bottom:2px;">🔔 일정 달력</div>
-              <div style="font-size:9px;color:var(--theme-text-muted);">일정이 있는 달만 모아 보여줘요 · 알림/리마인더와 연결됩니다.</div>
+              <div style="font-size:9px;color:var(--theme-text-muted);">다가올 일을 알려주는 달력 · 알림/리마인더와 연결되는 일정 관리</div>
             </div>
-            <div style="display:flex;gap:5px;flex-shrink:0;">
-              <button type="button" class="schedule-import-btn" onclick="openMemoScheduleImportModal()">📌 메모에서 가져오기</button>
-              <button type="button" class="calendar-schedule-add" onclick="openScheduleModal()">＋ 일정 추가</button>
-            </div>
+            <button type="button" class="calendar-schedule-add" onclick="openScheduleModal()">＋ 일정 추가</button>
           </div>
-          <div id="scheduleMonthChooser" class="schedule-months"></div>
-          <div id="scheduleMonthDetail" style="display:none;">
-            <div class="schedule-month-nav">
-              <button type="button" onclick="showAdjacentScheduleMonth(-1)">‹</button>
-              <div id="scheduleMonthTitle" class="schedule-month-title"></div>
-              <button type="button" onclick="showAdjacentScheduleMonth(1)">›</button>
-            </div>
-            <div id="scheduleCalendarGrid" class="calendar-days schedule-days"></div>
-            <div id="scheduleList" class="schedule-list"></div>
+          <div class="schedule-month-nav">
+            <button type="button" onclick="moveScheduleMonth(-1)">‹</button>
+            <div id="scheduleMonthTitle" class="schedule-month-title"></div>
+            <button type="button" onclick="moveScheduleMonth(1)">›</button>
           </div>
+          <div id="scheduleCalendarGrid" class="calendar-days schedule-days"></div>
+          <div id="scheduleList" class="schedule-list"></div>
         </div>
       </div>
     </div>
@@ -1205,19 +1194,6 @@ HTML = r"""<!DOCTYPE html>
       <div class="link-modal-actions">
         <button class="link-modal-btn cancel" type="button" onclick="closeAddExistingMemoModal()">닫기</button>
         <button class="link-modal-btn save" type="button" onclick="saveExistingMemosToThought()">이 주제에 추가</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 기존 메모에서 일정 가져오기 모달 -->
-  <div id="memoScheduleImportModalOverlay" class="memo-modal-overlay" style="display:none;">
-    <div class="link-modal-card">
-      <div class="link-modal-title">📌 기존 메모에서 일정 가져오기</div>
-      <div class="link-modal-description">날짜와 일정성이 구체적으로 적힌 기존 메모를 골라 일정으로 추가할 수 있어요.</div>
-      <div id="memoScheduleImportList" class="link-memo-list"></div>
-      <div class="link-modal-actions">
-        <button class="link-modal-btn cancel" type="button" onclick="closeMemoScheduleImportModal()">닫기</button>
-        <button class="link-modal-btn save" type="button" onclick="importSelectedMemoSchedules()">선택한 메모 일정 추가</button>
       </div>
     </div>
   </div>
@@ -1563,62 +1539,40 @@ function switchCalendarMode(mode){
    ===================================================== */
 
 function saveDailyRecords(){localStorage.setItem('notepound_daily_records',JSON.stringify(dailyRecords));}
-function normalizeDailyRecords(){
-  const normalized={};
-  Object.entries(dailyRecords||{}).forEach(([key,value])=>{
-    if(Array.isArray(value)){
-      normalized[key]=value.map((item,i)=>typeof item==='string'?{id:Date.now()+i,text:item}:{id:item.id||Date.now()+i,text:String(item.text||'').trim()}).filter(x=>x.text);
-    }else if(typeof value==='string'&&value.trim()){
-      normalized[key]=[{id:Date.now(),text:value.trim()}];
-    }
-  });
-  dailyRecords=normalized;
-  saveDailyRecords();
-}
-normalizeDailyRecords();
 function dailyRecordDateKey(year,month,day){return `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;}
 function dailyRecordMonthKey(year,month){return `${year}-${String(month+1).padStart(2,'0')}`;}
-function dailyRecordEntries(key){return Array.isArray(dailyRecords[key])?dailyRecords[key]:[];}
-function dailyRecordCountForMonth(year,month){const prefix=dailyRecordMonthKey(year,month)+'-';return Object.keys(dailyRecords).filter(k=>k.startsWith(prefix)&&dailyRecordEntries(k).length).length;}
-function dailyRecordTotalForMonth(year,month){const prefix=dailyRecordMonthKey(year,month)+'-';return Object.keys(dailyRecords).filter(k=>k.startsWith(prefix)).reduce((sum,k)=>sum+dailyRecordEntries(k).length,0);}
-function dailyRecordMonthsForYear(year){return Object.keys(dailyRecords).filter(k=>k.startsWith(String(year)+'-')&&dailyRecordEntries(k).length).map(k=>k.slice(0,7));}
+function normalizeDailyRecords(){
+  let changed=false;
+  Object.keys(dailyRecords||{}).forEach(key=>{
+    if(typeof dailyRecords[key]==='string'){
+      const text=dailyRecords[key].trim();
+      dailyRecords[key]=text?[{id:'dr_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),text}]:[];
+      changed=true;
+    }else if(!Array.isArray(dailyRecords[key])){
+      dailyRecords[key]=[];changed=true;
+    }else{
+      dailyRecords[key]=dailyRecords[key].map(item=>typeof item==='string'?{id:'dr_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),text:item}:{id:item.id||('dr_'+Date.now()+'_'+Math.random().toString(36).slice(2,7)),text:String(item.text||'')}).filter(item=>item.text.trim());
+    }
+  });
+  if(changed)saveDailyRecords();
+}
+normalizeDailyRecords();
+function getDailyRecordList(key){return Array.isArray(dailyRecords[key])?dailyRecords[key]:[];}
+function dailyRecordCountForMonth(year,month){const prefix=dailyRecordMonthKey(year,month)+'-';return Object.keys(dailyRecords).filter(k=>k.startsWith(prefix)&&getDailyRecordList(k).length).length;}
+function dailyRecordMonthsForYear(year){return Object.keys(dailyRecords).filter(k=>k.startsWith(String(year)+'-')&&getDailyRecordList(k).length).map(k=>k.slice(0,7));}
 function selectCalendarYear(year){calendarYear=year;calendarSelectedMonth=null;calendarSelectedDay=null;renderCalendarPage();}
 function selectCalendarMonth(year,month){calendarYear=year;calendarSelectedMonth=month;calendarSelectedDay=null;renderCalendarPage();}
 function selectCalendarDay(day){calendarSelectedDay=day;renderCalendarPage();}
 function showCalendarMonthList(){calendarSelectedMonth=null;calendarSelectedDay=null;renderCalendarPage();}
-function addDailyRecord(year,month,day){
-  const key=dailyRecordDateKey(year,month,day);
-  if(!dailyRecords[key])dailyRecords[key]=[];
-  const input=document.getElementById('newDailyRecordInput');
-  if(!input)return;
-  const text=input.value.trim();
-  if(!text)return;
-  dailyRecords[key].push({id:Date.now(),text});
-  saveDailyRecords();
-  renderCalendarPage();
-}
-function deleteDailyRecordEntry(year,month,day,id){
-  const key=dailyRecordDateKey(year,month,day);
-  dailyRecords[key]=dailyRecordEntries(key).filter(x=>Number(x.id)!==Number(id));
-  if(!dailyRecords[key].length)delete dailyRecords[key];
-  saveDailyRecords();renderCalendarPage();
-}
-function editDailyRecordEntry(year,month,day,id){
-  const key=dailyRecordDateKey(year,month,day),entry=dailyRecordEntries(key).find(x=>Number(x.id)===Number(id));
-  if(!entry)return;
-  const text=prompt('기록을 수정해주세요.',entry.text);
-  if(text===null)return;
-  const trimmed=text.trim();
-  if(!trimmed){deleteDailyRecordEntry(year,month,day,id);return;}
-  entry.text=trimmed;saveDailyRecords();renderCalendarPage();
-}
 function renderCalendarPage(){
-  const yearTabs=document.getElementById('calendarYearTabs'),monthGrid=document.getElementById('calendarMonthGrid'),detail=document.getElementById('calendarDetail');
-  if(!yearTabs||!monthGrid||!detail)return;
+  const yearTabs=document.getElementById('calendarYearTabs'),monthGrid=document.getElementById('calendarMonthGrid'),recordMonths=document.getElementById('calendarRecordMonths'),detail=document.getElementById('calendarDetail');
+  if(!yearTabs||!monthGrid||!recordMonths||!detail)return;
   const now=new Date().getFullYear(),years=[now-1,now,now+1];
   yearTabs.innerHTML=years.map(y=>`<button type="button" class="calendar-year-btn ${y===calendarYear?'active':''}" onclick="selectCalendarYear(${y})">${y===now?'올해 ':''}${y}년</button>`).join('');
   const names=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-  monthGrid.innerHTML=names.map((name,m)=>{const count=dailyRecordCountForMonth(calendarYear,m),total=dailyRecordTotalForMonth(calendarYear,m);return `<button type="button" class="calendar-month-btn ${calendarSelectedMonth===m?'active':''} ${count?'has-record':''}" onclick="selectCalendarMonth(${calendarYear},${m})">${name}<span class="calendar-month-count">${count?`기록 ${total}개 · ${count}일`:'기록 없음'}</span></button>`;}).join('');
+  monthGrid.innerHTML=names.map((name,m)=>{const count=dailyRecordCountForMonth(calendarYear,m);return `<button type="button" class="calendar-month-btn ${calendarSelectedMonth===m?'active':''} ${count?'has-record':''}" onclick="selectCalendarMonth(${calendarYear},${m})">${name}<span class="calendar-month-count">${count?`기록 ${count}일`:'기록 없음'}</span></button>`;}).join('');
+  const entries=dailyRecordMonthsForYear(calendarYear).sort().reverse();
+  recordMonths.innerHTML=entries.length?entries.map(key=>{const [y,m]=key.split('-').map(Number),count=dailyRecordCountForMonth(y,m-1);return `<button type="button" class="calendar-record-item" onclick="selectCalendarMonth(${y},${m-1})"><span><span class="calendar-record-title">${y}년 ${m}월</span><span class="calendar-record-meta">기록 ${count}일</span></span><span class="calendar-record-badge">열어보기</span></button>`;}).join(''):`<div class="calendar-empty">${calendarYear}년에 작성한 기록이 아직 없어요.</div>`;
   if(calendarSelectedMonth===null){detail.style.display='none';detail.innerHTML='';return;}
   renderCalendarMonthDetail(detail,calendarYear,calendarSelectedMonth,calendarSelectedDay);
 }
@@ -1626,10 +1580,36 @@ function renderCalendarMonthDetail(detail,year,month,selectedDay){
   const names=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   const first=new Date(year,month,1),lastDay=new Date(year,month+1,0).getDate(),start=first.getDay();
   let cells='';for(let i=0;i<start;i++)cells+='<div class="calendar-day empty"></div>';
-  for(let day=1;day<=lastDay;day++){const key=dailyRecordDateKey(year,month,day),entries=dailyRecordEntries(key),has=entries.length;cells+=`<button type="button" class="calendar-day ${has?'has-record':''}" onclick="selectCalendarDay(${day})"><span class="calendar-day-number">${day}</span>${has?`<span class="calendar-day-dot"></span><span class="calendar-day-count">${entries.length}개</span>`:''}</button>`;}
-  const key=selectedDay?dailyRecordDateKey(year,month,selectedDay):null,entries=key?dailyRecordEntries(key):[];
-  const recordHtml=selectedDay?`<div class="daily-record-form"><div class="daily-record-date">${year}년 ${month+1}월 ${selectedDay}일</div><div class="daily-record-list">${entries.length?entries.map(entry=>`<div class="daily-record-card"><div class="daily-record-card-text">${escapeHtml(entry.text)}</div><div class="daily-record-card-actions"><button type="button" class="daily-record-edit" onclick="editDailyRecordEntry(${year},${month},${selectedDay},${entry.id})">수정</button><button type="button" class="daily-record-delete" onclick="deleteDailyRecordEntry(${year},${month},${selectedDay},${entry.id})">삭제</button></div></div>`).join(''):'<div class="calendar-empty">아직 기록이 없어요.</div>'}<textarea id="newDailyRecordInput" class="daily-record-input" placeholder="이날 맘스터치, 병원 갔다 옴."></textarea><div class="daily-record-actions"><button type="button" class="daily-record-save" onclick="addDailyRecord(${year},${month},${selectedDay})">＋ 기록 추가</button></div></div>`:`<div class="calendar-empty">날짜를 누르면 그날의 기록을 여러 개 남길 수 있어요.</div>`;
-  detail.style.display='block';detail.innerHTML=`<div class="calendar-detail-head"><div><div class="calendar-detail-title">${year}년 ${names[month]}</div><div class="calendar-detail-sub">메모와 별개로, 그날 무엇을 했는지 각각 간단하게 기록해요.</div></div><button type="button" class="calendar-back-months" onclick="showCalendarMonthList()">달 목록</button></div><div class="calendar-weekdays">${['일','월','화','수','목','금','토'].map(d=>`<div class="calendar-weekday">${d}</div>`).join('')}</div><div class="calendar-days">${cells}</div>${recordHtml}`;
+  for(let day=1;day<=lastDay;day++){
+    const key=dailyRecordDateKey(year,month,day),list=getDailyRecordList(key),has=list.length;
+    cells+=`<button type="button" class="calendar-day ${has?'has-record':''}" onclick="selectCalendarDay(${day})"><span class="calendar-day-number">${day}</span>${has?`<span class="calendar-day-dot"></span><span class="calendar-day-count">${list.length}개 기록</span>`:''}</button>`;
+  }
+  const key=selectedDay?dailyRecordDateKey(year,month,selectedDay):null;
+  const list=key?getDailyRecordList(key):[];
+  const recordsHtml=selectedDay?`<div class="daily-record-form"><div class="daily-record-date">${year}년 ${month+1}월 ${selectedDay}일</div><div class="daily-record-list">${list.length?list.map((item,index)=>`<div class="daily-record-item" data-record-id="${escapeHtml(item.id)}"><textarea class="daily-record-input daily-record-edit" data-record-id="${escapeHtml(item.id)}" placeholder="맘스터치 갔다 옴. 병원 다녀옴. 친구랑 놀았다.">${escapeHtml(item.text)}</textarea><div class="daily-record-actions"><button type="button" class="daily-record-delete" onclick="deleteDailyRecord(${year},${month},${selectedDay},'${escapeHtml(item.id)}')">이 기록 삭제</button><button type="button" class="daily-record-save" onclick="updateDailyRecord(${year},${month},${selectedDay},'${escapeHtml(item.id)}')">수정</button></div></div>`).join(''):`<div class="calendar-empty">아직 이 날의 기록이 없어요.</div>`}</div><button type="button" class="daily-record-add" onclick="addDailyRecord(${year},${month},${selectedDay})">＋ 이 날의 기록 추가</button></div>`:`<div class="calendar-empty">날짜를 누르면 그날의 기록을 여러 개 남길 수 있어요.</div>`;
+  detail.style.display='block';detail.innerHTML=`<div class="calendar-detail-head"><div><div class="calendar-detail-title">${year}년 ${names[month]}</div><div class="calendar-detail-sub">메모와 별개로, 그날 무엇을 했는지 기록해요. 하루에 여러 개를 각각 남길 수 있어요.</div></div><button type="button" class="calendar-back-months" onclick="showCalendarMonthList()">달 목록</button></div><div class="calendar-weekdays">${['일','월','화','수','목','금','토'].map(d=>`<div class="calendar-weekday">${d}</div>`).join('')}</div><div class="calendar-days">${cells}</div>${recordsHtml}`;
+}
+function addDailyRecord(year,month,day){
+  const key=dailyRecordDateKey(year,month,day);
+  if(!Array.isArray(dailyRecords[key]))dailyRecords[key]=[];
+  dailyRecords[key].push({id:'dr_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),text:''});
+  saveDailyRecords();renderCalendarPage();
+}
+function updateDailyRecord(year,month,day,id){
+  const key=dailyRecordDateKey(year,month,day),list=getDailyRecordList(key),input=document.querySelector(`.daily-record-edit[data-record-id="${id}"]`);
+  if(!input)return;
+  const text=input.value.trim();
+  const index=list.findIndex(item=>item.id===id);
+  if(index<0)return;
+  if(text)list[index].text=text;else list.splice(index,1);
+  if(list.length)dailyRecords[key]=list;else delete dailyRecords[key];
+  saveDailyRecords();renderCalendarPage();
+}
+function deleteDailyRecord(year,month,day,id){
+  const key=dailyRecordDateKey(year,month,day);
+  if(id){const list=getDailyRecordList(key).filter(item=>item.id!==id);if(list.length)dailyRecords[key]=list;else delete dailyRecords[key];}
+  else delete dailyRecords[key];
+  saveDailyRecords();renderCalendarPage();
 }
 
 /* =====================================================
@@ -1646,8 +1626,6 @@ function clearMemoDateFilter(){memoDateFilter='';const input=document.getElement
 function saveSchedules(){localStorage.setItem('notepound_schedules',JSON.stringify(scheduleItems));}
 function scheduleDateTime(item){const t=item.time||'09:00';const d=new Date(`${item.date}T${t}:00`);return Number.isNaN(d.getTime())?null:d;}
 function scheduleMonthKey(year,month){return `${year}-${String(month+1).padStart(2,'0')}`;}
-function scheduleMonthKeys(){return [...new Set(scheduleItems.map(x=>{const d=scheduleDateTime(x);return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`:null;}).filter(Boolean))].sort();}
-function scheduleMonthsWithItems(){return scheduleMonthKeys().map(key=>{const [y,m]=key.split('-').map(Number);const items=scheduleItemsForMonth(y,m-1);return {key,year:y,month:m-1,items,count:items.length};});}
 function openScheduleModal(defaultDate){
   const overlay=document.getElementById('scheduleModalOverlay'); if(!overlay)return;
   document.getElementById('scheduleTitleInput').value='';
@@ -1664,13 +1642,13 @@ function saveSchedule(){
   const date=document.getElementById('scheduleDateInput').value;
   const time=document.getElementById('scheduleTimeInput').value||'09:00';
   if(!title||!date){alert('일정과 날짜를 입력해주세요.');return;}
-  scheduleItems.push({id:Date.now(),title,date,time,notified:false,deleteAfterNotify:document.getElementById('scheduleDeleteAfterNotify').checked,createdAt:Date.now(),sourceMemoId:null});
+  scheduleItems.push({id:Date.now(),title,date,time,notified:false,deleteAfterNotify:document.getElementById('scheduleDeleteAfterNotify').checked,createdAt:Date.now()});
   requestScheduleNotificationPermission();
   saveSchedules(); closeScheduleModal();
   scheduleViewDate=new Date(`${date}T12:00:00`); scheduleSelectedDay=Number(date.slice(-2));
   renderScheduleCalendar();
 }
-function moveScheduleMonth(delta){showAdjacentScheduleMonth(delta);}
+function moveScheduleMonth(delta){scheduleViewDate=new Date(scheduleViewDate.getFullYear(),scheduleViewDate.getMonth()+delta,1);scheduleSelectedDay=null;renderScheduleCalendar();}
 function deleteSchedule(id){scheduleItems=scheduleItems.filter(x=>Number(x.id)!==Number(id));saveSchedules();renderScheduleCalendar();}
 function completeSchedule(id){deleteSchedule(id);}
 function scheduleItemsForMonth(year,month){return scheduleItems.filter(x=>{const d=scheduleDateTime(x);return d&&d.getFullYear()===year&&d.getMonth()===month;}).sort((a,b)=>scheduleDateTime(a)-scheduleDateTime(b));}
@@ -1688,80 +1666,19 @@ function checkScheduleReminders(){
   });
   if(changed){scheduleItems=scheduleItems.filter(x=>!(x.notified&&x.deleteAfterNotify));saveSchedules();renderScheduleCalendar();}
 }
-
-/* 일정 자동 감지: 구체적인 날짜 + 일정성 표현이 함께 있는 메모만 자동 추가 */
-function detectScheduleFromMemoText(text){
-  const value=String(text||'').trim(); if(!value)return null;
-  const now=new Date(); let year=now.getFullYear(),month=now.getMonth(),day=null;
-  if(/오늘/.test(value)) day=now.getDate();
-  else if(/내일/.test(value)){const d=new Date(now);d.setDate(d.getDate()+1);year=d.getFullYear();month=d.getMonth();day=d.getDate();}
-  else if(/모레/.test(value)){const d=new Date(now);d.setDate(d.getDate()+2);year=d.getFullYear();month=d.getMonth();day=d.getDate();}
-  let m=value.match(/(20\d{2})\s*[.\-/년]\s*(\d{1,2})\s*[.\-/월]\s*(\d{1,2})\s*일?/);
-  if(m){year=Number(m[1]);month=Number(m[2])-1;day=Number(m[3]);}
-  if(day===null){m=value.match(/(\d{1,2})\s*월\s*(\d{1,2})\s*일/);if(m){month=Number(m[1])-1;day=Number(m[2]);}}
-  if(day===null){m=value.match(/(\d{1,2})\s*[\/.]\s*(\d{1,2})(?:일)?/);if(m){month=Number(m[1])-1;day=Number(m[2]);}}
-  if(day===null)return null;
-  if(month<0||month>11||day<1||day>31)return null;
-  const cue=/(과제|시험|제출|마감|약속|병원|알바|수업|예약|발표|회의|면접|가야|해야|방문|만나|일정|챙겨|준비|신청|예매)/.test(value);
-  if(!cue)return null;
-  let hour=9,minute=0;
-  let tm=value.match(/(오전|오후)\s*(\d{1,2})(?:시)?(?:\s*(\d{1,2})\s*분)?/);
-  if(tm){hour=Number(tm[2]);minute=Number(tm[3]||0);if(tm[1]==='오후'&&hour<12)hour+=12;if(tm[1]==='오전'&&hour===12)hour=0;}
-  else{tm=value.match(/\b(\d{1,2})\s*시(?:\s*(\d{1,2})\s*분)?/);if(tm){hour=Number(tm[1]);minute=Number(tm[2]||0);if(hour>23||minute>59)return null;}}
-  const date=`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-  const time=`${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`;
-  const parsed=new Date(`${date}T${time}:00`); if(Number.isNaN(parsed.getTime()))return null;
-  if(parsed.getTime() < Date.now())return null;
-  return {date,time};
-}
-function autoAddScheduleFromMemo(memo){
-  const parsed=detectScheduleFromMemoText(memo.text); if(!parsed)return false;
-  const existing=scheduleItems.find(x=>Number(x.sourceMemoId)===Number(memo.id));
-  const categoryCue=String(memo.category||'').includes('일정');
-  if(!categoryCue && !/(과제|시험|제출|마감|약속|병원|알바|수업|예약|발표|회의|면접|가야|해야|방문|만나|일정|챙겨|준비|신청|예매)/.test(memo.text))return false;
-  if(existing){existing.title=memo.text;existing.date=parsed.date;existing.time=parsed.time;existing.notified=false;existing.deleteAfterNotify=true;}
-  else scheduleItems.push({id:Date.now()+Math.floor(Math.random()*1000),title:memo.text,date:parsed.date,time:parsed.time,notified:false,deleteAfterNotify:true,createdAt:Date.now(),sourceMemoId:memo.id});
-  saveSchedules();return true;
-}
-
-function openMemoScheduleImportModal(){
-  const overlay=document.getElementById('memoScheduleImportModalOverlay'),list=document.getElementById('memoScheduleImportList');if(!overlay||!list)return;
-  const candidates=savedMemos.map((memo,index)=>({memo,index,parsed:detectScheduleFromMemoText(memo.text)})).filter(x=>x.parsed&&!scheduleItems.some(s=>Number(s.sourceMemoId)===Number(x.memo.id)));
-  list.innerHTML=candidates.length?candidates.map(x=>`<label class="link-memo-option"><input type="checkbox" value="${x.memo.id}"><span class="link-memo-option-text"><span class="link-memo-option-main">${escapeHtml(x.memo.text)}</span><span class="link-memo-option-meta">${x.parsed.date} · ${x.parsed.time} · 일정으로 가져오기</span></span></label>`).join(''):'<div class="calendar-empty">날짜와 일정이 구체적으로 적힌 기존 메모가 없어요.</div>';
-  overlay.style.display='flex';
-}
-function closeMemoScheduleImportModal(){const overlay=document.getElementById('memoScheduleImportModalOverlay');if(overlay)overlay.style.display='none';}
-function importSelectedMemoSchedules(){
-  const ids=[...document.querySelectorAll('#memoScheduleImportList input[type="checkbox"]:checked')].map(x=>Number(x.value));
-  if(!ids.length){alert('가져올 메모를 선택해주세요.');return;}
-  let added=0;ids.forEach(id=>{const memo=savedMemos.find(x=>Number(x.id)===id);if(memo&&autoAddScheduleFromMemo(memo))added++;});
-  closeMemoScheduleImportModal();renderScheduleCalendar();alert(`${added}개의 메모를 일정으로 추가했어요.`);
-}
-
 function renderScheduleCalendar(){
-  const chooser=document.getElementById('scheduleMonthChooser'),detail=document.getElementById('scheduleMonthDetail'),title=document.getElementById('scheduleMonthTitle'),grid=document.getElementById('scheduleCalendarGrid'),list=document.getElementById('scheduleList');
-  if(!chooser||!detail||!title||!grid||!list)return;
-  const months=scheduleMonthsWithItems();
-  if(!months.length){chooser.innerHTML='<div class="calendar-empty">아직 등록된 일정이 없어요.<br>일정을 추가하거나 기존 메모에서 가져와 보세요.</div>';detail.style.display='none';return;}
-  const currentKey=scheduleMonthKey(scheduleViewDate.getFullYear(),scheduleViewDate.getMonth());
-  const selected=months.some(x=>x.key===currentKey)?currentKey:months[months.length-1].key;
-  if(!months.some(x=>x.key===currentKey)){const [y,m]=selected.split('-').map(Number);scheduleViewDate=new Date(y,m-1,1);scheduleSelectedDay=null;}
-  chooser.innerHTML=months.map(x=>`<button type="button" class="schedule-month-item ${x.key===scheduleMonthKey(scheduleViewDate.getFullYear(),scheduleViewDate.getMonth())?'active':''}" onclick="openScheduleMonth(${x.year},${x.month})"><span><span class="schedule-month-title-small">${x.year}년 ${x.month+1}월</span><span class="schedule-month-meta">일정 ${x.count}개</span></span><span class="calendar-record-badge">열어보기</span></button>`).join('');
-  detail.style.display='block';
+  const title=document.getElementById('scheduleMonthTitle'),grid=document.getElementById('scheduleCalendarGrid'),list=document.getElementById('scheduleList');
+  if(!title||!grid||!list)return;
   const year=scheduleViewDate.getFullYear(),month=scheduleViewDate.getMonth();
-  const names=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']; title.textContent=`${year}년 ${names[month]}`;
-  const arr=scheduleItemsForMonth(year,month),byDay={};arr.forEach(x=>{const d=scheduleDateTime(x);if(d)(byDay[d.getDate()] ||= []).push(x);});
+  const names=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  title.textContent=`${year}년 ${names[month]}`;
+  const arr=scheduleItemsForMonth(year,month),byDay={}; arr.forEach(x=>{const d=scheduleDateTime(x);if(d)(byDay[d.getDate()] ||= []).push(x);});
   const first=new Date(year,month,1),start=first.getDay(),last=new Date(year,month+1,0).getDate();
   let cells='';for(let i=0;i<start;i++)cells+='<div class="calendar-day empty"></div>';
   for(let day=1;day<=last;day++){const items=byDay[day]||[];cells+=`<button type="button" class="calendar-day ${items.length?'has-record':''}" onclick="selectScheduleDay(${day})"><span class="calendar-day-number">${day}</span>${items.length?`<span class="schedule-day-dot"></span><span class="schedule-day-count">${items.length}개</span>`:''}</button>`;}
   grid.innerHTML=cells;
-  if(scheduleSelectedDay){const items=byDay[scheduleSelectedDay]||[];list.innerHTML=items.length?items.map(x=>`<div class="schedule-item"><div class="schedule-item-main"><div class="schedule-item-title">${escapeHtml(x.title)}${x.sourceMemoId?'<span class="schedule-source-badge">메모에서 가져옴</span>':''}</div><div class="schedule-item-meta">${x.date} · ${x.time||'09:00'}${x.deleteAfterNotify?' · 알림 후 삭제':''}</div></div><div class="schedule-item-actions"><button type="button" class="done" onclick="completeSchedule(${x.id})">완료</button><button type="button" onclick="deleteSchedule(${x.id})">삭제</button></div></div>`).join(''):'<div class="calendar-empty">이 날에는 일정이 없어요.</div>';}
-  else{list.innerHTML=arr.length?arr.map(x=>`<div class="schedule-item"><div class="schedule-item-main"><div class="schedule-item-title">${escapeHtml(x.title)}${x.sourceMemoId?'<span class="schedule-source-badge">메모에서 가져옴</span>':''}</div><div class="schedule-item-meta">${x.date} · ${x.time||'09:00'}${x.deleteAfterNotify?' · 알림 후 삭제':''}</div></div><div class="schedule-item-actions"><button type="button" class="done" onclick="completeSchedule(${x.id})">완료</button><button type="button" onclick="deleteSchedule(${x.id})">삭제</button></div></div>`).join(''):'<div class="calendar-empty">이 달에는 등록된 일정이 없어요.</div>';}
-}
-function openScheduleMonth(year,month){scheduleViewDate=new Date(year,month,1);scheduleSelectedDay=null;renderScheduleCalendar();}
-function showAdjacentScheduleMonth(delta){
-  const months=scheduleMonthsWithItems();if(!months.length)return;
-  const key=scheduleMonthKey(scheduleViewDate.getFullYear(),scheduleViewDate.getMonth());let idx=months.findIndex(x=>x.key===key);if(idx<0)idx=0;idx=Math.max(0,Math.min(months.length-1,idx+delta));openScheduleMonth(months[idx].year,months[idx].month);
+  if(scheduleSelectedDay){const items=byDay[scheduleSelectedDay]||[];list.innerHTML=items.length?items.map(x=>`<div class="schedule-item"><div class="schedule-item-main"><div class="schedule-item-title">${escapeHtml(x.title)}</div><div class="schedule-item-meta">${x.date} · ${x.time||'09:00'}${x.deleteAfterNotify?' · 알림 후 삭제':''}</div></div><div class="schedule-item-actions"><button type="button" class="done" onclick="completeSchedule(${x.id})">완료</button><button type="button" onclick="deleteSchedule(${x.id})">삭제</button></div></div>`).join(''):`<div class="calendar-empty">이 날에는 일정이 없어요.</div>`;}
+  else{list.innerHTML=arr.length?arr.map(x=>`<div class="schedule-item"><div class="schedule-item-main"><div class="schedule-item-title">${escapeHtml(x.title)}</div><div class="schedule-item-meta">${x.date} · ${x.time||'09:00'}${x.deleteAfterNotify?' · 알림 후 삭제':''}</div></div><div class="schedule-item-actions"><button type="button" class="done" onclick="completeSchedule(${x.id})">완료</button><button type="button" onclick="deleteSchedule(${x.id})">삭제</button></div></div>`).join(''):`<div class="calendar-empty">이 달에는 등록된 일정이 없어요.</div>`;}
 }
 function selectScheduleDay(day){scheduleSelectedDay=day;renderScheduleCalendar();}
 
@@ -2433,7 +2350,6 @@ function saveCurrentMemo() {
 
   savedMemos.push(memo);
 
-  autoAddScheduleFromMemo(memo);
   saveMemos();
 
   memoInput.value = '';
@@ -2652,7 +2568,6 @@ function saveMemoModal() {
     editingMemoIndex
   ].text = text;
 
-  autoAddScheduleFromMemo(savedMemos[editingMemoIndex]);
   saveMemos();
 
   closeMemoModal();
@@ -2922,6 +2837,11 @@ function renderDetailMemoList() {
       </div>
     `;
 
+    item.querySelector('.memo-delete-btn').addEventListener('click', function(event) {
+      event.stopPropagation();
+      deleteMemo(Number(this.dataset.deleteIndex));
+    });
+
     list.appendChild(item);
 
   });
@@ -2964,15 +2884,13 @@ function addMemoToCategoryPrompt(
     return;
   }
 
-  const addedMemo = {
+  savedMemos.push({
     id: createMemoId(),
     text: text.trim(),
     category: categoryFullName,
     tag: '',
     linkedMemos: []
-  };
-  savedMemos.push(addedMemo);
-  autoAddScheduleFromMemo(addedMemo);
+  });
 
   saveMemos();
 
@@ -4483,16 +4401,4 @@ function closeThemeModal(){const overlay=document.getElementById('themeModalOver
 </script>
 
 </body>
-</html>"""
-
-BASE_DIR = Path(__file__).resolve().parent
-OUTPUT_HTML = BASE_DIR / "Notepound_실행용.html"
-
-def create_html():
-    OUTPUT_HTML.write_text(HTML, encoding="utf-8")
-    return OUTPUT_HTML
-
-if __name__ == "__main__":
-    path = create_html()
-    print(f"Notepound 실행 파일 생성: {path}")
-    webbrowser.open(path.as_uri())
+</html>
