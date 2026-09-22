@@ -612,10 +612,14 @@
     .thought-change-box{margin-top:8px;padding:8px 9px;background:#fff8e1;border-radius:9px;color:#795548;font-size:9px;line-height:1.5}
     .selected-info{padding:7px 10px;margin:0 10px 8px;background:var(--theme-pale);border-radius:10px;color:#4b6380;font-size:9px;line-height:1.4}
     /* 색상 테마 모달 */
-    .theme-modal-card{width:300px;max-width:calc(100vw - 34px);height:min(760px,calc(100vh - 32px));max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden;}
+    .theme-modal-card{width:300px;max-width:calc(100vw - 34px);height:min(760px,calc(100vh - 24px));max-height:calc(100vh - 24px);box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;}
+    #themeModalOverlay{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;padding:12px 0;box-sizing:border-box;align-items:center;}
+    #themeModalOverlay .theme-modal-card{flex:0 0 auto;margin:auto;}
+    @media (max-height:560px){#themeModalOverlay{align-items:flex-start;}#themeModalOverlay .theme-modal-card{height:calc(100vh - 24px);max-height:calc(100vh - 24px);margin:0 auto;}}
+
     .theme-modal-title{font-size:15px;font-weight:800;color:#333;margin-bottom:4px;flex-shrink:0;}
     .theme-modal-sub{font-size:10px;color:#999;line-height:1.5;margin-bottom:12px;flex-shrink:0;}
-    .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:2px 5px 4px 2px;scrollbar-width:thin;scrollbar-color:var(--theme-border) transparent;}
+    .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:2px 5px 14px 2px;scrollbar-width:thin;scrollbar-color:var(--theme-border) transparent;overscroll-behavior:contain;}
     .theme-grid::-webkit-scrollbar{width:7px;}
     .theme-grid::-webkit-scrollbar-track{background:transparent;}
     .theme-grid::-webkit-scrollbar-thumb{background:var(--theme-border);border-radius:10px;}
@@ -3603,7 +3607,7 @@ function buildThoughtNode(memo,isCenter=false,index=0){
   const pos=getThoughtPosition(memo,index);
   node.style.left=`${pos.x}%`;
   node.style.top=`${pos.y}%`;
-  node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><button class="thought-node-delete" type="button" title="이 주제에서 메모 삭제">🗑</button><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><div class="thought-node-meta">${isCenter?'◎ 중심 · ':''}${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div><div class="thought-node-hint">클릭: 중심 선택 / 메모 선택 · 🗑: 이 주제에서 삭제 · ● 드래그: 상위→서브 연결 · 선 클릭: 연결 해제</div>`;
+  node.innerHTML=`<div class="thought-node-port left" title="여기로 연결"></div><div class="thought-node-port right" title="여기서 연결"></div><button class="thought-node-delete" type="button" title="이 주제에서 메모 삭제">🗑</button><div class="thought-node-date">${formatThoughtDate(memo.id)}${memo.replyTo?' · ↩️':''}</div><div class="thought-node-text">${escapeHtml(memo.text)}</div><div class="thought-node-meta">${isCenter?'◎ 중심 · ':''}${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div>`;
   node.addEventListener('pointerdown',e=>{if(e.target.closest('.thought-node-port')||e.target.closest('.thought-node-delete'))return;if(e.button!==undefined&&e.button!==0)return;startThoughtNodeDrag(e,memo.id);});
   node.addEventListener('click',e=>{
     if(isDraggingThoughtNode||e.target.closest('.thought-node-port')||e.target.closest('.thought-node-delete'))return;
