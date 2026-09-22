@@ -937,7 +937,7 @@
       <div id="thoughtGroupDetail" style="display:none;">
         <button class="thought-back-btn" onclick="exitThoughtGroup()">← 연결된 생각 주제로 돌아가기</button>
         <div id="thoughtDetailTitle" class="thought-detail-title"></div>
-      <div style="display:flex;justify-content:flex-end;margin:6px 0 10px;"><button class="thought-refresh-btn" type="button" onclick="addMemoToCurrentThought()">＋ 메모 추가하기</button></div>
+      <div style="display:flex;justify-content:flex-end;margin:6px 0 10px;"><button class="thought-refresh-btn" type="button" onclick="openAddExistingMemoModal()">＋ 이 주제에 메모 추가</button></div>
         <div class="thought-legend" style="display:none;"></div>
         <div id="thoughtSelectedInfo" class="selected-info" style="display:none;"></div>
         <div class="thought-graph-controls" aria-label="생각 연결 화면 배치 및 확대/축소">
@@ -1035,6 +1035,25 @@
 
     </div>
 
+  </div>
+
+  <div
+    id="addExistingMemoModalOverlay"
+    class="memo-modal-overlay"
+    style="display:none;"
+  >
+    <div class="link-modal-card">
+      <div class="link-modal-title">📝 이 주제에 메모 추가</div>
+      <div class="link-modal-description">
+        이미 작성한 메모 중 이 생각 주제에 넣을 메모를 선택하세요.<br>
+        새로운 메모를 작성하는 것이 아니라, 기존 메모를 이 주제에 추가합니다.
+      </div>
+      <div id="addExistingMemoList" class="link-memo-list"></div>
+      <div class="link-modal-actions">
+        <button class="link-modal-btn cancel" type="button" onclick="closeAddExistingMemoModal()">닫기</button>
+        <button class="link-modal-btn save" type="button" onclick="saveExistingMemosToThought()">이 주제에 추가</button>
+      </div>
+    </div>
   </div>
 
   <!-- 메모 수정 모달 -->
@@ -3232,12 +3251,50 @@ function mergeMemosIntoThoughtTopic(aId,bId,key=activeThoughtGroupKey){
   });
   saveThoughtTopicMembers();saveThoughtGroupTitles();saveThoughtGroupCenters();
 }
-function addMemoToCurrentThought(){
+function openAddExistingMemoModal(){
   if(!activeThoughtGroupKey)return;
-  const text=prompt('이 생각에 추가할 메모를 입력하세요.');
-  if(text===null||!text.trim())return;
-  const memo={id:createMemoId(),text:text.trim(),category:currentSelectedCategory||'#미분류',tag:'',linkedMemos:[]};
-  savedMemos.push(memo);addMemoToThoughtTopic(memo.id,activeThoughtGroupKey);saveMemos();renderWritePage();renderThoughtFlow();
+  const list=document.getElementById('addExistingMemoList');
+  if(!list)return;
+  const members=new Set((thoughtTopicMembers[activeThoughtGroupKey]||[]).map(Number));
+  const candidates=[...savedMemos]
+    .filter(m=>!members.has(Number(m.id)))
+    .sort((a,b)=>Number(b.id)-Number(a.id));
+  list.innerHTML='';
+  if(!candidates.length){
+    list.innerHTML='<div class="thought-empty" style="margin:0;">이 주제에 추가할 수 있는 기존 메모가 없어요.</div>';
+  }else{
+    candidates.forEach(memo=>{
+      const label=document.createElement('label');
+      label.className='link-memo-option';
+      const checkbox=document.createElement('input');
+      checkbox.type='checkbox';
+      checkbox.value=String(memo.id);
+      const text=document.createElement('div');
+      text.className='link-memo-option-text';
+      text.innerHTML=`<div class="link-memo-option-main">${escapeHtml(memo.text)}</div><div class="link-memo-option-meta">${formatThoughtDate(memo.id)} · ${escapeHtml(memo.category||'#미분류')}${memo.tag?' · '+escapeHtml(memo.tag):''}</div>`;
+      label.append(checkbox,text);
+      list.appendChild(label);
+    });
+  }
+  document.getElementById('addExistingMemoModalOverlay').style.display='flex';
+}
+function closeAddExistingMemoModal(){
+  const overlay=document.getElementById('addExistingMemoModalOverlay');
+  if(overlay)overlay.style.display='none';
+}
+function saveExistingMemosToThought(){
+  if(!activeThoughtGroupKey)return;
+  const checked=[...document.querySelectorAll('#addExistingMemoList input[type="checkbox"]:checked')]
+    .map(input=>Number(input.value))
+    .filter(id=>savedMemos.some(m=>Number(m.id)===id));
+  if(!checked.length){
+    closeAddExistingMemoModal();
+    return;
+  }
+  checked.forEach(id=>addMemoToThoughtTopic(id,activeThoughtGroupKey));
+  saveThoughtTopicMembers();
+  closeAddExistingMemoModal();
+  renderThoughtFlow();
 }
 function editThoughtGroupTitle(group){
   if(!group||!group.length)return;
