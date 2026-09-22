@@ -570,7 +570,7 @@
     .thought-graph-controls button.layout-mode.active{background:var(--theme-main);color:#fff;border-color:var(--theme-main);}
     .thought-graph-controls span{min-width:44px;text-align:center;font-size:9px;font-weight:800;color:#777;}
     .thought-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:var(--theme-surface-soft);overflow:auto;position:relative}
-    .thought-graph{position:relative;width:100%;min-width:1000px;height:760px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden;transform-origin:top left;}
+    .thought-graph{position:relative;width:1400px;min-width:1400px;height:900px;min-height:900px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:visible;transform-origin:top left;}
     .thought-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
     /* 메모 연결선: 모든 연결은 현재 선택한 테마 색상으로 통일 */
     .thought-edge{fill:none;stroke:var(--theme-connection);stroke-width:1.25;opacity:.82;stroke-linecap:round;stroke-linejoin:round}
@@ -3428,56 +3428,65 @@ function layoutThoughtMindMap(){
   const root=savedMemos.find(m=>Number(m.id)===Number(thoughtCenterId));
   const component=getActiveGroup() || (root?getConnectedComponent(root.id):[]);
   if(!root||!component.length)return;
+  const graph=document.getElementById('thoughtGraph');
+  if(graph) resizeThoughtGraphCanvas();
   const ids=new Set(component.map(m=>Number(m.id)));
-  const byId=new Map(component.map(m=>[Number(m.id),m]));
   const childrenByParent={};
-
   component.forEach(m=>{
     if(Number(m.id)===Number(root.id))return;
     const pid=Number(m.parentThoughtId||0);
     const parentId=(pid&&ids.has(pid))?pid:Number(root.id);
     (childrenByParent[parentId]||(childrenByParent[parentId]=[])).push(m);
   });
-
   Object.values(childrenByParent).forEach(list=>list.sort((a,b)=>Number(a.id)-Number(b.id)));
 
-  // 중심은 항상 중앙. 1단계는 중심 주변, 그 아래 단계는 부모 주변에
-  // 작은 가지처럼 배치해 계층이 눈에 보이도록 한다.
-  thoughtPositions[String(root.id)]={x:50,y:45};
+  // 계층별로 충분한 공간을 확보한 뒤, 각 부모의 가지를 서로 다른 방향으로
+  // 펼친다. 화면을 축소하면 캔버스 자체도 함께 넓어지므로 가지가 겹치지 않는다.
   const placed=new Set([Number(root.id)]);
-  const queue=[{id:Number(root.id),depth:0,x:50,y:45}];
+  const queue=[];
+  const rootX=50, rootY=50;
+  thoughtPositions[String(root.id)]={x:rootX,y:rootY};
+  const rootKids=childrenByParent[Number(root.id)]||[];
+  const rootAngles=[-150,-105,-60,-25,25,60,105,150].map(d=>d*Math.PI/180);
+  rootKids.forEach((m,i)=>{
+    const angle=rootAngles[i%rootAngles.length] + (Math.floor(i/rootAngles.length)*12*Math.PI/180);
+    const ring=Math.floor(i/rootAngles.length);
+    const radiusX=30+ring*7, radiusY=27+ring*6;
+    const x=Math.max(8,Math.min(92,rootX+Math.cos(angle)*radiusX));
+    const y=Math.max(8,Math.min(92,rootY+Math.sin(angle)*radiusY));
+    thoughtPositions[String(m.id)]={x,y};
+    placed.add(Number(m.id));
+    queue.push({id:Number(m.id),depth:1,angle});
+  });
 
   while(queue.length){
     const cur=queue.shift();
     const kids=(childrenByParent[cur.id]||[]).filter(m=>!placed.has(Number(m.id)));
     if(!kids.length)continue;
-
-    const depth=cur.depth+1;
-    const count=kids.length;
-    const isRootChildren=cur.id===Number(root.id);
-    const radiusX=isRootChildren?34:Math.max(15,23-depth*2.2);
-    const radiusY=isRootChildren?27:Math.max(12,19-depth*1.6);
-    const baseAngle=isRootChildren ? -Math.PI/2 : Math.atan2(cur.y-45,cur.x-50);
-    const spread=isRootChildren ? Math.min(Math.PI*1.85,Math.max(Math.PI*.9,count*.72)) : Math.min(Math.PI*1.25,Math.max(Math.PI*.65,count*.55));
-
+    const base=cur.angle;
+    const spread=Math.min(1.0,Math.max(.38,kids.length*.22));
+    const parentPos=thoughtPositions[String(cur.id)]||{x:50,y:50};
     kids.forEach((m,i)=>{
-      const ratio=count===1 ? 0.5 : i/(count-1);
-      const angle=count===1?baseAngle:baseAngle-spread/2+spread*ratio;
-      const outward=depth===1?1:(1+Math.min(depth,3)*.04);
-      const x=Math.max(5,Math.min(90,cur.x+Math.cos(angle)*radiusX*outward));
-      const y=Math.max(7,Math.min(84,cur.y+Math.sin(angle)*radiusY*outward));
+      const offset=kids.length===1?0:(i/(kids.length-1)-.5)*spread;
+      const angle=base+offset;
+      const depth=cur.depth+1;
+      const radiusX=Math.max(18,27-depth*1.5);
+      const radiusY=Math.max(15,23-depth*1.2);
+      let x=parentPos.x+Math.cos(angle)*radiusX;
+      let y=parentPos.y+Math.sin(angle)*radiusY;
+      x=Math.max(6,Math.min(94,x)); y=Math.max(6,Math.min(94,y));
       thoughtPositions[String(m.id)]={x,y};
       placed.add(Number(m.id));
-      queue.push({id:Number(m.id),depth,x,y});
+      queue.push({id:Number(m.id),depth,angle});
     });
   }
 
-  // 부모 정보가 없거나 순환 등으로 배치되지 않은 메모는 가장자리의
-  // 별도 위치에 놓되, 서로 겹치지 않도록 한다.
+  // 아직 부모가 없는 메모는 겹치지 않는 보조 영역에 배치한다.
   [...ids].filter(id=>!placed.has(id)).forEach((id,i)=>{
-    thoughtPositions[String(id)]={x:10+(i%4)*26,y:10+Math.floor(i/4)*20};
+    thoughtPositions[String(id)]={x:10+(i%5)*20,y:10+Math.floor(i/5)*18};
   });
   saveThoughtPositions();
+  if(graph) resizeThoughtGraphCanvas();
 }
 
 function disconnectMemos(aId,bId){
@@ -3653,6 +3662,7 @@ function renderThoughtFlow(){
     const centerId=Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null;thoughtCenterId=centerId;const center=active.find(m=>Number(m.id)===centerId);
     if(centerBadge)centerBadge.innerHTML=center?`◎ 중심 메모: 「${escapeHtml(String(center.text).slice(0,28))}${String(center.text).length>28?'…':''}」`:'◎ 이 주제의 중심 메모를 하나 선택해 주세요';
     const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-connection)"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-connection)"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;"></path></svg>`;
+    resizeThoughtGraphCanvas();
     const svg=graph.querySelector('svg');active.forEach((memo,index)=>graph.appendChild(buildThoughtNode(memo,Number(memo.id)===centerId,index)));
     if(center){
       starifyThoughtGroup(active,centerId);
@@ -3670,9 +3680,36 @@ function renderThoughtFlow(){
 }
 
 let thoughtZoom=1;
-function applyThoughtZoom(){const graph=document.getElementById('thoughtGraph'),label=document.getElementById('thoughtZoomLabel');if(!graph)return;graph.style.transform=`scale(${thoughtZoom})`;if(label)label.textContent=`${Math.round(thoughtZoom*100)}%`;}
-function changeThoughtZoom(delta){thoughtZoom=Math.max(.6,Math.min(1.8,Math.round((thoughtZoom+delta)*10)/10));applyThoughtZoom();renderThoughtEdgesOnly();}
+function resizeThoughtGraphCanvas(){
+  const graph=document.getElementById('thoughtGraph'),wrap=document.querySelector('.thought-graph-wrap');
+  if(!graph)return;
+  const minW=1400,minH=900;
+  const viewW=Math.max(720,(wrap?.clientWidth||1100));
+  const viewH=Math.max(520,(wrap?.clientHeight||620));
+  // 축소할수록 실제 캔버스를 더 넓게 만들어 같은 화면 안에서 더 많은 가지를 보여준다.
+  const width=Math.max(minW,Math.ceil(viewW/Math.max(.6,thoughtZoom)));
+  const height=Math.max(minH,Math.ceil(viewH/Math.max(.6,thoughtZoom)));
+  graph.style.width=width+'px';
+  graph.style.minWidth=width+'px';
+  graph.style.height=height+'px';
+  graph.style.minHeight=height+'px';
+  const svg=graph.querySelector('.thought-svg');
+  if(svg){svg.setAttribute('width',width);svg.setAttribute('height',height);svg.setAttribute('viewBox',`0 0 ${width} ${height}`);}
+}
+function applyThoughtZoom(){
+  const graph=document.getElementById('thoughtGraph'),label=document.getElementById('thoughtZoomLabel');
+  if(!graph)return;
+  resizeThoughtGraphCanvas();
+  graph.style.transform=`scale(${thoughtZoom})`;
+  if(label)label.textContent=`${Math.round(thoughtZoom*100)}%`;
+}
+function changeThoughtZoom(delta){
+  thoughtZoom=Math.max(.6,Math.min(1.8,Math.round((thoughtZoom+delta)*10)/10));
+  applyThoughtZoom();
+  renderThoughtEdgesOnly();
+}
 function resetThoughtZoom(){thoughtZoom=1;applyThoughtZoom();renderThoughtEdgesOnly();}
+window.addEventListener('resize',()=>{resizeThoughtGraphCanvas();renderThoughtEdgesOnly();});
 
 function startThoughtLink(event,id){event.stopPropagation();event.preventDefault();linkingFromId=Number(id);const temp=document.getElementById('thoughtTempEdge');if(temp)temp.style.display='block';document.addEventListener('pointermove',moveThoughtLink);document.addEventListener('pointerup',finishThoughtLink,{once:true});}
 function moveThoughtLink(event){if(linkingFromId===null)return;const graph=document.getElementById('thoughtGraph'),temp=document.getElementById('thoughtTempEdge');if(!graph||!temp)return;const gr=graph.getBoundingClientRect();const x=Math.max(0,Math.min(graph.clientWidth,(event.clientX-gr.left)/thoughtZoom)),y=Math.max(0,Math.min(graph.clientHeight,(event.clientY-gr.top)/thoughtZoom));temp.setAttribute('d',makeNodeToPointCurve(linkingFromId,x,y));}
