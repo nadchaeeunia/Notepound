@@ -550,16 +550,16 @@
 .thought-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:#f8f9fa;overflow:auto;position:relative}
     .thought-graph{position:relative;width:100%;min-width:1000px;height:760px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden}
     .thought-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
-    .thought-edge{fill:none;stroke:var(--theme-main);stroke-width:2.2;opacity:.82}
-    .thought-edge.suggested{stroke:#9aa0a6;stroke-width:1.6;opacity:.7}
-    .thought-edge.auto{stroke:var(--theme-main-dark);stroke-width:2.6;opacity:.84}
-    .thought-edge.manual{stroke:var(--theme-main);stroke-width:2.5}
+    /* 메모 연결선: 모든 연결은 현재 선택한 테마 색상으로 통일 */
+    .thought-edge{fill:none;stroke:var(--theme-main);stroke-width:1.8;opacity:.82;stroke-linecap:round;stroke-linejoin:round}
+    .thought-edge.suggested,.thought-edge.auto,.thought-edge.manual{stroke:var(--theme-main);stroke-width:1.8;opacity:.82}
     .thought-node{position:absolute;width:210px;min-height:118px;background:#fff;border:1px solid #dfe3e8;border-radius:14px;padding:10px 10px 9px;box-shadow:0 4px 12px rgba(0,0,0,.09);cursor:grab;user-select:none;touch-action:none}
     .thought-node:hover{box-shadow:0 5px 14px var(--theme-shadow-blue)}
     /* 생각의 계층에 따라 테두리 강도를 다르게 표시 */
     .thought-node.depth-0{border:4px double var(--theme-main-dark);box-shadow:0 7px 22px var(--theme-center-shadow)}
-    .thought-node.depth-1{border:4px solid var(--theme-main-dark)}
-    .thought-node.depth-2{border:4px solid var(--theme-dot-light)}
+    /* 중심의 double 선 하나하나처럼 얇게: 하위 계층은 모두 1px */
+    .thought-node.depth-1{border:1px solid var(--theme-main-dark)}
+    .thought-node.depth-2{border:1px solid var(--theme-dot-light)}
     .thought-node.depth-3,.thought-node.depth-4,.thought-node.depth-5,.thought-node.depth-6{border:1px solid transparent}
     .thought-node.depth-3{opacity:.82;}
     .thought-node.depth-4{opacity:.68;}
@@ -889,7 +889,7 @@
             <svg id="thoughtSvg" class="thought-svg" aria-hidden="true">
               <defs>
                 <marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main)"></path></marker>
-                <marker id="arrowSuggested" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main-dark)"></path></marker>
+                <marker id="arrowSuggested" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main)"></path></marker>
               </defs>
               <g id="thoughtEdges"></g>
               <path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path>
@@ -3367,7 +3367,16 @@ function disconnectMemos(aId,bId){
   saveMemos();
 }
 
-function makeCurve(x1,y1,x2,y2){const dx=Math.max(30,Math.abs(x2-x1)*0.35),c1x=x1+(x2>=x1?dx:-dx),c2x=x2-(x2>=x1?dx:-dx);return `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;}
+function makeCurve(x1,y1,x2,y2){
+  const dx=x2-x1,dy=y2-y1,dist=Math.hypot(dx,dy)||1;
+  const bend=Math.max(28,Math.min(120,dist*.22));
+  const nx=-dy/dist,ny=dx/dist;
+  const sign=(Math.abs(dx)>=Math.abs(dy)?(dx>=0?1:-1):(dy>=0?1:-1));
+  const offset=bend*.55*sign;
+  const c1x=x1+dx*.28+nx*offset,c1y=y1+dy*.28+ny*offset;
+  const c2x=x1+dx*.72+nx*offset,c2y=y1+dy*.72+ny*offset;
+  return `M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}`;
+}
 function getNodeCenter(id){const node=document.querySelector(`.thought-node[data-id="${id}"]`),graph=document.getElementById('thoughtGraph');if(!node||!graph)return null;const nr=node.getBoundingClientRect(),gr=graph.getBoundingClientRect();return{x:nr.left-gr.left+nr.width/2,y:nr.top-gr.top+nr.height/2};}
 function renderThoughtEdgesOnly(){
   const group=document.getElementById('thoughtEdges'),graph=document.getElementById('thoughtGraph');if(!group||!graph)return;group.innerHTML='';const visibleIds=new Set([...document.querySelectorAll('.thought-node')].map(n=>Number(n.dataset.id)));
@@ -3463,7 +3472,7 @@ function renderThoughtFlow(){
     const title=getThoughtGroupTitle(active,0);const detailTitle=document.getElementById('thoughtDetailTitle');detailTitle.innerHTML=`<span>${escapeHtml(title)} · ${active.length}개 기록</span><button class="thought-title-edit detail" type="button" title="주제 이름 수정">✏️</button><button class="thought-topic-delete" type="button" title="이 생각 주제 삭제">🗑️</button>`;detailTitle.querySelector('.thought-title-edit').addEventListener('click',e=>{e.stopPropagation();editThoughtGroupTitle(active);});detailTitle.querySelector('.thought-topic-delete').addEventListener('click',e=>{e.stopPropagation();deleteThoughtGroup(active);});
     const centerId=Number(thoughtGroupCenters[activeThoughtGroupKey]||'')||null;thoughtCenterId=centerId;const center=active.find(m=>Number(m.id)===centerId);
     if(centerBadge)centerBadge.innerHTML=center?`◎ 중심 메모: 「${escapeHtml(String(center.text).slice(0,28))}${String(center.text).length>28?'…':''}」`:'◎ 이 주제의 중심 메모를 하나 선택해 주세요';
-    const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main)"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main-dark)"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>`;
+    const graph=document.getElementById('thoughtGraph');graph.innerHTML=`<svg id="thoughtSvg" class="thought-svg" aria-hidden="true"><defs><marker id="arrowManual" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main)"></path></marker><marker id="arrowSuggested" markerWidth="7" height="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="var(--theme-main)"></path></marker></defs><g id="thoughtEdges"></g><path id="thoughtTempEdge" class="thought-edge manual" style="display:none;" marker-end="url(#arrowManual)"></path></svg>`;
     const svg=graph.querySelector('svg');active.forEach((memo,index)=>graph.appendChild(buildThoughtNode(memo,Number(memo.id)===centerId,index)));
     if(center){
       starifyThoughtGroup(active,centerId);
@@ -3596,7 +3605,9 @@ const COLOR_THEMES={
   sky:{name:'하늘',main:'#55AEEA',dark:'#2D8FD3',soft:'#E9F6FF',border:'#B8DDF6',pale:'#F5FBFF',accent:'#DDF0FC',light:'#C8E7FA',mid:'#82C6F0'},
   mint:{name:'민트',main:'#52BFA8',dark:'#2D9E89',soft:'#E8F8F4',border:'#B5E2D8',pale:'#F5FCFA',accent:'#D9F1EB',light:'#C4E8DF',mid:'#7CCFBC'},
   navy:{name:'남색',main:'#405B9A',dark:'#293F76',soft:'#E9EEF9',border:'#B9C5E2',pale:'#F6F8FC',accent:'#DCE4F4',light:'#CBD5E9',mid:'#7187B8'},
-  gray:{name:'회색',main:'#7B818A',dark:'#5C626B',soft:'#F0F1F3',border:'#D0D3D7',pale:'#FAFAFB',accent:'#E5E7EA',light:'#D9DBDE',mid:'#A8ACB2'}
+  gray:{name:'회색',main:'#7B818A',dark:'#5C626B',soft:'#F0F1F3',border:'#D0D3D7',pale:'#FAFAFB',accent:'#E5E7EA',light:'#D9DBDE',mid:'#A8ACB2'},
+  beige:{name:'연갈색',main:'#B99A78',dark:'#9D7D5C',soft:'#F7F0E8',border:'#DDCCB8',pale:'#FCF9F5',accent:'#EFE3D4',light:'#E7D7C5',mid:'#D0B99D'},
+  lavender:{name:'연보라',main:'#A79AD8',dark:'#8879C2',soft:'#F2EFFB',border:'#D6CFF0',pale:'#FAF9FE',accent:'#E8E3F7',light:'#DED8F1',mid:'#BEB4E2'}
 };
 function applyColorTheme(name){
   const key=COLOR_THEMES[name]?name:'blue';
