@@ -566,6 +566,8 @@
 .thought-graph-controls{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin:0 10px 6px;}
     .thought-graph-controls button{width:28px;height:26px;border:1px solid var(--theme-border);background:var(--theme-surface);color:var(--theme-main-dark);border-radius:9px;font-size:14px;font-weight:800;cursor:pointer;}
     .thought-graph-controls button:hover{background:var(--theme-soft);}
+    .thought-graph-controls button.layout-mode{width:auto;min-width:72px;padding:0 8px;font-size:10px;}
+    .thought-graph-controls button.layout-mode.active{background:var(--theme-main);color:#fff;border-color:var(--theme-main);}
     .thought-graph-controls span{min-width:44px;text-align:center;font-size:9px;font-weight:800;color:#777;}
     .thought-graph-wrap{margin:0 10px;border:1px solid #e5e7eb;border-radius:16px;background:var(--theme-surface-soft);overflow:auto;position:relative}
     .thought-graph{position:relative;width:100%;min-width:1000px;height:760px;background-image:radial-gradient(#dfe3e8 1px,transparent 1px);background-size:18px 18px;overflow:hidden;transform-origin:top left;}
@@ -610,10 +612,10 @@
     .thought-change-box{margin-top:8px;padding:8px 9px;background:#fff8e1;border-radius:9px;color:#795548;font-size:9px;line-height:1.5}
     .selected-info{padding:7px 10px;margin:0 10px 8px;background:var(--theme-pale);border-radius:10px;color:#4b6380;font-size:9px;line-height:1.4}
     /* 색상 테마 모달 */
-    .theme-modal-card{width:300px;max-width:calc(100vw - 34px);max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden;}
+    .theme-modal-card{width:300px;max-width:calc(100vw - 34px);height:min(760px,calc(100vh - 32px));max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden;}
     .theme-modal-title{font-size:15px;font-weight:800;color:#333;margin-bottom:4px;flex-shrink:0;}
     .theme-modal-sub{font-size:10px;color:#999;line-height:1.5;margin-bottom:12px;flex-shrink:0;}
-    .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;overflow-y:auto;overflow-x:hidden;min-height:0;padding:2px 5px 4px 2px;scrollbar-width:thin;scrollbar-color:var(--theme-border) transparent;}
+    .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:2px 5px 4px 2px;scrollbar-width:thin;scrollbar-color:var(--theme-border) transparent;}
     .theme-grid::-webkit-scrollbar{width:7px;}
     .theme-grid::-webkit-scrollbar-track{background:transparent;}
     .theme-grid::-webkit-scrollbar-thumb{background:var(--theme-border);border-radius:10px;}
@@ -625,9 +627,11 @@
     .theme-palette-swatch{display:flex;width:100%;height:34px;border-radius:9px;overflow:hidden;margin:0 auto 7px;box-shadow:0 1px 5px rgba(0,0,0,.10);}
     .theme-palette-swatch span{flex:1;display:block;}
     .theme-choice-name{font-size:9px;font-weight:800;color:#555;line-height:1.25;}
-    .theme-close-row{display:flex;justify-content:flex-end;margin-top:10px;padding-top:8px;flex-shrink:0;border-top:1px solid var(--theme-line-soft);background:var(--theme-surface);}
-    .theme-close-btn{min-width:58px;}
+    .theme-close-row{display:flex;justify-content:flex-end;align-items:center;margin-top:10px;padding:8px 2px 0;flex:0 0 auto;min-height:42px;position:relative;z-index:3;border-top:1px solid var(--theme-line-soft);background:var(--theme-surface);}
+    .theme-close-btn{min-width:64px;}
     .theme-close-btn{border:none;background:#f1f3f4;color:#666;border-radius:12px;padding:7px 12px;font-size:10px;font-weight:bold;cursor:pointer;}
+    .theme-modal-card.palette-mode .theme-close-btn{background:var(--theme-soft);color:var(--theme-main-dark);border:1px solid var(--theme-border);}
+    .theme-modal-card.palette-mode .theme-close-row{box-shadow:0 -4px 12px rgba(0,0,0,.04);}
 
     /* 연결 모달 */
     .link-modal-card{max-height:540px;display:flex;flex-direction:column;gap:10px}
@@ -906,7 +910,7 @@
     <div id="thoughtHelp" class="thought-help">
       <div class="thought-description">
         연결된 메모는 먼저 하나의 주제로 묶여요. 주제 안에서 중심 메모를 정하면 기본적으로 중심에서 가지처럼 뻗고, 필요하면 서브 메모에서 다시 서서브 메모로 연결할 수 있어요.<br>
-        메모의 ●를 다른 메모로 드래그하면 연결할 수 있고, 연결선을 클릭하면 끊을 수 있어요. 메모를 클릭하면 중심 선택 또는 이 생각에서 빼기 메뉴가 나타나요.
+        메모의 ●를 다른 메모로 드래그하면 연결할 수 있고, 연결선을 클릭하면 끊을 수 있어요. 메모는 드래그해서 원하는 곳에 자유롭게 놓을 수 있고, 자동 배치를 누르면 중심 → 서브 → 서서브 계층에 맞춰 다시 정리해요.
       </div>
     </div>
     <div id="thoughtCenterBadge" class="thought-center-badge">◎ 중심 메모를 선택해 주세요</div>
@@ -928,7 +932,9 @@
       <div style="display:flex;justify-content:flex-end;margin:6px 0 10px;"><button class="thought-refresh-btn" type="button" onclick="addMemoToCurrentThought()">＋ 메모 추가하기</button></div>
         <div class="thought-legend" style="display:none;"></div>
         <div id="thoughtSelectedInfo" class="selected-info" style="display:none;"></div>
-        <div class="thought-graph-controls" aria-label="생각 연결 화면 확대/축소">
+        <div class="thought-graph-controls" aria-label="생각 연결 화면 배치 및 확대/축소">
+          <button type="button" class="layout-mode" id="thoughtAutoLayoutBtn" onclick="setThoughtLayoutMode('auto')" title="중심·서브·서서브 계층에 맞춰 자동으로 배치">✨ 자동 배치</button>
+          <button type="button" class="layout-mode" id="thoughtManualLayoutBtn" onclick="setThoughtLayoutMode('manual')" title="메모를 직접 드래그해서 원하는 위치에 배치">✋ 자유 배치</button>
           <button type="button" onclick="changeThoughtZoom(-0.1)" title="축소">−</button>
           <span id="thoughtZoomLabel">100%</span>
           <button type="button" onclick="changeThoughtZoom(0.1)" title="확대">＋</button>
@@ -3041,6 +3047,22 @@ let selectedThoughtIds = [];
 let linkingFromId = null;
 let isDraggingThoughtNode = false;
 let thoughtDragOffset = {x:0,y:0};
+const THOUGHT_LAYOUT_MODE_KEY = 'notepound_thought_layout_mode';
+let thoughtLayoutMode = localStorage.getItem(THOUGHT_LAYOUT_MODE_KEY) === 'manual' ? 'manual' : 'auto';
+
+function saveThoughtLayoutMode(){localStorage.setItem(THOUGHT_LAYOUT_MODE_KEY,thoughtLayoutMode);}
+function updateThoughtLayoutModeUI(){
+  const auto=document.getElementById('thoughtAutoLayoutBtn'),manual=document.getElementById('thoughtManualLayoutBtn');
+  if(auto)auto.classList.toggle('active',thoughtLayoutMode==='auto');
+  if(manual)manual.classList.toggle('active',thoughtLayoutMode==='manual');
+}
+function setThoughtLayoutMode(mode){
+  thoughtLayoutMode=mode==='manual'?'manual':'auto';
+  saveThoughtLayoutMode();
+  if(thoughtLayoutMode==='auto')layoutThoughtMindMap();
+  updateThoughtLayoutModeUI();
+  renderThoughtFlow();
+}
 
 function loadThoughtPositions(){
   try{const d=JSON.parse(localStorage.getItem(THOUGHT_POSITION_KEY));return d&&typeof d==='object'?d:{};}catch(e){return {};}
@@ -3235,9 +3257,14 @@ function getThoughtPosition(memo,index){
   const pos=defaultThoughtPosition(index,savedMemos.length);thoughtPositions[String(memo.id)]=pos;return pos;
 }
 function resetThoughtPositions(){
-  const group=getActiveGroup();if(group){thoughtPositions={};layoutThoughtMindMap();}
+  thoughtLayoutMode='auto';
+  saveThoughtLayoutMode();
+  const group=getActiveGroup();
+  if(group){thoughtPositions={};layoutThoughtMindMap();}
   else savedMemos.forEach((memo,index)=>{thoughtPositions[String(memo.id)]=defaultThoughtPosition(index,savedMemos.length);});
-  saveThoughtPositions();renderThoughtFlow();
+  saveThoughtPositions();
+  updateThoughtLayoutModeUI();
+  renderThoughtFlow();
 }
 function selectThoughtNode(id){
   if(selectedThoughtIds.includes(id))selectedThoughtIds=selectedThoughtIds.filter(x=>x!==id);else{if(selectedThoughtIds.length>=2)selectedThoughtIds=[];selectedThoughtIds.push(id);}updateThoughtSelectionUI();
@@ -3343,7 +3370,7 @@ function setThoughtCenterForGroup(group,centerId){
   saveThoughtCenter();saveThoughtGroupCenters();
   starifyThoughtGroup(group,thoughtCenterId);
   selectedThoughtIds=[];
-  layoutThoughtMindMap();
+  if(thoughtLayoutMode==='auto')layoutThoughtMindMap();
   renderThoughtFlow();
 }
 function setSelectedAsThoughtCenter(){
@@ -3399,29 +3426,57 @@ function getConnectedComponent(startId){
 }
 function layoutThoughtMindMap(){
   const root=savedMemos.find(m=>Number(m.id)===Number(thoughtCenterId));
-  const component=getActiveGroup()|| (root?getConnectedComponent(root.id):[]);
+  const component=getActiveGroup() || (root?getConnectedComponent(root.id):[]);
   if(!root||!component.length)return;
   const ids=new Set(component.map(m=>Number(m.id)));
+  const byId=new Map(component.map(m=>[Number(m.id),m]));
   const childrenByParent={};
-  component.forEach(m=>{const pid=Number(m.parentThoughtId||0);if(pid&&ids.has(pid)){(childrenByParent[pid]||(childrenByParent[pid]=[])).push(m);}});
-  // Anything without a valid parent is a direct child of the center.
-  component.forEach(m=>{if(Number(m.id)===Number(root.id))return;const pid=Number(m.parentThoughtId||0);if(!pid||!ids.has(pid)){(childrenByParent[root.id]||(childrenByParent[root.id]=[])).push(m);}});
-  thoughtPositions[String(root.id)]={x:50,y:46};
-  const queue=[{id:Number(root.id),depth:0,x:50,y:46}];
+
+  component.forEach(m=>{
+    if(Number(m.id)===Number(root.id))return;
+    const pid=Number(m.parentThoughtId||0);
+    const parentId=(pid&&ids.has(pid))?pid:Number(root.id);
+    (childrenByParent[parentId]||(childrenByParent[parentId]=[])).push(m);
+  });
+
+  Object.values(childrenByParent).forEach(list=>list.sort((a,b)=>Number(a.id)-Number(b.id)));
+
+  // 중심은 항상 중앙. 1단계는 중심 주변, 그 아래 단계는 부모 주변에
+  // 작은 가지처럼 배치해 계층이 눈에 보이도록 한다.
+  thoughtPositions[String(root.id)]={x:50,y:45};
   const placed=new Set([Number(root.id)]);
+  const queue=[{id:Number(root.id),depth:0,x:50,y:45}];
+
   while(queue.length){
-    const cur=queue.shift(), kids=childrenByParent[cur.id]||[];
-    const radiusX=Math.min(40,24+kids.length*2.5), radiusY=Math.min(34,16+kids.length*1.8);
+    const cur=queue.shift();
+    const kids=(childrenByParent[cur.id]||[]).filter(m=>!placed.has(Number(m.id)));
+    if(!kids.length)continue;
+
+    const depth=cur.depth+1;
+    const count=kids.length;
+    const isRootChildren=cur.id===Number(root.id);
+    const radiusX=isRootChildren?34:Math.max(15,23-depth*2.2);
+    const radiusY=isRootChildren?27:Math.max(12,19-depth*1.6);
+    const baseAngle=isRootChildren ? -Math.PI/2 : Math.atan2(cur.y-45,cur.x-50);
+    const spread=isRootChildren ? Math.min(Math.PI*1.85,Math.max(Math.PI*.9,count*.72)) : Math.min(Math.PI*1.25,Math.max(Math.PI*.65,count*.55));
+
     kids.forEach((m,i)=>{
-      if(placed.has(Number(m.id)))return;
-      const angle=(-Math.PI/2)+(Math.PI*2*i/Math.max(1,kids.length));
-      const depthOffset=Math.min(2,cur.depth)*6;
-      thoughtPositions[String(m.id)]={x:Math.max(5,Math.min(90,cur.x+Math.cos(angle)*(radiusX-depthOffset))),y:Math.max(7,Math.min(86,cur.y+Math.sin(angle)*(radiusY-depthOffset)))};
-      placed.add(Number(m.id));queue.push({id:Number(m.id),depth:cur.depth+1,x:thoughtPositions[String(m.id)].x,y:thoughtPositions[String(m.id)].y});
+      const ratio=count===1 ? 0.5 : i/(count-1);
+      const angle=count===1?baseAngle:baseAngle-spread/2+spread*ratio;
+      const outward=depth===1?1:(1+Math.min(depth,3)*.04);
+      const x=Math.max(5,Math.min(90,cur.x+Math.cos(angle)*radiusX*outward));
+      const y=Math.max(7,Math.min(84,cur.y+Math.sin(angle)*radiusY*outward));
+      thoughtPositions[String(m.id)]={x,y};
+      placed.add(Number(m.id));
+      queue.push({id:Number(m.id),depth,x,y});
     });
   }
-  // Fallback placement for any orphaned records.
-  [...ids].filter(id=>!placed.has(id)).forEach((id,i)=>{thoughtPositions[String(id)]={x:10+(i%4)*25,y:10+Math.floor(i/4)*22};});
+
+  // 부모 정보가 없거나 순환 등으로 배치되지 않은 메모는 가장자리의
+  // 별도 위치에 놓되, 서로 겹치지 않도록 한다.
+  [...ids].filter(id=>!placed.has(id)).forEach((id,i)=>{
+    thoughtPositions[String(id)]={x:10+(i%4)*26,y:10+Math.floor(i/4)*20};
+  });
   saveThoughtPositions();
 }
 
@@ -3601,10 +3656,11 @@ function renderThoughtFlow(){
     const svg=graph.querySelector('svg');active.forEach((memo,index)=>graph.appendChild(buildThoughtNode(memo,Number(memo.id)===centerId,index)));
     if(center){
       starifyThoughtGroup(active,centerId);
-      layoutThoughtMindMap();
+      if(thoughtLayoutMode==='auto')layoutThoughtMindMap();
       active.forEach((memo,index)=>{const node=document.querySelector(`.thought-node[data-id="${memo.id}"]`);const pos=getThoughtPosition(memo,index);if(node){node.style.left=`${pos.x}%`;node.style.top=`${pos.y}%`;}});
     }
     applyThoughtZoom();
+    updateThoughtLayoutModeUI();
     renderThoughtEdgesOnly();
     const summary=document.getElementById('thoughtSummary');if(summary)summary.innerHTML=`<div class="thought-panel-title">🧠 ${escapeHtml(title)}</div><div style="font-size:9px;color:#777;line-height:1.5;">이 주제에 연결된 메모 <b>${active.length}</b>개 · 중심 → 서브 → 서서브 → 서서서브로 단계가 이어져요.<br>메모를 클릭하면 선택할 수 있고, 🗑 버튼으로 이 주제에서 메모를 삭제할 수 있어요. ● 드래그로 상위 메모에서 서브 메모를 연결할 수 있어요.</div>`;
     renderThoughtChangePanel(active);updateThoughtSelectionUI();return;
@@ -3624,7 +3680,18 @@ function finishThoughtLink(event){document.removeEventListener('pointermove',mov
 function startThoughtNodeDrag(event,id){
   if(event.target.closest('.thought-node-port'))return;const node=event.currentTarget,graph=document.getElementById('thoughtGraph'),gr=graph.getBoundingClientRect(),nr=node.getBoundingClientRect();isDraggingThoughtNode=true;thoughtDragOffset={x:(event.clientX-nr.left)/thoughtZoom,y:(event.clientY-nr.top)/thoughtZoom};node.classList.add('dragging');
   const move=e=>{const x=Math.max(2,Math.min(graph.clientWidth-node.offsetWidth-2,(e.clientX-gr.left)/thoughtZoom-thoughtDragOffset.x)),y=Math.max(2,Math.min(graph.clientHeight-node.offsetHeight-2,(e.clientY-gr.top)/thoughtZoom-thoughtDragOffset.y));node.style.left=x+'px';node.style.top=y+'px';thoughtPositions[String(id)]={x:x/graph.clientWidth*100,y:y/graph.clientHeight*100};renderThoughtEdgesOnly();};
-  const up=()=>{node.classList.remove('dragging');isDraggingThoughtNode=false;saveThoughtPositions();document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up,{once:true});
+  const up=()=>{
+    node.classList.remove('dragging');
+    isDraggingThoughtNode=false;
+    thoughtLayoutMode='manual';
+    saveThoughtLayoutMode();
+    saveThoughtPositions();
+    updateThoughtLayoutModeUI();
+    document.removeEventListener('pointermove',move);
+    document.removeEventListener('pointerup',up);
+  };
+  document.addEventListener('pointermove',move);
+  document.addEventListener('pointerup',up,{once:true});
 }
 
 function getUnconnectedPosition(memo,index,total){
@@ -3805,6 +3872,8 @@ function applyColorTheme(name){
 function hexToRgba(hex,alpha){const h=hex.replace('#','');const n=parseInt(h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${alpha})`;}
 function setThemeMode(mode){
   themeMode=mode==='solid'?'solid':'palette';
+  const modalCard=document.querySelector('.theme-modal-card');
+  if(modalCard){modalCard.classList.toggle('palette-mode',themeMode==='palette');modalCard.classList.toggle('solid-mode',themeMode==='solid');}
   localStorage.setItem('notepound_theme_mode',themeMode);
   document.getElementById('themeModeSolid')?.classList.toggle('active',themeMode==='solid');
   document.getElementById('themeModePalette')?.classList.toggle('active',themeMode==='palette');
@@ -3832,6 +3901,8 @@ function openThemeModal(){
   const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='flex';
   document.getElementById('themeModeSolid')?.classList.toggle('active',themeMode==='solid');
   document.getElementById('themeModePalette')?.classList.toggle('active',themeMode==='palette');
+  const modalCard=document.querySelector('.theme-modal-card');
+  if(modalCard){modalCard.classList.toggle('palette-mode',themeMode==='palette');modalCard.classList.toggle('solid-mode',themeMode==='solid');}
   renderThemeChoices();
 }
 function closeThemeModal(){const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='none';}
