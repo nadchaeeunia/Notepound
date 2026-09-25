@@ -46,6 +46,22 @@ HTML = r"""<!DOCTYPE html>
       box-sizing: border-box;
     }
 
+    html,
+    body,
+    button,
+    input,
+    textarea,
+    select,
+    option,
+    svg text {
+      font-family: var(--app-font) !important;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      font-family: var(--app-font) !important;
+    }
+
     body {
       background: var(--theme-body-bg);
       color: var(--theme-text);
@@ -326,6 +342,20 @@ HTML = r"""<!DOCTYPE html>
 
     .delete-btn:hover {
       color: #d32f2f;
+    }
+
+    .icon-x-btn,
+    .delete-btn {
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      padding: 0 3px !important;
+      color: var(--theme-main);
+      cursor: pointer;
+      line-height: 1;
     }
 
     .category-grid {
@@ -886,11 +916,23 @@ HTML = r"""<!DOCTYPE html>
     }
 
     /* X 삭제 버튼에는 사각 배경을 만들지 않음 */
-    body[data-role-theme="true"] .delete-btn,
-    body[data-role-theme="true"] .thought-node-delete{
+    body[data-role-theme="true"] .phone-container button.delete-btn,
+    body[data-role-theme="true"] .phone-container button.thought-node-delete,
+    body[data-role-theme="true"] .phone-container .icon-x-btn{
       background:transparent!important;
       border:none!important;
       box-shadow:none!important;
+      color:var(--theme-role-accent)!important;
+      text-shadow:-.8px 0 var(--theme-role-box),.8px 0 var(--theme-role-box),0 -.8px var(--theme-role-box),0 .8px var(--theme-role-box)!important;
+    }
+    @supports (-webkit-text-stroke:1px #000){
+      body[data-role-theme="true"] .phone-container button.delete-btn,
+      body[data-role-theme="true"] .phone-container button.thought-node-delete,
+      body[data-role-theme="true"] .phone-container .icon-x-btn{
+        text-shadow:none!important;
+        -webkit-text-stroke:.8px var(--theme-role-box);
+        paint-order:stroke fill;
+      }
     }
 
     /* 갈색 메모 영역의 글씨 외곽선은 글씨 크기에 맞춰 자동 구분 */
@@ -1484,6 +1526,7 @@ HTML = r"""<!DOCTYPE html>
         <span>📌 메모 수정하기</span>
 
         <span
+          class="icon-x-btn"
           style="cursor:pointer;"
           onclick="closeMemoModal()"
         >
@@ -3509,6 +3552,9 @@ function showHistoryPopup() {
 
       remove.textContent =
         '✕';
+
+      remove.className =
+        'icon-x-btn';
 
       remove.style.color =
         '#aaa';
