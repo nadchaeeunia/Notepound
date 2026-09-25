@@ -1,7 +1,4 @@
-from pathlib import Path
-import webbrowser
-
-HTML = r"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -33,11 +30,6 @@ HTML = r"""<!DOCTYPE html>
       --theme-text: #24324a;
       --theme-text-muted: #6f7890;
       --theme-line-soft: rgba(70,90,120,.12);
-      --theme-role-base: var(--theme-app-bg);
-      --theme-role-nav: var(--theme-nav-bg);
-      --theme-role-box: var(--theme-surface);
-      --theme-role-accent: var(--theme-main);
-      --theme-role-memo: var(--theme-input-bg);
     }
 
     * {
@@ -804,140 +796,6 @@ HTML = r"""<!DOCTYPE html>
     .thought-view-btn.active,.theme-choice.active{background:var(--theme-soft)!important;}
     .theme-modal-sub,.theme-choice-name,.link-modal-description,.link-memo-option-main{color:var(--theme-text-muted)!important;}
     .theme-choice:hover,.thought-group-card:hover,.unlinked-card:hover,.thought-node:hover{background:var(--theme-surface)!important;}
-
-    /* ===== 5색 역할 고정 테마 =====
-       색상표 순서 → 화면 역할: 1 · 4 · 3 · 5 · 2
-       1 기본 배경 / 2 메모 박스 / 3 일반 박스 / 4 상하단 / 5 글씨·포인트 */
-    body[data-role-theme="true"]{background:var(--theme-role-base)!important;color:var(--theme-role-accent)!important;}
-    body[data-role-theme="true"] .phone-container,
-    body[data-role-theme="true"] .tab-content{background:var(--theme-role-base)!important;}
-    body[data-role-theme="true"] .phone-container{border-color:var(--theme-role-nav)!important;}
-    body[data-role-theme="true"] .app-header,
-    body[data-role-theme="true"] .tab-nav{background:var(--theme-role-nav)!important;border-color:var(--theme-role-accent)!important;}
-
-    body[data-role-theme="true"] .persistent-dock,
-    body[data-role-theme="true"] .category-folder-card,
-    body[data-role-theme="true"] .history-popup,
-    body[data-role-theme="true"] .cat-modal-card,
-    body[data-role-theme="true"] .link-modal-card,
-    body[data-role-theme="true"] .theme-modal-card,
-    body[data-role-theme="true"] .calendar-section,
-    body[data-role-theme="true"] .calendar-detail,
-    body[data-role-theme="true"] .calendar-day,
-    body[data-role-theme="true"] .schedule-month-item,
-    body[data-role-theme="true"] .schedule-item,
-    body[data-role-theme="true"] .schedule-modal-card,
-    body[data-role-theme="true"] .thought-panel,
-    body[data-role-theme="true"] .thought-group-card,
-    body[data-role-theme="true"] .thought-graph-wrap,
-    body[data-role-theme="true"] .unlinked-graph-wrap,
-    body[data-role-theme="true"] .theme-choice,
-    body[data-role-theme="true"] .thought-view-btn,
-    body[data-role-theme="true"] .thought-graph-controls button,
-    body[data-role-theme="true"] .thought-back-btn,
-    body[data-role-theme="true"] .theme-close-btn{background:var(--theme-role-box)!important;}
-
-    body[data-role-theme="true"] .phone-container button:not(.tab-btn),
-    body[data-role-theme="true"] .phone-container input,
-    body[data-role-theme="true"] .search-input,
-    body[data-role-theme="true"] .cat-input-field,
-    body[data-role-theme="true"] .memo-date-input,
-    body[data-role-theme="true"] .schedule-field input,
-    body[data-role-theme="true"] .cat-chip,
-    body[data-role-theme="true"] .tag-badge,
-    body[data-role-theme="true"] .emoji-btn,
-    body[data-role-theme="true"] .thought-change-box{background:var(--theme-role-box)!important;border-color:var(--theme-role-accent)!important;}
-
-    body[data-role-theme="true"] .memo-input,
-    body[data-role-theme="true"] .recent-card,
-    body[data-role-theme="true"] .memo-item,
-    body[data-role-theme="true"] .memo-sticky-note,
-    body[data-role-theme="true"] .sticky-textarea,
-    body[data-role-theme="true"] .calendar-memo-item,
-    body[data-role-theme="true"] .daily-record-card,
-    body[data-role-theme="true"] .thought-node,
-    body[data-role-theme="true"] .unlinked-card,
-    body[data-role-theme="true"] .link-memo-option,
-    body[data-role-theme="true"] .thought-group-chip{background:var(--theme-role-memo)!important;}
-
-    /* 갈색 메모 영역의 내용 글씨에만 3번 아이보리색 외곽선 적용 */
-    body[data-role-theme="true"] .memo-input,
-    body[data-role-theme="true"] .memo-input::placeholder,
-    body[data-role-theme="true"] .sticky-textarea,
-    body[data-role-theme="true"] .sticky-textarea::placeholder,
-    body[data-role-theme="true"] .recent-card > span,
-    body[data-role-theme="true"] .memo-text-clickable,
-    body[data-role-theme="true"] .calendar-memo-date,
-    body[data-role-theme="true"] .calendar-memo-text,
-    body[data-role-theme="true"] .calendar-memo-cat,
-    body[data-role-theme="true"] .daily-record-card-text,
-    body[data-role-theme="true"] .thought-node-text,
-    body[data-role-theme="true"] .thought-node-date,
-    body[data-role-theme="true"] .unlinked-card-text,
-    body[data-role-theme="true"] .unlinked-card-date,
-    body[data-role-theme="true"] .link-memo-option-main,
-    body[data-role-theme="true"] .link-memo-option-meta,
-    body[data-role-theme="true"] .thought-group-chip{
-      text-shadow:
-        -2.3px 0 var(--theme-role-box), 2.3px 0 var(--theme-role-box),
-        0 -2.3px var(--theme-role-box), 0 2.3px var(--theme-role-box),
-        -1.63px -1.63px var(--theme-role-box), 1.63px -1.63px var(--theme-role-box),
-        -1.63px 1.63px var(--theme-role-box), 1.63px 1.63px var(--theme-role-box);
-    }
-    @supports (-webkit-text-stroke:1px #000){
-      body[data-role-theme="true"] .memo-input,
-      body[data-role-theme="true"] .memo-input::placeholder,
-      body[data-role-theme="true"] .sticky-textarea,
-      body[data-role-theme="true"] .sticky-textarea::placeholder,
-      body[data-role-theme="true"] .recent-card > span,
-      body[data-role-theme="true"] .memo-text-clickable,
-      body[data-role-theme="true"] .calendar-memo-date,
-      body[data-role-theme="true"] .calendar-memo-text,
-      body[data-role-theme="true"] .calendar-memo-cat,
-      body[data-role-theme="true"] .daily-record-card-text,
-      body[data-role-theme="true"] .thought-node-text,
-      body[data-role-theme="true"] .thought-node-date,
-      body[data-role-theme="true"] .unlinked-card-text,
-      body[data-role-theme="true"] .unlinked-card-date,
-      body[data-role-theme="true"] .link-memo-option-main,
-      body[data-role-theme="true"] .link-memo-option-meta,
-      body[data-role-theme="true"] .thought-group-chip{
-        text-shadow:none;
-        -webkit-text-stroke:2.3px var(--theme-role-box);
-        paint-order:stroke fill;
-      }
-    }
-
-    body[data-role-theme="true"] .phone-container,
-    body[data-role-theme="true"] .phone-container :where(div,span,p,h1,h2,h3,button,input,textarea,label){color:var(--theme-role-accent)!important;}
-    body[data-role-theme="true"] .phone-container input::placeholder,
-    body[data-role-theme="true"] .phone-container textarea::placeholder{color:var(--theme-role-accent)!important;opacity:.88;}
-
-    body[data-role-theme="true"] .calendar-mode-btn.active,
-    body[data-role-theme="true"] .calendar-year-btn.active,
-    body[data-role-theme="true"] .sticky-btn.save,
-    body[data-role-theme="true"] .link-modal-btn.save,
-    body[data-role-theme="true"] .calendar-schedule-add,
-    body[data-role-theme="true"] .daily-record-save,
-    body[data-role-theme="true"] .schedule-item-actions .done,
-    body[data-role-theme="true"] .schedule-modal-actions .save,
-    body[data-role-theme="true"] .thought-graph-controls button.layout-mode.active,
-    body[data-role-theme="true"] .cat-chip.active,
-    body[data-role-theme="true"] .tab-btn.home-tab .tab-icon{background:var(--theme-role-nav)!important;color:var(--theme-role-accent)!important;border-color:var(--theme-role-accent)!important;}
-
-    body[data-role-theme="true"] .recent-card,
-    body[data-role-theme="true"] .persistent-dock,
-    body[data-role-theme="true"] .category-folder-card,
-    body[data-role-theme="true"] .search-input,
-    body[data-role-theme="true"] .calendar-section,
-    body[data-role-theme="true"] .calendar-detail,
-    body[data-role-theme="true"] .calendar-day,
-    body[data-role-theme="true"] .schedule-month-item,
-    body[data-role-theme="true"] .schedule-item,
-    body[data-role-theme="true"] .thought-panel,
-    body[data-role-theme="true"] .thought-group-card,
-    body[data-role-theme="true"] .thought-node,
-    body[data-role-theme="true"] .unlinked-card{border-color:var(--theme-role-accent)!important;}
   </style>
 </head>
 
@@ -4547,17 +4405,7 @@ function refreshThoughtFlow(){try{const latest=JSON.parse(localStorage.getItem('
 const NOTEOUND_THEME_KEY='notepound_color_theme';
 const COLOR_THEMES={
   fireSea:{name:'불타는 바다',colors:['#6E120B','#B12A29','#FBF0D8','#102F47','#729AB9']},
-  oliveGarden:{
-    name:'올리브 가든의 만찬 · 최종 테마',
-    colors:['#626C3E','#2B361C','#FDFAE3','#F59A23','#B5753C'],
-    roles:{
-      base:'#626C3E',
-      nav:'#2B361C',
-      box:'#FDFAE3',
-      accent:'#F59A23',
-      memo:'#B5753C'
-    }
-  },
+  oliveGarden:{name:'올리브 가든의 만찬',colors:['#626C3E','#2B361C','#FDFAE3','#D4A369','#B17036']},
   pastelGlam:{name:'파스텔 글램댄 어드벤처',colors:['#C9B5D8','#F6CADC','#F3B2CB','#C4DFFB','#ACD1FB']},
   goldenDusk:{name:'황금빛 황혼',colors:['#010813','#071C3B','#133463','#F6C543','#F8D84A']},
   deepSea:{name:'심해',colors:['#0E1320','#202D42','#445B74','#798BA8','#EFEBDA']},
@@ -4624,45 +4472,14 @@ function paletteToTheme(t){
     text:darkest, textMuted:hexToRgba(darkest,.62), lineSoft:hexToRgba(darkest,.12)
   };
 }
-function rolePaletteToTheme(t){
-  const r=t.roles;
-  return {
-    main:r.accent,
-    dark:r.accent,
-    soft:r.box,
-    border:r.accent,
-    pale:r.box,
-    accent:r.accent,
-    light:r.box,
-    mid:r.memo,
-    connection:r.accent,
-    center:r.accent,
-    colors:[...t.colors],
-    bodyBg:r.base,
-    appBg:r.base,
-    pageBg:r.base,
-    surface:r.box,
-    surfaceSoft:r.box,
-    navBg:r.nav,
-    activeBg:r.nav,
-    inputBg:r.memo,
-    text:r.accent,
-    textMuted:r.accent,
-    lineSoft:r.accent,
-    roles:r
-  };
-}
 function applyColorTheme(name){
   const isSolid=String(name).startsWith('solid:');
   const rawKey=isSolid?String(name).slice(7):name;
   const key=(isSolid&&SOLID_THEMES[rawKey])?`solid:${rawKey}`:(COLOR_THEMES[name]?name:'fireSea');
   const palette=isSolid?solidToPalette(SOLID_THEMES[rawKey]):COLOR_THEMES[key];
-  const isRoleTheme=Boolean(palette&&palette.roles);
-  const t=isRoleTheme?rolePaletteToTheme(palette):paletteToTheme(palette),root=document.documentElement;
+  const t=paletteToTheme(palette),root=document.documentElement;
   root.style.setProperty('--theme-main',t.main);root.style.setProperty('--theme-main-dark',t.dark);root.style.setProperty('--theme-soft',t.soft);root.style.setProperty('--theme-border',t.border);root.style.setProperty('--theme-pale',t.pale);root.style.setProperty('--theme-accent-soft',t.accent);root.style.setProperty('--theme-dot-light',t.light);root.style.setProperty('--theme-dot-mid',t.mid);root.style.setProperty('--theme-connection',t.connection);root.style.setProperty('--theme-center',t.center);root.style.setProperty('--theme-center-shadow',hexToRgba(t.center,.25));root.style.setProperty('--theme-shadow-blue',hexToRgba(t.main,.16));root.style.setProperty('--theme-shadow-blue-soft',hexToRgba(t.main,.13));root.style.setProperty('--theme-shadow-blue-strong',hexToRgba(t.main,.20));root.style.setProperty('--theme-body-bg',t.bodyBg);root.style.setProperty('--theme-app-bg',t.appBg);root.style.setProperty('--theme-page-bg',t.pageBg);root.style.setProperty('--theme-surface',t.surface);root.style.setProperty('--theme-surface-soft',t.surfaceSoft);root.style.setProperty('--theme-nav-bg',t.navBg);root.style.setProperty('--theme-active-bg',t.activeBg);root.style.setProperty('--theme-input-bg',t.inputBg);root.style.setProperty('--theme-text',t.text);root.style.setProperty('--theme-text-muted',t.textMuted);root.style.setProperty('--theme-line-soft',t.lineSoft);
-  root.style.setProperty('--theme-role-base',isRoleTheme?t.roles.base:t.appBg);root.style.setProperty('--theme-role-nav',isRoleTheme?t.roles.nav:t.navBg);root.style.setProperty('--theme-role-box',isRoleTheme?t.roles.box:t.surface);root.style.setProperty('--theme-role-accent',isRoleTheme?t.roles.accent:t.main);root.style.setProperty('--theme-role-memo',isRoleTheme?t.roles.memo:t.inputBg);
   localStorage.setItem(NOTEOUND_THEME_KEY,key);themeMode=key.startsWith('solid:')?'solid':'palette';localStorage.setItem('notepound_theme_mode',themeMode);document.body.dataset.colorTheme=key;
-  document.body.dataset.roleTheme=isRoleTheme?'true':'false';
   const grid=document.getElementById('themeGrid');if(grid)grid.querySelectorAll('.theme-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.theme===key));
 }
 
@@ -4748,32 +4565,9 @@ function resetNotepoundData(){
   location.reload();
 }
 function closeThemeModal(){const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='none';}
-(function(){
-  const previewKey='notepound_role_theme_preview_v1';
-  if(!localStorage.getItem(previewKey)){
-    localStorage.setItem(previewKey,'done');
-    localStorage.setItem(NOTEOUND_THEME_KEY,'oliveGarden');
-    localStorage.setItem('notepound_theme_mode','palette');
-  }
-  const saved=localStorage.getItem(NOTEOUND_THEME_KEY)||'oliveGarden';
-  applyColorTheme(saved);
-})();
+(function(){const saved=localStorage.getItem(NOTEOUND_THEME_KEY)||'fireSea';applyColorTheme(saved);})();
 
 </script>
 
 </body>
-</html>"""
-
-BASE_DIR = Path(__file__).resolve().parent
-OUTPUT_HTML = BASE_DIR / "Notepound_실행용.html"
-
-
-def create_html():
-    OUTPUT_HTML.write_text(HTML, encoding="utf-8")
-    return OUTPUT_HTML
-
-
-if __name__ == "__main__":
-    path = create_html()
-    print(f"Notepound 실행 파일 생성 완료: {path}")
-    webbrowser.open_new_tab(path.as_uri())
+</html>
