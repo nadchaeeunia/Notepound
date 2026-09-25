@@ -10,6 +10,7 @@ HTML = r"""<!DOCTYPE html>
 
   <style>
     :root {
+      --app-font: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
       --theme-main: #4A7FE5;
       --theme-main-dark: #3973DC;
       --theme-soft: #EAF1FF;
@@ -38,6 +39,7 @@ HTML = r"""<!DOCTYPE html>
       --theme-role-box: var(--theme-surface);
       --theme-role-accent: var(--theme-main);
       --theme-role-memo: var(--theme-input-bg);
+      --theme-role-memo-border: var(--theme-border);
     }
 
     * {
@@ -54,7 +56,12 @@ HTML = r"""<!DOCTYPE html>
       align-items: center;
       min-height: 100vh;
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--app-font);
+    }
+
+    .phone-container,
+    .phone-container * {
+      font-family: var(--app-font) !important;
     }
 
     .phone-container {
@@ -864,50 +871,80 @@ HTML = r"""<!DOCTYPE html>
     body[data-role-theme="true"] .link-memo-option,
     body[data-role-theme="true"] .thought-group-chip{background:var(--theme-role-memo)!important;}
 
-    /* 갈색 메모 영역의 내용 글씨에만 3번 아이보리색 외곽선 적용 */
+    /* 메모 상자는 갈색보다 밝은 갈색 외곽선으로 구분 */
+    body[data-role-theme="true"] .memo-input,
+    body[data-role-theme="true"] .recent-card,
+    body[data-role-theme="true"] .memo-item,
+    body[data-role-theme="true"] .memo-sticky-note,
+    body[data-role-theme="true"] .sticky-textarea,
+    body[data-role-theme="true"] .calendar-memo-item,
+    body[data-role-theme="true"] .daily-record-card,
+    body[data-role-theme="true"] .thought-node,
+    body[data-role-theme="true"] .unlinked-card,
+    body[data-role-theme="true"] .link-memo-option{
+      border:1.5px solid var(--theme-role-memo-border)!important;
+    }
+
+    /* X 삭제 버튼에는 사각 배경을 만들지 않음 */
+    body[data-role-theme="true"] .delete-btn,
+    body[data-role-theme="true"] .thought-node-delete{
+      background:transparent!important;
+      border:none!important;
+      box-shadow:none!important;
+    }
+
+    /* 갈색 메모 영역의 글씨 외곽선은 글씨 크기에 맞춰 자동 구분 */
     body[data-role-theme="true"] .memo-input,
     body[data-role-theme="true"] .memo-input::placeholder,
     body[data-role-theme="true"] .sticky-textarea,
-    body[data-role-theme="true"] .sticky-textarea::placeholder,
+    body[data-role-theme="true"] .sticky-textarea::placeholder{
+      text-shadow:-1.6px 0 var(--theme-role-box),1.6px 0 var(--theme-role-box),0 -1.6px var(--theme-role-box),0 1.6px var(--theme-role-box);
+    }
     body[data-role-theme="true"] .recent-card > span,
     body[data-role-theme="true"] .memo-text-clickable,
-    body[data-role-theme="true"] .calendar-memo-date,
     body[data-role-theme="true"] .calendar-memo-text,
-    body[data-role-theme="true"] .calendar-memo-cat,
     body[data-role-theme="true"] .daily-record-card-text,
     body[data-role-theme="true"] .thought-node-text,
-    body[data-role-theme="true"] .thought-node-date,
     body[data-role-theme="true"] .unlinked-card-text,
-    body[data-role-theme="true"] .unlinked-card-date,
     body[data-role-theme="true"] .link-memo-option-main,
-    body[data-role-theme="true"] .link-memo-option-meta,
     body[data-role-theme="true"] .thought-group-chip{
-      text-shadow:
-        -2.3px 0 var(--theme-role-box), 2.3px 0 var(--theme-role-box),
-        0 -2.3px var(--theme-role-box), 0 2.3px var(--theme-role-box),
-        -1.63px -1.63px var(--theme-role-box), 1.63px -1.63px var(--theme-role-box),
-        -1.63px 1.63px var(--theme-role-box), 1.63px 1.63px var(--theme-role-box);
+      text-shadow:-1.2px 0 var(--theme-role-box),1.2px 0 var(--theme-role-box),0 -1.2px var(--theme-role-box),0 1.2px var(--theme-role-box);
+    }
+    body[data-role-theme="true"] .calendar-memo-date,
+    body[data-role-theme="true"] .calendar-memo-cat,
+    body[data-role-theme="true"] .thought-node-date,
+    body[data-role-theme="true"] .unlinked-card-date,
+    body[data-role-theme="true"] .link-memo-option-meta{
+      text-shadow:-.8px 0 var(--theme-role-box),.8px 0 var(--theme-role-box),0 -.8px var(--theme-role-box),0 .8px var(--theme-role-box);
     }
     @supports (-webkit-text-stroke:1px #000){
       body[data-role-theme="true"] .memo-input,
       body[data-role-theme="true"] .memo-input::placeholder,
       body[data-role-theme="true"] .sticky-textarea,
-      body[data-role-theme="true"] .sticky-textarea::placeholder,
-      body[data-role-theme="true"] .recent-card > span,
-      body[data-role-theme="true"] .memo-text-clickable,
-      body[data-role-theme="true"] .calendar-memo-date,
-      body[data-role-theme="true"] .calendar-memo-text,
-      body[data-role-theme="true"] .calendar-memo-cat,
-      body[data-role-theme="true"] .daily-record-card-text,
-      body[data-role-theme="true"] .thought-node-text,
-      body[data-role-theme="true"] .thought-node-date,
-      body[data-role-theme="true"] .unlinked-card-text,
-      body[data-role-theme="true"] .unlinked-card-date,
-      body[data-role-theme="true"] .link-memo-option-main,
-      body[data-role-theme="true"] .link-memo-option-meta,
-      body[data-role-theme="true"] .thought-group-chip{
+      body[data-role-theme="true"] .sticky-textarea::placeholder{
         text-shadow:none;
         -webkit-text-stroke:2.3px var(--theme-role-box);
+        paint-order:stroke fill;
+      }
+      body[data-role-theme="true"] .recent-card > span,
+      body[data-role-theme="true"] .memo-text-clickable,
+      body[data-role-theme="true"] .calendar-memo-text,
+      body[data-role-theme="true"] .daily-record-card-text,
+      body[data-role-theme="true"] .thought-node-text,
+      body[data-role-theme="true"] .unlinked-card-text,
+      body[data-role-theme="true"] .link-memo-option-main,
+      body[data-role-theme="true"] .thought-group-chip{
+        text-shadow:none;
+        -webkit-text-stroke:1.8px var(--theme-role-box);
+        paint-order:stroke fill;
+      }
+      body[data-role-theme="true"] .calendar-memo-date,
+      body[data-role-theme="true"] .calendar-memo-cat,
+      body[data-role-theme="true"] .thought-node-date,
+      body[data-role-theme="true"] .unlinked-card-date,
+      body[data-role-theme="true"] .link-memo-option-meta{
+        text-shadow:none;
+        -webkit-text-stroke:1.2px var(--theme-role-box);
         paint-order:stroke fill;
       }
     }
@@ -929,6 +966,21 @@ HTML = r"""<!DOCTYPE html>
     body[data-role-theme="true"] .cat-chip.active,
     body[data-role-theme="true"] .tab-btn.home-tab .tab-icon{background:var(--theme-role-nav)!important;color:var(--theme-role-accent)!important;border-color:var(--theme-role-accent)!important;}
 
+    /* 기록 달력 / 일정 달력 중 선택된 버튼 */
+    body[data-role-theme="true"] .calendar-mode-btn.active{
+      background:var(--theme-role-memo)!important;
+      color:var(--theme-role-accent)!important;
+      border:1.5px solid var(--theme-role-memo-border)!important;
+      text-shadow:-1px 0 var(--theme-role-box),1px 0 var(--theme-role-box),0 -1px var(--theme-role-box),0 1px var(--theme-role-box);
+    }
+    @supports (-webkit-text-stroke:1px #000){
+      body[data-role-theme="true"] .calendar-mode-btn.active{
+        text-shadow:none;
+        -webkit-text-stroke:1.2px var(--theme-role-box);
+        paint-order:stroke fill;
+      }
+    }
+
     body[data-role-theme="true"] .recent-card,
     body[data-role-theme="true"] .persistent-dock,
     body[data-role-theme="true"] .category-folder-card,
@@ -942,6 +994,17 @@ HTML = r"""<!DOCTYPE html>
     body[data-role-theme="true"] .thought-group-card,
     body[data-role-theme="true"] .thought-node,
     body[data-role-theme="true"] .unlinked-card{border-color:var(--theme-role-accent)!important;}
+
+    body[data-role-theme="true"] .recent-card,
+    body[data-role-theme="true"] .memo-item,
+    body[data-role-theme="true"] .memo-input,
+    body[data-role-theme="true"] .memo-sticky-note,
+    body[data-role-theme="true"] .sticky-textarea,
+    body[data-role-theme="true"] .calendar-memo-item,
+    body[data-role-theme="true"] .daily-record-card,
+    body[data-role-theme="true"] .thought-node,
+    body[data-role-theme="true"] .unlinked-card,
+    body[data-role-theme="true"] .link-memo-option{border-color:var(--theme-role-memo-border)!important;}
   </style>
 </head>
 
@@ -4553,13 +4616,14 @@ const COLOR_THEMES={
   fireSea:{name:'불타는 바다',colors:['#6E120B','#B12A29','#FBF0D8','#102F47','#729AB9']},
   oliveGarden:{
     name:'올리브 가든의 만찬 · 최종 테마',
-    colors:['#626C3E','#2B361C','#FDFAE3','#F59A23','#B5753C'],
+    colors:['#626C3E','#2B361C','#FDFAE3','#F59A23','#B47F4D'],
     roles:{
       base:'#626C3E',
       nav:'#2B361C',
       box:'#FDFAE3',
       accent:'#F59A23',
-      memo:'#B5753C'
+      memo:'#B47F4D',
+      memoBorder:'#D9AD7C'
     }
   },
   pastelGlam:{name:'파스텔 글램댄 어드벤처',colors:['#C9B5D8','#F6CADC','#F3B2CB','#C4DFFB','#ACD1FB']},
@@ -4664,7 +4728,7 @@ function applyColorTheme(name){
   const isRoleTheme=Boolean(palette&&palette.roles);
   const t=isRoleTheme?rolePaletteToTheme(palette):paletteToTheme(palette),root=document.documentElement;
   root.style.setProperty('--theme-main',t.main);root.style.setProperty('--theme-main-dark',t.dark);root.style.setProperty('--theme-soft',t.soft);root.style.setProperty('--theme-border',t.border);root.style.setProperty('--theme-pale',t.pale);root.style.setProperty('--theme-accent-soft',t.accent);root.style.setProperty('--theme-dot-light',t.light);root.style.setProperty('--theme-dot-mid',t.mid);root.style.setProperty('--theme-connection',t.connection);root.style.setProperty('--theme-center',t.center);root.style.setProperty('--theme-center-shadow',hexToRgba(t.center,.25));root.style.setProperty('--theme-shadow-blue',hexToRgba(t.main,.16));root.style.setProperty('--theme-shadow-blue-soft',hexToRgba(t.main,.13));root.style.setProperty('--theme-shadow-blue-strong',hexToRgba(t.main,.20));root.style.setProperty('--theme-body-bg',t.bodyBg);root.style.setProperty('--theme-app-bg',t.appBg);root.style.setProperty('--theme-page-bg',t.pageBg);root.style.setProperty('--theme-surface',t.surface);root.style.setProperty('--theme-surface-soft',t.surfaceSoft);root.style.setProperty('--theme-nav-bg',t.navBg);root.style.setProperty('--theme-active-bg',t.activeBg);root.style.setProperty('--theme-input-bg',t.inputBg);root.style.setProperty('--theme-text',t.text);root.style.setProperty('--theme-text-muted',t.textMuted);root.style.setProperty('--theme-line-soft',t.lineSoft);
-  root.style.setProperty('--theme-role-base',isRoleTheme?t.roles.base:t.appBg);root.style.setProperty('--theme-role-nav',isRoleTheme?t.roles.nav:t.navBg);root.style.setProperty('--theme-role-box',isRoleTheme?t.roles.box:t.surface);root.style.setProperty('--theme-role-accent',isRoleTheme?t.roles.accent:t.main);root.style.setProperty('--theme-role-memo',isRoleTheme?t.roles.memo:t.inputBg);
+  root.style.setProperty('--theme-role-base',isRoleTheme?t.roles.base:t.appBg);root.style.setProperty('--theme-role-nav',isRoleTheme?t.roles.nav:t.navBg);root.style.setProperty('--theme-role-box',isRoleTheme?t.roles.box:t.surface);root.style.setProperty('--theme-role-accent',isRoleTheme?t.roles.accent:t.main);root.style.setProperty('--theme-role-memo',isRoleTheme?t.roles.memo:t.inputBg);root.style.setProperty('--theme-role-memo-border',isRoleTheme?(t.roles.memoBorder||t.roles.box):t.border);
   localStorage.setItem(NOTEOUND_THEME_KEY,key);themeMode=key.startsWith('solid:')?'solid':'palette';localStorage.setItem('notepound_theme_mode',themeMode);document.body.dataset.colorTheme=key;
   document.body.dataset.roleTheme=isRoleTheme?'true':'false';
   const grid=document.getElementById('themeGrid');if(grid)grid.querySelectorAll('.theme-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.theme===key));
