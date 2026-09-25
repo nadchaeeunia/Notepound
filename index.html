@@ -9,8 +9,10 @@ HTML = r"""<!DOCTYPE html>
   <title>Notepound</title>
 
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
     :root {
-      --app-font: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
+      --app-font: "Jua", "나눔스퀘어라운드", "NanumSquareRound", "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
       --theme-main: #4A7FE5;
       --theme-main-dark: #3973DC;
       --theme-soft: #EAF1FF;
@@ -917,20 +919,26 @@ HTML = r"""<!DOCTYPE html>
 
     /* X 삭제 버튼에는 사각 배경을 만들지 않음 */
     body[data-role-theme="true"] .phone-container button.delete-btn,
-    body[data-role-theme="true"] .phone-container button.thought-node-delete,
     body[data-role-theme="true"] .phone-container .icon-x-btn{
       background:transparent!important;
       border:none!important;
       box-shadow:none!important;
       color:var(--theme-role-accent)!important;
-      text-shadow:-.8px 0 var(--theme-role-box),.8px 0 var(--theme-role-box),0 -.8px var(--theme-role-box),0 .8px var(--theme-role-box)!important;
+      text-shadow:
+        -4px 0 var(--theme-role-box),4px 0 var(--theme-role-box),
+        0 -4px var(--theme-role-box),0 4px var(--theme-role-box),
+        -3px -3px var(--theme-role-box),3px -3px var(--theme-role-box),
+        -3px 3px var(--theme-role-box),3px 3px var(--theme-role-box),
+        -4px -2px var(--theme-role-box),4px -2px var(--theme-role-box),
+        -4px 2px var(--theme-role-box),4px 2px var(--theme-role-box),
+        -2px -4px var(--theme-role-box),2px -4px var(--theme-role-box),
+        -2px 4px var(--theme-role-box),2px 4px var(--theme-role-box)!important;
     }
     @supports (-webkit-text-stroke:1px #000){
       body[data-role-theme="true"] .phone-container button.delete-btn,
-      body[data-role-theme="true"] .phone-container button.thought-node-delete,
       body[data-role-theme="true"] .phone-container .icon-x-btn{
         text-shadow:none!important;
-        -webkit-text-stroke:.8px var(--theme-role-box);
+        -webkit-text-stroke:4px var(--theme-role-box);
         paint-order:stroke fill;
       }
     }
@@ -942,7 +950,7 @@ HTML = r"""<!DOCTYPE html>
     body[data-role-theme="true"] .sticky-textarea::placeholder{
       text-shadow:-1.6px 0 var(--theme-role-box),1.6px 0 var(--theme-role-box),0 -1.6px var(--theme-role-box),0 1.6px var(--theme-role-box);
     }
-    body[data-role-theme="true"] .recent-card > span,
+    body[data-role-theme="true"] .recent-memo-text,
     body[data-role-theme="true"] .memo-text-clickable,
     body[data-role-theme="true"] .calendar-memo-text,
     body[data-role-theme="true"] .daily-record-card-text,
@@ -968,7 +976,7 @@ HTML = r"""<!DOCTYPE html>
         -webkit-text-stroke:2.3px var(--theme-role-box);
         paint-order:stroke fill;
       }
-      body[data-role-theme="true"] .recent-card > span,
+      body[data-role-theme="true"] .recent-memo-text,
       body[data-role-theme="true"] .memo-text-clickable,
       body[data-role-theme="true"] .calendar-memo-text,
       body[data-role-theme="true"] .daily-record-card-text,
@@ -989,6 +997,14 @@ HTML = r"""<!DOCTYPE html>
         -webkit-text-stroke:1.2px var(--theme-role-box);
         paint-order:stroke fill;
       }
+    }
+
+    /* 홈 화면의 분류 태그에는 글자 외곽선을 사용하지 않음 */
+    body[data-role-theme="true"] .recent-category-tag,
+    body[data-role-theme="true"] .tag-badge{
+      text-shadow:none!important;
+      -webkit-text-stroke:0!important;
+      paint-order:normal;
     }
 
     body[data-role-theme="true"] .phone-container,
@@ -2810,10 +2826,10 @@ function renderWritePage() {
       };
 
       item.innerHTML = `
-        <span style="flex:1;word-break:break-word;">
+        <span class="recent-memo-text" style="flex:1;word-break:break-word;">
           ${escapeHtml(memo.text)}
         </span>
-        <span style="font-size:10px;color:#777;white-space:nowrap;">
+        <span class="recent-category-tag" style="font-size:10px;color:#777;white-space:nowrap;">
           ${escapeHtml(memo.category || '#미분류')}
         </span>
       `;
