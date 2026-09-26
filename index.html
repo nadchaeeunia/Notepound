@@ -4674,38 +4674,47 @@ function refreshThoughtFlow(){try{const latest=JSON.parse(localStorage.getItem('
    색상 테마
    ===================================================== */
 const NOTEOUND_THEME_KEY='notepound_color_theme';
-const COLOR_THEMES={
-  fireSea:{name:'불타는 바다',colors:['#6E120B','#B12A29','#FBF0D8','#102F47','#729AB9']},
-  oliveGarden:{
-    name:'올리브 가든의 만찬 · 최종 테마',
-    colors:['#626C3E','#2B361C','#FDFAE3','#F59A23','#B47F4D'],
+function makeRoleTheme(name,colors,memoBorder){
+  return {
+    name,
+    colors,
     roles:{
-      base:'#626C3E',
-      nav:'#2B361C',
-      box:'#FDFAE3',
-      accent:'#F59A23',
-      memo:'#B47F4D',
-      memoBorder:'#D9AD7C'
+      base:colors[0],
+      nav:colors[1],
+      box:colors[2],
+      accent:colors[3],
+      memo:colors[4],
+      memoBorder:memoBorder||mixHex(colors[3],colors[2],.45)
     }
-  },
-  pastelGlam:{name:'파스텔 글램댄 어드벤처',colors:['#C9B5D8','#F6CADC','#F3B2CB','#C4DFFB','#ACD1FB']},
-  goldenDusk:{name:'황금빛 황혼',colors:['#010813','#071C3B','#133463','#F6C543','#F8D84A']},
-  deepSea:{name:'심해',colors:['#0E1320','#202D42','#445B74','#798BA8','#EFEBDA']},
-  oceanBlue:{name:'오션 블루 세레나데',colors:['#03045A','#3375B1','#50B1D4','#A2DEED','#D1EFF7']},
-  softPink:{name:'부드러운 핑크빛 즐거움',colors:['#FBE6EC','#F6C4D1','#F4B6C6','#F095AB','#EA7793']},
-  goldenField:{name:'황금빛 여름 들판',colors:['#CED5B2','#EAEDCC','#FDFAE3','#F8EDD0','#CCA57A']},
-  darkForest:{name:'흑빛 숲의 색조',colors:['#D9D7CE','#A6B18E','#61805B','#415942','#3A4D42']},
-  earthGarden:{name:'흙빛 정원의 색조',colors:['#6B4522','#CC8582','#EDB4B2','#FBEBCB','#CBD18B']},
-  purpleRain:{name:'보라색 빗방울',colors:['#A62A99','#4E13A6','#350F9C','#4960E6','#70C6EC']},
-  darkSunset:{name:'어두운 석양',colors:['#3D5B66','#FDF3B8','#D6A251','#923430','#4D1211']},
-  freshVegetable:{name:'신선한 채소',colors:['#436544','#749857','#AEC867','#F0E8D2','#AE4F4D']},
-  beachSunset:{name:'해변의 석양',colors:['#C7E8E7','#77B4C8','#284863','#D0E8FD','#71A6CF']},
-  burningRed:{name:'불타는 듯한 붉은 석양',colors:['#04071D','#611214','#BF281B','#D7662A','#EEA73C']},
-  burningPalette:{name:'불타는 팔레트',colors:['#57173F','#8D1C24','#EC9140','#D36C2F','#234B5A']},
-  cherryBloom:{name:'벚꽃이 만개하다',colors:['#511423','#96253E','#EC5B70','#F095A4','#F7CED5']},
-  autumnHarvest:{name:'가을 수확',colors:['#EBE0D5','#E2CDB5','#D7B997','#79573E','#94684A']},
-  blackGold:{name:'블랙 & 골드의 우아함',colors:['#000000','#17213B','#EFA73E','#E5E5E5','#FFFFFF']},
-  lushGreen:{name:'잎이 무성한 녹색 정원',colors:['#192915','#3A5631','#587637','#95A860','#EDF3A8']}
+  };
+}
+const COLOR_THEMES={
+  oliveGarden:makeRoleTheme('올리브 가든의 만찬',['#626C3E','#2B361C','#FDFAE3','#F59A23','#B47F4D'],'#D9AD7C'),
+  redVoyage:makeRoleTheme('붉은 항해',['#6D130A','#B12B2A','#FBF1D8','#103049','#7299B8']),
+  greenGarden:makeRoleTheme('초록 정원',['#436544','#749956','#AEC867','#F0E8D3','#AD4F4D']),
+  candySky:makeRoleTheme('솜사탕 하늘',['#C7B6D6','#F6C9DD','#F2B2CC','#C4DFFC','#ACD1FB']),
+  goldenNight:makeRoleTheme('황금빛 밤',['#010812','#071C3B','#133362','#F6C544','#F8D74A']),
+  quietDeepSea:makeRoleTheme('고요한 심해',['#0D131F','#202C42','#435B73','#788BA9','#EEEBDA']),
+  mistForest:makeRoleTheme('안개 숲',['#DAD7D0','#A5B08E','#62805C','#405A41','#394D42']),
+  summerField:makeRoleTheme('여름 들판',['#CED5B3','#E9ECCD','#FCFAE3','#F7EED1','#CCA57A']),
+  rosyAfternoon:makeRoleTheme('장밋빛 오후',['#FCE7EC','#F5C6D0','#F4B7C6','#F195AC','#E97992']),
+  earthyFlowers:makeRoleTheme('흙빛 꽃밭',['#6B4521','#CC8583','#EEB4B2','#FBEBCA','#CBD08D']),
+  violetDream:makeRoleTheme('보랏빛 꿈',['#211940','#5C5589','#9B87BC','#B897C2','#D9B3CA']),
+  dawnFestival:makeRoleTheme('새벽 축제',['#3C3487','#7779E6','#EDBB40','#E18C31','#E2652B']),
+  sunsetCoast:makeRoleTheme('노을빛 해안',['#3B506F','#6A5B78','#A96977','#D57171','#E1AE8F']),
+  blackAndGold:makeRoleTheme('검정과 황금',['#000000','#16223A','#F0A73E','#E5E5E5','#FFFFFF']),
+  greenWaves:makeRoleTheme('초록 물결',['#DEEC9D','#A6D893','#6CB49C','#39759A','#284E75']),
+  morningGlow:makeRoleTheme('아침 햇살',['#293C4B','#EE8744','#F5CC60','#A7C087','#6F9B8A']),
+  sandGarden:makeRoleTheme('모래빛 정원',['#EFEAD4','#DEE5BB','#B1BF81','#A3856B','#6A594F']),
+  peachSunset:makeRoleTheme('복숭아 노을',['#E08783','#E69C91','#ECB19F','#F3C6AF','#F8DBBD']),
+  coralBeach:makeRoleTheme('산호빛 해변',['#435A7C','#A0BFD4','#E5FAFB','#DF7356','#2A323F']),
+  blueCalm:makeRoleTheme('푸른 고요',['#EFF4FA','#E4EAFA','#D8E3FA','#BACBF9','#B0C3FB']),
+  pastelFantasy:makeRoleTheme('파스텔 환상',['#94DDEE','#C0F5EF','#F1F7F7','#F0D5DC','#E3B3CD']),
+  softSand:makeRoleTheme('부드러운 모래',['#E2E3DE','#C9C0B7','#E6DDD4','#D4CAC0','#C6B4A8']),
+  winterGarden:makeRoleTheme('겨울 정원',['#75818F','#A5B4D5','#FFFCF7','#E7F0D3','#C7D7BC']),
+  peachWalk:makeRoleTheme('복숭아 산책',['#F4B089','#F0978F','#F4C5A9','#EEE8B4','#D3E9C5']),
+  lavenderSun:makeRoleTheme('라벤더 햇살',['#9083F7','#B7B8F9','#F8F7FD','#FCEFDF','#F9D9C0']),
+  greenApricot:makeRoleTheme('초록과 살구',['#3E6D4B','#5F936F','#FEFEE6','#F6CBBB','#CB8F51'])
 };
 const SOLID_THEMES={
   blue:{name:'파랑',color:'#4A7FE5'},
@@ -4785,7 +4794,7 @@ function rolePaletteToTheme(t){
 function applyColorTheme(name){
   const isSolid=String(name).startsWith('solid:');
   const rawKey=isSolid?String(name).slice(7):name;
-  const key=(isSolid&&SOLID_THEMES[rawKey])?`solid:${rawKey}`:(COLOR_THEMES[name]?name:'fireSea');
+  const key=(isSolid&&SOLID_THEMES[rawKey])?`solid:${rawKey}`:(COLOR_THEMES[name]?name:'oliveGarden');
   const palette=isSolid?solidToPalette(SOLID_THEMES[rawKey]):COLOR_THEMES[key];
   const isRoleTheme=Boolean(palette&&palette.roles);
   const t=isRoleTheme?rolePaletteToTheme(palette):paletteToTheme(palette),root=document.documentElement;
@@ -4808,7 +4817,9 @@ function setThemeMode(mode){
 }
 function renderThemeChoices(){
   const grid=document.getElementById('themeGrid');if(!grid)return;
-  const current=localStorage.getItem(NOTEOUND_THEME_KEY)||'fireSea';grid.innerHTML='';
+  const current=COLOR_THEMES[localStorage.getItem(NOTEOUND_THEME_KEY)]||String(localStorage.getItem(NOTEOUND_THEME_KEY)||'').startsWith('solid:')
+    ?(localStorage.getItem(NOTEOUND_THEME_KEY)||'oliveGarden')
+    :'oliveGarden';grid.innerHTML='';
   const entries=themeMode==='solid'
     ?Object.entries(SOLID_THEMES).map(([key,t])=>[`solid:${key}`,{...solidToPalette(t),solidColor:t.color}])
     :Object.entries(COLOR_THEMES).map(([key,t])=>[key,t]);
@@ -4823,7 +4834,7 @@ function renderThemeChoices(){
   });
 }
 function openThemeModal(){
-  const saved=localStorage.getItem(NOTEOUND_THEME_KEY)||'fireSea';
+  const saved=localStorage.getItem(NOTEOUND_THEME_KEY)||'oliveGarden';
   themeMode=saved.startsWith('solid:')?'solid':(localStorage.getItem('notepound_theme_mode')||'palette');
   const overlay=document.getElementById('themeModalOverlay');if(overlay)overlay.style.display='flex';
   document.getElementById('themeModeSolid')?.classList.toggle('active',themeMode==='solid');
